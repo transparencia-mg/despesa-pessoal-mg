@@ -1,0 +1,184 @@
+{
+  "name": "despesa-pessoal-mg",
+  "owner_org": "",
+  "profile": "data-package",
+  "resources": [
+    {
+      "description": "Insira a descrição/explicação detalhada deste recurso.",
+      "dialect": {
+        "delimiter": ";"
+      },
+      "encoding": "utf-8-sig",
+      "format": "csv",
+      "hashing": "md5",
+      "name": "despesa_pessoal_mensal",
+      "path": "data/despesa_pessoal_mensal.csv",
+      "profile": "tabular-data-resource",
+      "schema": {
+        "fields": [
+          {
+            "name": "unnamed_0",
+            "type": "string"
+          },
+          {
+            "name": "mai_23",
+            "type": "string"
+          },
+          {
+            "name": "jun_23",
+            "type": "string"
+          },
+          {
+            "name": "jul_23",
+            "type": "string"
+          },
+          {
+            "name": "ago_23",
+            "type": "string"
+          },
+          {
+            "name": "set_23",
+            "type": "string"
+          },
+          {
+            "name": "out_23",
+            "type": "string"
+          },
+          {
+            "name": "nov_23",
+            "type": "string"
+          },
+          {
+            "name": "dez_23",
+            "type": "string"
+          },
+          {
+            "name": "jan_24",
+            "type": "string"
+          },
+          {
+            "name": "fev_24",
+            "type": "string"
+          },
+          {
+            "name": "mar_24",
+            "type": "string"
+          },
+          {
+            "name": "abr_24",
+            "type": "string"
+          },
+          {
+            "name": "mai_24",
+            "type": "string"
+          },
+          {
+            "name": "jun_24",
+            "type": "string"
+          },
+          {
+            "name": "jul_24",
+            "type": "string"
+          },
+          {
+            "name": "ago_24",
+            "type": "string"
+          },
+          {
+            "name": "set_24",
+            "type": "string"
+          },
+          {
+            "name": "out_24",
+            "type": "string"
+          },
+          {
+            "name": "nov_24",
+            "type": "string"
+          },
+          {
+            "name": "dez_24",
+            "type": "string"
+          },
+          {
+            "name": "jan_25",
+            "type": "string"
+          },
+          {
+            "name": "fev_25",
+            "type": "string"
+          },
+          {
+            "name": "mar_25",
+            "type": "string"
+          },
+          {
+            "name": "abr_25",
+            "type": "string"
+          },
+          {
+            "name": "mai_25",
+            "type": "string"
+          },
+          {
+            "name": "jun_25",
+            "type": "string"
+          },
+          {
+            "name": "jul_25",
+            "type": "string"
+          },
+          {
+            "name": "ago_25",
+            "type": "string"
+          }
+        ]
+      },
+      "scheme": "file",
+      "title": "Insira um título humanamente legível para este recurso."
+    },
+    {
+      "description": "Insira a descrição/explicação detalhada deste recurso.",
+      "dialect": {
+        "delimiter": ";"
+      },
+      "encoding": "utf-8-sig",
+      "format": "csv",
+      "hashing": "md5",
+      "name": "limites_lrf",
+      "path": "data/limites_lrf.csv",
+      "profile": "tabular-data-resource",
+      "schema": {
+        "fields": [
+          {
+            "name": "unnamed_0",
+            "type": "string"
+          },
+          {
+            "name": "set_2024_a_ago_2025",
+            "type": "string"
+          },
+          {
+            "name": "mai_2025_a_abr_2025",
+            "type": "string"
+          },
+          {
+            "name": "jan_2024_a_dez_2024",
+            "type": "string"
+          },
+          {
+            "name": "set_2023_a_ago_2024",
+            "type": "string"
+          },
+          {
+            "name": "mai_2023_a_abr_2024",
+            "type": "string"
+          }
+        ]
+      },
+      "scheme": "file",
+      "title": "Insira um título humanamente legível para este recurso."
+    }
+  ],
+  "title": "Despesa pessoal mg"
+}
