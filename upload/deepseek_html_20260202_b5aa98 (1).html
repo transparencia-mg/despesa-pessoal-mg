@@ -1,0 +1,3137 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Despesa com Pessoal - Governo de Minas Gerais</title>
+    
+    <!-- ==================== ESTILOS E BIBLIOTECAS ==================== -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* ==================== VARIÁVEIS DE CORES ==================== */
+        :root {
+            --primary-dark: #1A5276;
+            --primary-darker: #0E2F44;
+            --accent-blue: #3498DB;
+            --accent-bright: #2980B9;
+            --background-light: #F2F4F7;
+            --success-green: #27AE60;
+            --warning-yellow: #F39C12;
+            --info-blue: #17A589;
+            --secondary-purple: #8E44AD;
+            --secondary-orange: #E67E22;
+            --secondary-teal: #16A085;
+            --danger-red: #E74C3C;
+        }
+        
+        /* ==================== ESTILOS GERAIS ==================== */
+        body {
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-light);
+            padding-bottom: 30px;
+        }
+        
+        /* ==================== HEADER PRINCIPAL ==================== */
+        .main-header {
+            background: linear-gradient(135deg, var(--primary-darker) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-bottom: 4px solid var(--accent-blue);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-bright) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            box-shadow: 0 3px 8px rgba(52, 152, 219, 0.25);
+        }
+        
+        .header-title {
+            font-weight: 700;
+            font-size: 22px;
+            margin: 0;
+            line-height: 1.2;
+        }
+        
+        .header-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin: 5px 0 0 0;
+        }
+
+        .header-info {
+            margin-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .link-legislacao {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.3s;
+        }
+        
+        .link-legislacao:hover {
+            color: white;
+            text-decoration: underline;
+        }
+        
+        .badge-atualizacao-header {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 11px;
+        }
+        
+        /* ==================== FILTROS ==================== */
+        .filter-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--accent-blue);
+        }
+        
+        .filter-label {
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 6px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            height: 42px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.15);
+        }
+        
+        /* ==================== CARDS DE MÉTRICAS ==================== */
+        .metric-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px 15px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+            border-top: 4px solid var(--accent-blue);
+            transition: all 0.3s ease;
+            height: 100%;
+            position: relative;
+            cursor: default;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .metric-card.primary {
+            border-top-color: var(--primary-dark);
+        }
+        
+        .metric-card.success {
+            border-top-color: var(--success-green);
+        }
+        
+        .metric-card.warning {
+            border-top-color: var(--warning-yellow);
+        }
+        
+        .metric-card.info {
+            border-top-color: var(--info-blue);
+        }
+        
+        .metric-card.purple {
+            border-top-color: var(--secondary-purple);
+        }
+        
+        .metric-card.orange {
+            border-top-color: var(--secondary-orange);
+        }
+        
+        .metric-card.danger {
+            border-top-color: var(--danger-red);
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin: 8px 0;
+            line-height: 1;
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: var(--primary-darker);
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .metric-change {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 15px;
+            display: inline-block;
+        }
+        
+        .metric-change.positive {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success-green);
+        }
+        
+        .metric-change.warning {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-yellow);
+        }
+        
+        .metric-change.danger {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-red);
+        }
+        
+        /* ==================== CONTAINER DE GRÁFICOS ==================== */
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+            height: 100%;
+            min-height: 280px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--background-light);
+        }
+        
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin: 0;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 220px;
+            width: 100%;
+        }
+        
+        /* ==================== TABELAS ==================== */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .table-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .table-badge {
+            background: var(--accent-blue);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        /* Container para tabela com cabeçalho fixo */
+        .table-fixed-header-container {
+            position: relative;
+            max-height: 500px;
+            overflow: auto;
+            padding: 0;
+        }
+        
+        /* Cabeçalho fixo para todas as tabelas */
+        .table-fixed-header-container table thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #f8f9fa !important;
+        }
+        
+        .table-fixed-header-container table thead th {
+            background-color: #f8f9fa !important;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+        
+        .table-responsive {
+            padding: 0;
+            overflow-x: auto;
+        }
+        
+        .table {
+            margin: 0;
+            width: 100%;
+            font-size: 13px;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .table thead th {
+            background-color: #f8f9fa !important;
+            color: var(--primary-dark);
+            font-weight: 600;
+            border: none;
+            padding: 12px 10px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s ease;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            white-space: nowrap;
+        }
+        
+        .sort-icon {
+            opacity: 0.5;
+            margin-left: 4px;
+            font-size: 9px;
+            transition: opacity 0.2s ease;
+        }
+        
+        .table thead th:hover {
+            background-color: #f1f3f5 !important;
+        }
+        
+        .table thead th:hover .sort-icon {
+            opacity: 1;
+        }
+        
+        .table thead th.sorted-asc .sort-icon,
+        .table thead th.sorted-desc .sort-icon {
+            opacity: 1;
+        }
+        
+        .table thead th.sorted-asc .sort-icon::after {
+            content: "↑";
+        }
+        
+        .table thead th.sorted-desc .sort-icon::after {
+            content: "↓";
+        }
+        
+        .table tbody tr {
+            transition: background-color 0.2s ease;
+            border-bottom: 1px solid #f1f1f1;
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(26, 82, 118, 0.04);
+        }
+        
+        .table tbody td {
+            padding: 12px 10px;
+            vertical-align: middle;
+            font-size: 13px;
+        }
+        
+        /* Estilos específicos para valores monetários */
+        .valor-monetario {
+            font-weight: 600;
+            text-align: right;
+            white-space: nowrap;
+        }
+        
+        .valor-positivo {
+            color: var(--success-green);
+        }
+        
+        .valor-negativo {
+            color: var(--danger-red);
+        }
+        
+        /* ==================== BOTÕES ==================== */
+        .btn-primary-custom {
+            background: linear-gradient(to right, var(--accent-blue), var(--accent-bright));
+            border: none;
+            padding: 10px 20px;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            color: white;
+        }
+        
+        .btn-primary-custom:hover {
+            background: linear-gradient(to right, var(--accent-bright), var(--accent-blue));
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+            color: white;
+        }
+        
+        .btn-secondary-custom {
+            background: white;
+            border: 2px solid var(--primary-dark);
+            color: var(--primary-dark);
+            padding: 10px 20px;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+        
+        .btn-secondary-custom:hover {
+            background-color: var(--primary-dark);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(26, 82, 118, 0.15);
+        }
+        
+        .btn-export {
+            background: white;
+            border: 2px solid var(--primary-dark);
+            color: var(--primary-dark);
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+        
+        .btn-export:hover {
+            background: var(--primary-dark);
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        /* ==================== MENU DE NAVEGAÇÃO ==================== */
+        .nav-tabs-container {
+            background: white;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        }
+        
+        .nav-tabs {
+            border: none;
+            gap: 4px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            border-radius: 6px;
+            padding: 10px 15px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            transition: all 0.3s ease;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            background-color: rgba(26, 82, 118, 0.05);
+            color: var(--accent-blue);
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
+            color: white;
+        }
+        
+        /* ==================== AÇÕES ==================== */
+        .actions-container {
+            background: white;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        /* ==================== LOADING OVERLAY ==================== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(26, 82, 118, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent-blue);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* ==================== RODAPÉ DA TABELA ==================== */
+        .table-total-row {
+            background-color: #f8f9fa !important;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        .table-total-row td {
+            border-top: 2px solid #dee2e6 !important;
+        }
+
+        /* ==================== BARRAS DE PROGRESSO ==================== */
+        .progress-limite {
+            height: 20px;
+            border-radius: 10px;
+            background-color: #e9ecef;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .progress-bar-limite {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-bar-limite.safe {
+            background-color: var(--success-green);
+        }
+        
+        .progress-bar-limite.warning {
+            background-color: var(--warning-yellow);
+        }
+        
+        .progress-bar-limite.danger {
+            background-color: var(--danger-red);
+        }
+        
+        .limite-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-top: 3px;
+            color: var(--primary-darker);
+        }
+        
+        /* ==================== CARDS DE LIMITES ==================== */
+        .limite-card {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .limite-card.safe {
+            border-top: 4px solid var(--success-green);
+        }
+        
+        .limite-card.warning {
+            border-top: 4px solid var(--warning-yellow);
+        }
+        
+        .limite-card.danger {
+            border-top: 4px solid var(--danger-red);
+        }
+        
+        .limite-card .valor {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 8px 0;
+        }
+        
+        .limite-card .porcentagem {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 8px 0;
+        }
+        
+        .limite-card .label {
+            font-size: 12px;
+            color: var(--primary-darker);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        /* ==================== RESPONSIVIDADE ==================== */
+        @media (max-width: 768px) {
+            .main-header {
+                padding: 15px 0;
+                margin-bottom: 20px;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .header-title {
+                font-size: 18px;
+            }
+            
+            .header-subtitle {
+                font-size: 12px;
+            }
+            
+            .header-info {
+                justify-content: center;
+            }
+            
+            .metric-value {
+                font-size: 20px;
+            }
+            
+            .actions-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .export-buttons {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            .nav-tabs .nav-link {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            
+            .chart-wrapper {
+                height: 200px;
+            }
+            
+            .table-responsive {
+                font-size: 12px;
+            }
+            
+            .table thead th,
+            .table tbody td {
+                padding: 8px 6px;
+                font-size: 11px;
+            }
+            
+            .pagination-container {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+            
+            .btn-primary-custom,
+            .btn-secondary-custom {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+            
+            .limite-card .valor {
+                font-size: 18px;
+            }
+            
+            .limite-card .porcentagem {
+                font-size: 20px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .filter-container .row > div {
+                margin-bottom: 10px;
+            }
+            
+            .chart-container {
+                min-height: 240px;
+            }
+            
+            .chart-wrapper {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== HEADER PRINCIPAL ==================== -->
+    <header class="main-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="logo-container">
+                    <div class="logo">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <h1 class="header-title">Despesa com Pessoal - Governo de MG</h1>
+                        <p class="header-subtitle">Governo do Estado de Minas Gerais - RGF - Anexo 1 (LRF)</p>
+                        <div class="header-info">
+                            <a href="https://dados.mg.gov.br/" target="_blank" class="link-legislacao">
+                                <i class="fas fa-external-link-alt"></i> Portal de Dados Abertos MG
+                            </a>
+                            <span class="badge-atualizacao-header">
+                                <i class="fas fa-sync-alt"></i> Atualização: <span id="data-atualizacao-header">Carregando...</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Informação de Fonte de Dados -->
+                <div class="text-end">
+                    <div class="btn-export" style="background: rgba(255, 255, 255, 0.2); color: white; border-color: white;">
+                        <i class="fas fa-database me-2"></i> Fonte: GitHub
+                    </div>
+                    <small class="text-white d-block mt-1" style="font-size: 10px;">Atualização automática</small>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
+    <div class="container">
+        <!-- ==================== MENU DE NAVEGAÇÃO ==================== -->
+        <div class="nav-tabs-container">
+            <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="dashboard1-tab" data-bs-toggle="tab" data-bs-target="#dashboard1" type="button" role="tab">
+                        <i class="fas fa-chart-bar me-2"></i>Visão Geral
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="dashboard2-tab" data-bs-toggle="tab" data-bs-target="#dashboard2" type="button" role="tab">
+                        <i class="fas fa-calendar-alt me-2"></i>Evolução Mensal
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="dashboard3-tab" data-bs-toggle="tab" data-bs-target="#dashboard3" type="button" role="tab">
+                        <i class="fas fa-balance-scale me-2"></i>Limites da LRF
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="dashboard4-tab" data-bs-toggle="tab" data-bs-target="#dashboard4" type="button" role="tab">
+                        <i class="fas fa-download me-2"></i>Downloads
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <!-- ==================== CONTEÚDO DAS ABAS ==================== -->
+        <div class="tab-content" id="dashboardTabsContent">
+            
+            <!-- ==================== DASHBOARD 1: VISÃO GERAL ==================== -->
+            <div class="tab-pane fade show active" id="dashboard1" role="tabpanel">
+                
+                <!-- Filtros Dashboard 1 -->
+                <div class="filter-container">
+                    <div class="row">
+                        <div class="col-md-3 col-6">
+                            <div class="mb-3">
+                                <label for="anoDashboard1" class="form-label filter-label">Ano</label>
+                                <select class="form-select" id="anoDashboard1">
+                                    <!-- Opções serão carregadas dinamicamente -->
+                                    <option value="">Carregando...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="mb-3">
+                                <label for="periodoDashboard1" class="form-label filter-label">Período</label>
+                                <select class="form-select" id="periodoDashboard1">
+                                    <option value="anual">Anual</option>
+                                    <option value="mensal" selected>Mensal</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6" id="mesDashboard1Container">
+                            <div class="mb-3">
+                                <label for="mesDashboard1" class="form-label filter-label">Mês</label>
+                                <select class="form-select" id="mesDashboard1">
+                                    <!-- Opções serão carregadas dinamicamente -->
+                                    <option value="">Carregando...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="mb-3">
+                                <label for="categoriaDashboard1" class="form-label filter-label">Categoria</label>
+                                <select class="form-select" id="categoriaDashboard1">
+                                    <option value="total">Despesa Total</option>
+                                    <option value="ativo">Pessoal Ativo</option>
+                                    <option value="inativo">Inativos/Pensionistas</option>
+                                    <option value="liquidada">Despesa Líquida</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex gap-3 flex-wrap">
+                                <button class="btn-primary-custom" id="aplicarFiltros">
+                                    <i class="fas fa-filter me-2"></i>Aplicar Filtros
+                                </button>
+                                <button class="btn-secondary-custom" id="limparFiltros">
+                                    <i class="fas fa-redo me-2"></i>Limpar Filtros
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cards de Estatísticas Dashboard 1 -->
+                <div class="row mb-4" id="summaryCards">
+                    <!-- Cards serão carregados aqui -->
+                    <div class="col-12 text-center">
+                        <p class="text-muted">Carregando dados...</p>
+                    </div>
+                </div>
+
+                <!-- Gráficos Dashboard 1 -->
+                <div class="row mb-4">
+                    <div class="col-md-6 col-12">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h4 class="chart-title">Distribuição da Despesa</h4>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="chartDistribuicao"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h4 class="chart-title">Despesa com Pessoal Ativo</h4>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="chartAtivoDetalhado"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ações Dashboard 1 -->
+                <div class="actions-container mb-4">
+                    <div class="export-buttons">
+                        <button class="btn-export" id="exportCSVDashboard1">
+                            <i class="fas fa-file-csv me-2"></i> Exportar CSV
+                        </button>
+                        <button class="btn-export" id="printDashboard1">
+                            <i class="fas fa-print me-2"></i> Imprimir
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabela Dashboard 1 - RESUMO -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Despesa com Pessoal - Resumo</h3>
+                        <div class="d-flex align-items-center gap-3 ms-auto">
+                            <span class="table-badge" id="resumoCountDashboard1">Carregando dados...</span>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="resumoTable">
+                            <thead>
+                                <tr>
+                                    <th>Descrição</th>
+                                    <th class="text-end">Valor (R$)</th>
+                                    <th class="text-end">% do Total</th>
+                                    <th class="text-end">Média Mensal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resumoTableBody">
+                                <!-- Dados serão carregados aqui -->
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">Carregando dados...</td>
+                                </tr>
+                            </tbody>
+                            <tfoot id="resumoTableFooter">
+                                <!-- Total geral será carregado aqui -->
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                
+            </div> <!-- Fim Dashboard 1 -->
+
+            <!-- ==================== DASHBOARD 2: EVOLUÇÃO MENSAL ==================== -->
+            <div class="tab-pane fade" id="dashboard2" role="tabpanel">
+                
+                <!-- Filtros Dashboard 2 -->
+                <div class="filter-container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="anoDashboard2" class="form-label filter-label">Ano</label>
+                                <select class="form-select" id="anoDashboard2">
+                                    <!-- Opções serão carregadas dinamicamente -->
+                                    <option value="">Carregando...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="categoriaDashboard2" class="form-label filter-label">Categoria</label>
+                                <select class="form-select" id="categoriaDashboard2">
+                                    <option value="total">Despesa Total</option>
+                                    <option value="bruta">Despesa Bruta</option>
+                                    <option value="liquida">Despesa Líquida</option>
+                                    <option value="ativo">Pessoal Ativo</option>
+                                    <option value="inativo">Inativos/Pensionistas</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex gap-3 flex-wrap">
+                                <button class="btn-primary-custom" id="aplicarFiltrosDashboard2">
+                                    <i class="fas fa-filter me-2"></i>Aplicar Filtros
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Evolução -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h4 class="chart-title">Evolução Mensal da Despesa</h4>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="toggleAccumulated">
+                                    <label class="form-check-label" for="toggleAccumulated" style="font-size: 12px;">
+                                        Acumulado
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="chartEvolucao"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ações Dashboard 2 -->
+                <div class="actions-container mb-4">
+                    <div class="export-buttons">
+                        <button class="btn-export" id="exportCSVDashboard2">
+                            <i class="fas fa-file-csv me-2"></i> Exportar CSV
+                        </button>
+                        <button class="btn-export" id="printDashboard2">
+                            <i class="fas fa-print me-2"></i> Imprimir
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabela de Evolução Mensal -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Evolução Mensal da Despesa</h3>
+                        <div class="d-flex align-items-center gap-3 ms-auto">
+                            <span class="table-badge" id="resumoCountDashboard2">Carregando dados...</span>
+                        </div>
+                    </div>
+                    <div class="table-fixed-header-container">
+                        <table class="table table-hover" id="evolucaoTable">
+                            <thead>
+                                <tr>
+                                    <th>Mês</th>
+                                    <th class="text-end">Despesa Bruta</th>
+                                    <th class="text-end">Despesa Líquida</th>
+                                    <th class="text-end">Pessoal Ativo</th>
+                                    <th class="text-end">Inativos/Pensionistas</th>
+                                    <th class="text-end">Variação Mês Anterior</th>
+                                </tr>
+                            </thead>
+                            <tbody id="evolucaoTableBody">
+                                <!-- Dados serão carregados aqui -->
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">Carregando dados...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+            </div> <!-- Fim Dashboard 2 -->
+
+            <!-- ==================== DASHBOARD 3: LIMITES DA LRF ==================== -->
+            <div class="tab-pane fade" id="dashboard3" role="tabpanel">
+                
+                <!-- Filtros Dashboard 3 -->
+                <div class="filter-container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="periodoLRF" class="form-label filter-label">Período de 12 Meses</label>
+                                <select class="form-select" id="periodoLRF">
+                                    <!-- Opções serão carregadas dinamicamente -->
+                                    <option value="">Carregando...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cards de Limites -->
+                <div class="row mb-4">
+                    <div class="col-md-4 col-12">
+                        <div class="limite-card safe" id="limiteLegalCard">
+                            <div class="label">LIMITE LEGAL</div>
+                            <div class="porcentagem" id="limiteLegalPercentual">49.00%</div>
+                            <div class="valor" id="limiteLegalValor">Carregando...</div>
+                            <div class="limite-info">
+                                <span>Máximo permitido</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12">
+                        <div class="limite-card warning" id="limitePrudencialCard">
+                            <div class="label">LIMITE PRUDENCIAL</div>
+                            <div class="porcentagem" id="limitePrudencialPercentual">46.55%</div>
+                            <div class="valor" id="limitePrudencialValor">Carregando...</div>
+                            <div class="limite-info">
+                                <span>Recomendação</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12">
+                        <div class="limite-card danger" id="limiteAlertaCard">
+                            <div class="label">LIMITE DE ALERTA</div>
+                            <div class="porcentagem" id="limiteAlertaPercentual">44.10%</div>
+                            <div class="valor" id="limiteAlertaValor">Carregando...</div>
+                            <div class="limite-info">
+                                <span>Atenção necessária</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barra de Progresso -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h4 class="chart-title">Despesa com Pessoal em Relação à RCL</h4>
+                                <span class="badge bg-primary" id="despesaAtualPercentual">Carregando...</span>
+                            </div>
+                            <div class="p-4">
+                                <div class="progress-limite">
+                                    <div class="progress-bar-limite" id="progressBar" style="width: 0%"></div>
+                                </div>
+                                <div class="limite-info">
+                                    <span>0%</span>
+                                    <span>Limite de Alerta: <span id="limiteAlertaValorLabel">44.10%</span></span>
+                                    <span>Limite Prudencial: <span id="limitePrudencialValorLabel">46.55%</span></span>
+                                    <span>Limite Legal: <span id="limiteLegalValorLabel">49.00%</span></span>
+                                    <span>100%</span>
+                                </div>
+                                
+                                <div class="mt-4">
+                                    <h5>Informações da RCL</h5>
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label filter-label">Receita Corrente Líquida (RCL)</label>
+                                                <div class="valor-monetario valor-positivo" id="rclTotal">Carregando...</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label filter-label">Despesa com Pessoal Executada</label>
+                                                <div class="valor-monetario" id="despesaExecutada">Carregando...</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Limites -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Apuração do Cumprimento do Limite Legal</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="limitesTable">
+                            <thead>
+                                <tr>
+                                    <th>Descrição</th>
+                                    <th class="text-end">Valor (R$)</th>
+                                    <th class="text-end">% sobre a RCL</th>
+                                </tr>
+                            </thead>
+                            <tbody id="limitesTableBody">
+                                <!-- Dados serão carregados aqui -->
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">Carregando dados...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+            </div> <!-- Fim Dashboard 3 -->
+
+            <!-- ==================== DASHBOARD 4: DOWNLOADS ==================== -->
+            <div class="tab-pane fade" id="dashboard4" role="tabpanel">
+                
+                <!-- Download por Quadrimestre -->
+                <div class="filter-container">
+                    <div class="row">
+                        <div class="col-md-4 col-12">
+                            <div class="mb-3">
+                                <label for="anoDownload" class="form-label filter-label">Ano</label>
+                                <select class="form-select" id="anoDownload">
+                                    <!-- Opções serão carregadas dinamicamente -->
+                                    <option value="">Carregando...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-12">
+                            <div class="mb-3">
+                                <label for="quadrimestreDownload" class="form-label filter-label">Quadrimestre</label>
+                                <select class="form-select" id="quadrimestreDownload">
+                                    <option value="1">1º Quadrimestre (Jan-Abr)</option>
+                                    <option value="2">2º Quadrimestre (Mai-Ago)</option>
+                                    <option value="3">3º Quadrimestre (Set-Dez)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-12 d-flex align-items-end">
+                            <button class="btn-primary-custom w-100" id="downloadQuadrimestreCSV">
+                                <i class="fas fa-download me-2"></i>Baixar Quadrimestre
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações sobre os dados -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Informações sobre os Dados</h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="row">
+                            <div class="col-md-6 col-12">
+                                <div class="card-stats">
+                                    <i class="fas fa-database fa-3x mb-3" style="color: var(--primary-dark);"></i>
+                                    <h4>Fonte dos Dados</h4>
+                                    <p class="text-muted" style="font-size: 13px;">Dados atualizados automaticamente do GitHub</p>
+                                    <div class="mt-3">
+                                        <button class="btn-export w-100 d-block text-decoration-none" id="atualizarDadosGitHub">
+                                            <i class="fas fa-sync-alt me-2"></i>Forçar Atualização
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="card-stats">
+                                    <i class="fas fa-external-link-alt fa-3x mb-3" style="color: var(--primary-dark);"></i>
+                                    <h4>Portal de Dados Abertos</h4>
+                                    <p class="text-muted" style="font-size: 13px;">Acesse o portal oficial de dados abertos de Minas Gerais</p>
+                                    <div class="mt-3">
+                                        <a href="https://dados.mg.gov.br/" 
+                                           target="_blank" 
+                                           class="btn-export w-100 d-block text-decoration-none">
+                                            <i class="fas fa-external-link-alt me-2"></i>Acessar Portal
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <h5 class="mb-3">Estrutura dos Arquivos CSV</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Arquivo</th>
+                                            <th>Descrição</th>
+                                            <th>Período de Atualização</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>despesa_pessoal_mensal.csv</strong></td>
+                                            <td>Dados mensais de despesa com pessoal</td>
+                                            <td>Quadrimestral</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>limites_lrf.csv</strong></td>
+                                            <td>Limites da Lei de Responsabilidade Fiscal por período de 12 meses</td>
+                                            <td>Quadrimestral</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="alert alert-info mt-3">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Atualização Automática:</strong> Os dados são atualizados automaticamente quando novos arquivos são adicionados ao repositório GitHub. 
+                                Os relatórios são gerados quadrimestralmente.
+                            </div>
+                            
+                            <div class="alert alert-success mt-2">
+                                <i class="fas fa-balance-scale me-2"></i>
+                                <strong>Conformidade Legal:</strong> Os dados seguem as disposições da Lei Complementar nº 101/2000 (LRF) e são publicados conforme exigências do RGF.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div> <!-- Fim Dashboard 4 -->
+        </div>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer mt-4 pt-4 border-top">
+        <div class="container text-center text-muted">
+            <p class="mb-1">
+                <i class="fas fa-sync-alt me-2"></i> 
+                Última atualização — 
+                <span id="footer-atualizacao">Carregando...</span>
+            </p>
+            <p class="mb-0" style="font-size: 0.85rem;">
+                © 2025 Governo do Estado de Minas Gerais - Lei de Responsabilidade Fiscal
+            </p>
+            <p class="mt-2 mb-0 small">
+                <a href="https://dados.mg.gov.br" style="color: var(--primary-dark); text-decoration: none; font-weight: 600;">
+                    <i class="fas fa-external-link-alt"></i> dados.mg.gov.br
+                </a>
+                | 
+                <a href="https://github.com/transparencia-mg/despesa-pessoal-mg" 
+                   style="color: var(--primary-dark); text-decoration: none; font-weight: 600;">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- ==================== LOADING OVERLAY ==================== -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- ==================== SCRIPTS ==================== -->
+
+    <!-- PapaParse (TEM QUE VIR PRIMEIRO) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    
+    <!-- jQuery e DataTables -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // ============================================
+        // VARIÁVEIS GLOBAIS
+        // ============================================
+        let despesaMensalData = [];
+        let limitesLRFData = [];
+        let allData = {};
+        let limitesData = {};
+        let currentAnoDashboard1 = '';
+        let currentPeriodoDashboard1 = 'mensal';
+        let currentMesDashboard1 = '';
+        let currentCategoriaDashboard1 = 'total';
+        let currentAnoDashboard2 = '';
+        let currentChartCategory = 'total';
+        let currentPeriodoLRF = '';
+        let isAccumulated = false;
+        let charts = {};
+        
+        // URLs dos CSVs no GitHub - CORRIGIDAS
+        const GITHUB_BASE_URL = 'https://raw.githubusercontent.com/transparencia-mg/despesa-pessoal-mg/main/dataset/data/';
+        const DESPESA_MENSAL_CSV = 'despesa_pessoal_mensal.csv';
+        const LIMITES_LRF_CSV = 'limites_lrf.csv';
+
+        // Cores dos gráficos
+        const chartColors = {
+            despesaBruta: '#1A5276',
+            pessoalAtivo: '#3498DB',
+            vencimentos: '#2980B9',
+            obrigacoesPatronais: '#27AE60',
+            inativosPensionistas: '#8E44AD',
+            aposentadorias: '#9B59B6',
+            pensoes: '#E74C3C',
+            despesasNaoComputadas: '#F39C12',
+            despesaLiquida: '#17A589',
+            limiteMaximo: '#2ECC71',
+            limitePrudencial: '#F1C40F',
+            limiteAlerta: '#E74C3C'
+        };
+
+        // ============================================
+        // INICIALIZAÇÃO DO DASHBOARD
+        // ============================================
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('=== INICIANDO DASHBOARD DESPESA COM PESSOAL ===');
+            console.log('Carregando dados do GitHub...');
+
+            showLoading(true);
+            
+            try {
+                // Carregar dados do GitHub
+                await loadAllDataFromGitHub();
+                
+                // Determinar dados mais recentes
+                await determineLatestData();
+                
+                // Atualizar interface
+                updateDataAtualizacao();
+                updateFilterOptions();
+                updateDashboard1();
+                initializeDashboard2();
+                updateDashboard3();
+                setupEventListeners();
+                
+                console.log('Dashboard inicializado com sucesso!');
+                console.log(`Dados carregados: ${despesaMensalData.length} registros mensais`);
+                console.log(`Períodos LRF carregados: ${Object.keys(limitesData).length}`);
+                
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                showError('Erro ao carregar dados do GitHub. Por favor, tente novamente.');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // ==================== CARREGAR DADOS DO GITHUB ====================
+        async function loadAllDataFromGitHub() {
+            console.log('Carregando dados do GitHub...');
+            
+            // Carregar dados de despesa mensal
+            await loadDespesaMensalData();
+            
+            // Carregar dados de limites LRF
+            await loadLimitesLRFData();
+            
+            console.log('Dados carregados com sucesso!');
+        }
+
+        async function loadDespesaMensalData() {
+            const url = `${GITHUB_BASE_URL}${DESPESA_MENSAL_CSV}`;
+            console.log(`Carregando despesa mensal: ${url}`);
+
+            return new Promise((resolve, reject) => {
+                Papa.parse(url, {
+                    download: true,
+                    delimiter: ";",
+                    header: true,
+                    skipEmptyLines: true,
+                    encoding: 'UTF-8',
+                    complete: function (results) {
+                        console.log(`CSV parseado com sucesso. ${results.data.length} registros encontrados.`);
+                        console.log('Colunas disponíveis:', results.meta.fields);
+                        console.log('Primeiras 3 linhas:', results.data.slice(0, 3));
+                        
+                        if (results.errors && results.errors.length > 0) {
+                            console.warn('Erros no parsing:', results.errors);
+                        }
+                        
+                        despesaMensalData = results.data.map((row, index) => {
+                            try {
+                                // Depuração: mostrar estrutura da linha
+                                if (index < 3) {
+                                    console.log(`Linha ${index}:`, row);
+                                    console.log(`MES_ANO: "${row.MES_ANO}"`, `DESPESA_BRUTA: "${row.DESPESA_BRUTA}"`);
+                                }
+                                
+                                // Normalizar nomes de colunas
+                                const mes_ano = row.MES_ANO || row.mes_ano || row.Mes_Ano || '';
+                                const despesa_bruta = parseFloat(row.DESPESA_BRUTA || row.despesa_bruta || row.Despesa_Bruta || 0);
+                                const pessoal_ativo = parseFloat(row.PESSOAL_ATIVO || row.pessoal_ativo || row.Pessoal_Ativo || 0);
+                                const vencimentos_vantagens = parseFloat(row.VENCIMENTOS_VANTAGENS || row.vencimentos_vantagens || row.Vencimentos_Vantagens || 0);
+                                const obrigacoes_patronais = parseFloat(row.OBRIGACOES_PATRONAIS || row.obrigacoes_patronais || row.Obrigacoes_Patronais || 0);
+                                const inativos_pensionistas = parseFloat(row.INATIVOS_PENSIONISTAS || row.inativos_pensionistas || row.Inativos_Pensionistas || 0);
+                                const aposentadorias = parseFloat(row.APOSENTADORIAS || row.aposentadorias || row.Aposentadorias || 0);
+                                const pensoes = parseFloat(row.PENSOES || row.pensoes || row.Pensoes || 0);
+                                const despesas_nao_computadas = parseFloat(row.DESPESAS_NAO_COMPUTADAS || row.despesas_nao_computadas || row.Despesas_Nao_Computadas || 0);
+                                const despesa_liquida = parseFloat(row.DESPESA_LIQUIDA || row.despesa_liquida || row.Despesa_Liquida || 0);
+                                
+                                // Extrair ano e mês do formato "MMM/AAAA"
+                                let ano = '';
+                                let mes = '';
+                                let mes_num = 0;
+                                
+                                if (mes_ano) {
+                                    const parts = mes_ano.split('/');
+                                    if (parts.length === 2) {
+                                        const mes_str = parts[0].toLowerCase().trim();
+                                        ano = parts[1].trim();
+                                        
+                                        // Converter mês para número
+                                        mes_num = getMonthNumber(mes_str);
+                                        mes = mes_num.toString().padStart(2, '0');
+                                    }
+                                }
+                                
+                                return {
+                                    mes_ano: mes_ano,
+                                    despesa_bruta: despesa_bruta,
+                                    pessoal_ativo: pessoal_ativo,
+                                    vencimentos_vantagens: vencimentos_vantagens,
+                                    obrigacoes_patronais: obrigacoes_patronais,
+                                    inativos_pensionistas: inativos_pensionistas,
+                                    aposentadorias: aposentadorias,
+                                    pensoes: pensoes,
+                                    despesas_nao_computadas: despesas_nao_computadas,
+                                    despesa_liquida: despesa_liquida,
+                                    ANO: ano,
+                                    MES: mes,
+                                    MES_NUM: mes_num
+                                };
+                            } catch (error) {
+                                console.error(`Erro ao processar linha ${index}:`, error, row);
+                                return null;
+                            }
+                        }).filter(item => item !== null && item.mes_ano !== '' && item.despesa_bruta > 0);
+                        
+                        console.log(`Dados de despesa mensal processados: ${despesaMensalData.length} registros válidos`);
+                        
+                        if (despesaMensalData.length === 0) {
+                            console.warn('Nenhum dado válido encontrado no CSV. Verificando estrutura do arquivo...');
+                            console.log('Primeiras 5 linhas do CSV bruto:', results.data.slice(0, 5));
+                        } else {
+                            console.log('Primeiros registros processados:', despesaMensalData.slice(0, 3));
+                            organizeDataByYear();
+                        }
+                        
+                        resolve();
+                    },
+                    error: function (err) {
+                        console.error('Erro ao carregar despesa mensal:', err);
+                        reject(err);
+                    }
+                });
+            });
+        }
+
+        async function loadLimitesLRFData() {
+            const url = `${GITHUB_BASE_URL}${LIMITES_LRF_CSV}`;
+            console.log(`Carregando limites LRF: ${url}`);
+
+            return new Promise((resolve, reject) => {
+                Papa.parse(url, {
+                    download: true,
+                    delimiter: ";",
+                    header: true,
+                    skipEmptyLines: true,
+                    encoding: 'UTF-8',
+                    complete: function (results) {
+                        console.log(`CSV de limites parseado com sucesso. ${results.data.length} registros encontrados.`);
+                        console.log('Colunas disponíveis nos limites:', results.meta.fields);
+                        
+                        if (results.errors && results.errors.length > 0) {
+                            console.warn('Erros no parsing dos limites:', results.errors);
+                        }
+                        
+                        limitesLRFData = results.data.map(row => {
+                            try {
+                                // Normalizar dados
+                                const periodo = row.PERIODO || row.periodo || row.Periodo || '';
+                                const rcl = parseFloat(row.RCL || row.rcl || row.Rcl || 0);
+                                const transferencias_individuais = parseFloat(row.TRANSFERENCIAS_INDIVIDUAIS || row.transferencias_individuais || row.Transferencias_Individuais || 0);
+                                const transferencias_bancada = parseFloat(row.TRANSFERENCIAS_BANCADA || row.transferencias_bancada || row.Transferencias_Bancada || 0);
+                                const rcl_ajustada = parseFloat(row.RCL_AJUSTADA || row.rcl_ajustada || row.Rcl_Ajustada || 0);
+                                const despesa_total_pessoal = parseFloat(row.DESPESA_TOTAL_PESSOAL || row.despesa_total_pessoal || row.Despesa_Total_Pessoal || 0);
+                                const percentual_despesa = parseFloat(row.PERCENTUAL_DESPESA || row.percentual_despesa || row.Percentual_Despesa || 0);
+                                const limite_maximo = parseFloat(row.LIMITE_MAXIMO || row.limite_maximo || row.Limite_Maximo || 49.0);
+                                const limite_prudencial = parseFloat(row.LIMITE_PRUDENCIAL || row.limite_prudencial || row.Limite_Prudencial || 46.55);
+                                const limite_alerta = parseFloat(row.LIMITE_ALERTA || row.limite_alerta || row.Limite_Alerta || 44.1);
+                                
+                                return {
+                                    periodo: periodo,
+                                    rcl: rcl,
+                                    transferencias_individuais: transferencias_individuais,
+                                    transferencias_bancada: transferencias_bancada,
+                                    rcl_ajustada: rcl_ajustada,
+                                    despesa_total_pessoal: despesa_total_pessoal,
+                                    percentual_despesa: percentual_despesa,
+                                    limite_maximo: limite_maximo,
+                                    limite_prudencial: limite_prudencial,
+                                    limite_alerta: limite_alerta
+                                };
+                            } catch (error) {
+                                console.error('Erro ao processar linha de limites:', error, row);
+                                return null;
+                            }
+                        }).filter(item => item !== null && item.periodo !== '');
+                        
+                        console.log(`Dados de limites LRF processados: ${limitesLRFData.length} períodos válidos`);
+                        
+                        if (limitesLRFData.length === 0) {
+                            console.warn('Nenhum dado válido encontrado no CSV de limites.');
+                        } else {
+                            console.log('Primeiros períodos processados:', limitesLRFData.slice(0, 3));
+                            organizeLimitesData();
+                        }
+                        
+                        resolve();
+                    },
+                    error: function (err) {
+                        console.error('Erro ao carregar limites LRF:', err);
+                        reject(err);
+                    }
+                });
+            });
+        }
+
+        function getMonthNumber(mesStr) {
+            const meses = {
+                'jan': 1, 'jan.': 1, 'janeiro': 1,
+                'fev': 2, 'fev.': 2, 'fevereiro': 2,
+                'mar': 3, 'mar.': 3, 'março': 3,
+                'abr': 4, 'abr.': 4, 'abril': 4,
+                'mai': 5, 'mai.': 5, 'maio': 5,
+                'jun': 6, 'jun.': 6, 'junho': 6,
+                'jul': 7, 'jul.': 7, 'julho': 7,
+                'ago': 8, 'ago.': 8, 'agosto': 8,
+                'set': 9, 'set.': 9, 'setembro': 9,
+                'out': 10, 'out.': 10, 'outubro': 10,
+                'nov': 11, 'nov.': 11, 'novembro': 11,
+                'dez': 12, 'dez.': 12, 'dezembro': 12
+            };
+            
+            const mesLower = mesStr.toLowerCase().trim();
+            return meses[mesLower] || 0;
+        }
+
+        function organizeDataByYear() {
+            allData = {};
+            
+            despesaMensalData.forEach(item => {
+                const ano = item.ANO;
+                if (!ano) return;
+                
+                if (!allData[ano]) {
+                    allData[ano] = [];
+                }
+                
+                allData[ano].push(item);
+            });
+            
+            // Ordenar dados de cada ano por mês
+            Object.keys(allData).forEach(ano => {
+                allData[ano].sort((a, b) => {
+                    const mesA = a.MES_NUM || 0;
+                    const mesB = b.MES_NUM || 0;
+                    return mesA - mesB;
+                });
+            });
+            
+            console.log(`Dados organizados por ano: ${Object.keys(allData).join(', ')}`);
+            console.log(`Anos disponíveis:`, Object.keys(allData));
+            Object.keys(allData).forEach(ano => {
+                console.log(`Ano ${ano}: ${allData[ano].length} meses`);
+            });
+        }
+
+        function organizeLimitesData() {
+            limitesData = {};
+            
+            limitesLRFData.forEach(item => {
+                const periodo = item.periodo;
+                if (!periodo) return;
+                
+                limitesData[periodo] = item;
+            });
+            
+            console.log(`Períodos LRF disponíveis: ${Object.keys(limitesData).join(', ')}`);
+        }
+
+        async function determineLatestData() {
+            // Determinar ano mais recente
+            const anos = Object.keys(allData).sort((a, b) => b - a);
+            currentAnoDashboard1 = anos[0] || '';
+            currentAnoDashboard2 = anos[0] || '';
+            
+            console.log(`Anos disponíveis: ${anos.join(', ')}`);
+            console.log(`Ano selecionado: ${currentAnoDashboard1}`);
+            
+            // Determinar mês mais recente do ano atual
+            if (currentAnoDashboard1 && allData[currentAnoDashboard1]) {
+                const mesesAno = allData[currentAnoDashboard1];
+                console.log(`Meses disponíveis para ${currentAnoDashboard1}: ${mesesAno.length}`);
+                
+                if (mesesAno.length > 0) {
+                    const ultimoMes = mesesAno[mesesAno.length - 1];
+                    currentMesDashboard1 = ultimoMes.mes_ano || '';
+                    console.log(`Último mês: ${currentMesDashboard1}`);
+                }
+            }
+            
+            // Determinar período LRF mais recente
+            const periodosLRF = Object.keys(limitesData).sort();
+            if (periodosLRF.length > 0) {
+                currentPeriodoLRF = periodosLRF[periodosLRF.length - 1];
+            }
+            
+            console.log(`Dados mais recentes: Ano ${currentAnoDashboard1}, Mês ${currentMesDashboard1}, Período LRF ${currentPeriodoLRF}`);
+        }
+
+        // ==================== FUNÇÕES DE ATUALIZAÇÃO ====================
+        function updateDataAtualizacao() {
+            try {
+                const now = new Date();
+                const dataFormatada = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
+                
+                const headerElement = document.getElementById('data-atualizacao-header');
+                const footerElement = document.getElementById('footer-atualizacao');
+                
+                if (headerElement) headerElement.textContent = dataFormatada;
+                if (footerElement) footerElement.textContent = dataFormatada;
+            } catch (error) {
+                console.error('Erro ao atualizar data:', error);
+            }
+        }
+
+        function updateFilterOptions() {
+            console.log('Atualizando opções de filtro...');
+            
+            // Dashboard 1 - Ano
+            const anoSelect1 = document.getElementById('anoDashboard1');
+            if (anoSelect1) {
+                anoSelect1.innerHTML = '';
+                const anos = Object.keys(allData).sort((a, b) => b - a);
+                console.log(`Anos para filtro: ${anos.join(', ')}`);
+                
+                if (anos.length === 0) {
+                    anoSelect1.innerHTML = '<option value="">Nenhum dado disponível</option>';
+                } else {
+                    anos.forEach(ano => {
+                        const option = document.createElement('option');
+                        option.value = ano;
+                        option.textContent = ano;
+                        if (ano === currentAnoDashboard1) option.selected = true;
+                        anoSelect1.appendChild(option);
+                    });
+                }
+            }
+            
+            // Dashboard 1 - Mês
+            updateMesOptions();
+            
+            // Dashboard 1 - Período
+            const periodoSelect1 = document.getElementById('periodoDashboard1');
+            if (periodoSelect1) {
+                periodoSelect1.value = currentPeriodoDashboard1;
+                toggleMesVisibility();
+            }
+            
+            // Dashboard 2 - Ano
+            const anoSelect2 = document.getElementById('anoDashboard2');
+            if (anoSelect2) {
+                anoSelect2.innerHTML = '';
+                const anos = Object.keys(allData).sort((a, b) => b - a);
+                if (anos.length === 0) {
+                    anoSelect2.innerHTML = '<option value="">Nenhum dado disponível</option>';
+                } else {
+                    anos.forEach(ano => {
+                        const option = document.createElement('option');
+                        option.value = ano;
+                        option.textContent = ano;
+                        if (ano === currentAnoDashboard2) option.selected = true;
+                        anoSelect2.appendChild(option);
+                    });
+                }
+            }
+            
+            // Dashboard 3 - Período LRF
+            const periodoLRFSelect = document.getElementById('periodoLRF');
+            if (periodoLRFSelect) {
+                periodoLRFSelect.innerHTML = '';
+                
+                const periodos = Object.keys(limitesData).sort();
+                if (periodos.length === 0) {
+                    periodoLRFSelect.innerHTML = '<option value="">Nenhum dado disponível</option>';
+                } else {
+                    periodos.forEach(periodo => {
+                        const option = document.createElement('option');
+                        option.value = periodo;
+                        option.textContent = periodo;
+                        if (periodo === currentPeriodoLRF) option.selected = true;
+                        periodoLRFSelect.appendChild(option);
+                    });
+                }
+            }
+            
+            // Dashboard 4 - Ano para download
+            const anoDownloadSelect = document.getElementById('anoDownload');
+            if (anoDownloadSelect) {
+                anoDownloadSelect.innerHTML = '';
+                const anos = Object.keys(allData).sort((a, b) => b - a);
+                if (anos.length === 0) {
+                    anoDownloadSelect.innerHTML = '<option value="">Nenhum dado disponível</option>';
+                } else {
+                    anos.forEach(ano => {
+                        const option = document.createElement('option');
+                        option.value = ano;
+                        option.textContent = ano;
+                        if (ano === currentAnoDashboard1) option.selected = true;
+                        anoDownloadSelect.appendChild(option);
+                    });
+                }
+            }
+        }
+
+        function updateMesOptions() {
+            const mesSelect = document.getElementById('mesDashboard1');
+            if (mesSelect && currentAnoDashboard1 && allData[currentAnoDashboard1]) {
+                mesSelect.innerHTML = '';
+                
+                const mesesAno = allData[currentAnoDashboard1];
+                console.log(`Meses para ${currentAnoDashboard1}: ${mesesAno.length}`);
+                
+                if (mesesAno.length === 0) {
+                    mesSelect.innerHTML = '<option value="">Nenhum mês disponível</option>';
+                } else {
+                    mesesAno.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.mes_ano;
+                        option.textContent = item.mes_ano;
+                        if (item.mes_ano === currentMesDashboard1) option.selected = true;
+                        mesSelect.appendChild(option);
+                    });
+                }
+            }
+        }
+
+        function toggleMesVisibility() {
+            const mesContainer = document.getElementById('mesDashboard1Container');
+            if (mesContainer) {
+                if (currentPeriodoDashboard1 === 'mensal') {
+                    mesContainer.style.display = 'block';
+                } else {
+                    mesContainer.style.display = 'none';
+                }
+            }
+        }
+
+        // ==================== CONFIGURAR EVENT LISTENERS ====================
+        function setupEventListeners() {
+            // Dashboard 1
+            const aplicarFiltrosBtn = document.getElementById('aplicarFiltros');
+            const limparFiltrosBtn = document.getElementById('limparFiltros');
+            const exportCSV1Btn = document.getElementById('exportCSVDashboard1');
+            const print1Btn = document.getElementById('printDashboard1');
+            
+            if (aplicarFiltrosBtn) aplicarFiltrosBtn.addEventListener('click', updateDashboard1);
+            if (limparFiltrosBtn) limparFiltrosBtn.addEventListener('click', resetFiltersDashboard1);
+            if (exportCSV1Btn) exportCSV1Btn.addEventListener('click', exportDashboard1CSV);
+            if (print1Btn) print1Btn.addEventListener('click', printDashboard1);
+            
+            // Mudanças nos filtros Dashboard 1
+            const anoDashboard1 = document.getElementById('anoDashboard1');
+            const periodoDashboard1 = document.getElementById('periodoDashboard1');
+            const mesDashboard1 = document.getElementById('mesDashboard1');
+            
+            if (anoDashboard1) {
+                anoDashboard1.addEventListener('change', function() {
+                    currentAnoDashboard1 = this.value;
+                    updateMesOptions();
+                    updateDashboard1();
+                });
+            }
+            
+            if (periodoDashboard1) {
+                periodoDashboard1.addEventListener('change', function() {
+                    currentPeriodoDashboard1 = this.value;
+                    toggleMesVisibility();
+                    updateDashboard1();
+                });
+            }
+            
+            if (mesDashboard1) {
+                mesDashboard1.addEventListener('change', function() {
+                    currentMesDashboard1 = this.value;
+                    updateDashboard1();
+                });
+            }
+            
+            // Dashboard 2
+            const aplicarFiltros2Btn = document.getElementById('aplicarFiltrosDashboard2');
+            const exportCSV2Btn = document.getElementById('exportCSVDashboard2');
+            const print2Btn = document.getElementById('printDashboard2');
+            const toggleAccumulated = document.getElementById('toggleAccumulated');
+            
+            if (aplicarFiltros2Btn) aplicarFiltros2Btn.addEventListener('click', updateDashboard2);
+            if (exportCSV2Btn) exportCSV2Btn.addEventListener('click', exportDashboard2CSV);
+            if (print2Btn) print2Btn.addEventListener('click', printDashboard2);
+            if (toggleAccumulated) {
+                toggleAccumulated.addEventListener('change', function() {
+                    isAccumulated = this.checked;
+                    updateEvolucaoChart();
+                });
+            }
+            
+            // Dashboard 3
+            const periodoLRF = document.getElementById('periodoLRF');
+            if (periodoLRF) {
+                periodoLRF.addEventListener('change', function() {
+                    currentPeriodoLRF = this.value;
+                    updateDashboard3();
+                });
+            }
+            
+            // Dashboard 4
+            const downloadQuadrimestreBtn = document.getElementById('downloadQuadrimestreCSV');
+            const atualizarDadosBtn = document.getElementById('atualizarDadosGitHub');
+            
+            if (downloadQuadrimestreBtn) downloadQuadrimestreBtn.addEventListener('click', downloadQuadrimestreCSV);
+            if (atualizarDadosBtn) {
+                atualizarDadosBtn.addEventListener('click', async function() {
+                    await forceUpdateFromGitHub();
+                });
+            }
+        }
+
+        // ==================== FUNÇÕES UTILITÁRIAS ====================
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.style.display = show ? 'flex' : 'none';
+            }
+        }
+
+        function showError(message) {
+            const container = document.querySelector('.container');
+            if (!container) return;
+            
+            // Remover alertas antigos
+            const oldAlerts = container.querySelectorAll('.alert');
+            oldAlerts.forEach(alert => alert.remove());
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'alert alert-danger alert-dismissible fade show';
+            errorDiv.innerHTML = `
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            container.prepend(errorDiv);
+        }
+
+        function showSuccess(message) {
+            const container = document.querySelector('.container');
+            if (!container) return;
+            
+            // Remover alertas antigos
+            const oldAlerts = container.querySelectorAll('.alert');
+            oldAlerts.forEach(alert => alert.remove());
+            
+            const successDiv = document.createElement('div');
+            successDiv.className = 'alert alert-success alert-dismissible fade show';
+            successDiv.innerHTML = `
+                <i class="fas fa-check-circle me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            container.prepend(successDiv);
+        }
+
+        function formatCurrency(value, compact = false) {
+            if (value === null || value === undefined || isNaN(value)) return 'R$ 0,00';
+            
+            if (compact && value >= 1000000000) {
+                return `R$ ${(value / 1000000000).toFixed(2).replace('.', ',')} bi`;
+            } else if (compact && value >= 1000000) {
+                return `R$ ${(value / 1000000).toFixed(2).replace('.', ',')} mi`;
+            } else {
+                return new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(value);
+            }
+        }
+
+        function formatPercent(value) {
+            if (value === null || value === undefined || isNaN(value)) return '0,00%';
+            return `${value.toFixed(2).replace('.', ',')}%`;
+        }
+
+        // ==================== DASHBOARD 1: VISÃO GERAL ====================
+        function resetFiltersDashboard1() {
+            // Resetar para valores padrão
+            const anos = Object.keys(allData).sort((a, b) => b - a);
+            currentAnoDashboard1 = anos[0] || '';
+            currentPeriodoDashboard1 = 'mensal';
+            
+            if (currentAnoDashboard1 && allData[currentAnoDashboard1]) {
+                const mesesAno = allData[currentAnoDashboard1];
+                if (mesesAno.length > 0) {
+                    currentMesDashboard1 = mesesAno[mesesAno.length - 1].mes_ano || '';
+                }
+            }
+            
+            updateFilterOptions();
+            updateDashboard1();
+        }
+
+        function updateDashboard1() {
+            console.log('Atualizando Dashboard 1...');
+            console.log(`Filtros: Ano=${currentAnoDashboard1}, Período=${currentPeriodoDashboard1}, Mês=${currentMesDashboard1}`);
+            
+            showLoading(true);
+            
+            // Atualizar valores dos filtros
+            const categoriaSelect = document.getElementById('categoriaDashboard1');
+            if (categoriaSelect) {
+                currentCategoriaDashboard1 = categoriaSelect.value;
+            }
+            
+            updateSummaryCards();
+            updateResumoTable();
+            updateChartsDashboard1();
+            
+            setTimeout(() => {
+                showLoading(false);
+            }, 300);
+        }
+
+        function updateSummaryCards() {
+            const container = document.getElementById('summaryCards');
+            if (!container) return;
+            
+            console.log('Atualizando cards de resumo...');
+            console.log(`Dados disponíveis: ${Object.keys(allData).length} anos`);
+            
+            if (Object.keys(allData).length === 0) {
+                container.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Nenhum dado encontrado. Verifique a conexão com o GitHub.</p></div>';
+                return;
+            }
+            
+            let cardsHTML = '';
+            
+            if (currentPeriodoDashboard1 === 'anual') {
+                // Dados anuais
+                const anoData = allData[currentAnoDashboard1] || [];
+                console.log(`Dados anuais para ${currentAnoDashboard1}: ${anoData.length} meses`);
+                
+                if (anoData.length === 0) {
+                    container.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Nenhum dado encontrado para o ano selecionado.</p></div>';
+                    return;
+                }
+                
+                // Calcular totais anuais
+                const totalBruta = anoData.reduce((sum, item) => sum + item.despesa_bruta, 0);
+                const totalAtivo = anoData.reduce((sum, item) => sum + item.pessoal_ativo, 0);
+                const totalInativo = anoData.reduce((sum, item) => sum + item.inativos_pensionistas, 0);
+                const totalLiquida = anoData.reduce((sum, item) => sum + item.despesa_liquida, 0);
+                const mediaMensal = totalBruta / anoData.length;
+                
+                console.log(`Totais anuais: Bruta=${totalBruta}, Ativo=${totalAtivo}, Inativo=${totalInativo}, Liquida=${totalLiquida}`);
+                
+                cardsHTML = `
+                    <div class="col-md-3 col-6">
+                        <div class="metric-card primary">
+                            <div class="metric-label">Despesa Bruta Anual</div>
+                            <div class="metric-value">${formatCurrency(totalBruta, true)}</div>
+                            <div class="update-info">
+                                <i class="fas fa-calendar-alt"></i> ${currentAnoDashboard1}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="metric-card success">
+                            <div class="metric-label">Pessoal Ativo (Anual)</div>
+                            <div class="metric-value">${formatCurrency(totalAtivo, true)}</div>
+                            <div class="metric-change positive">
+                                ${formatPercent((totalAtivo/totalBruta)*100)} do total
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="metric-card purple">
+                            <div class="metric-label">Inativos/Pensionistas</div>
+                            <div class="metric-value">${formatCurrency(totalInativo, true)}</div>
+                            <div class="metric-change warning">
+                                ${formatPercent((totalInativo/totalBruta)*100)} do total
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="metric-card info">
+                            <div class="metric-label">Média Mensal</div>
+                            <div class="metric-value">${formatCurrency(mediaMensal, true)}</div>
+                            <div class="metric-change positive">
+                                ${anoData.length} meses considerados
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Dados mensais
+                const anoData = allData[currentAnoDashboard1] || [];
+                console.log(`Procurando mês ${currentMesDashboard1} em ${anoData.length} meses`);
+                
+                const mesData = anoData.find(item => item.mes_ano === currentMesDashboard1);
+                
+                if (!mesData) {
+                    console.log(`Mês ${currentMesDashboard1} não encontrado`);
+                    container.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Nenhum dado encontrado para o mês selecionado.</p></div>';
+                    return;
+                }
+                
+                console.log('Dados do mês encontrado:', mesData);
+                
+                const bruta = mesData.despesa_bruta;
+                const ativo = mesData.pessoal_ativo;
+                const inativo = mesData.inativos_pensionistas;
+                const liquida = mesData.despesa_liquida;
+                
+                cardsHTML = `
+                    <div class="col-md-3 col-6">
+                        <div class="metric-card primary">
+                            <div class="metric-label">Despesa Bruta</div>
+                            <div class="metric-value">${formatCurrency(bruta, true)}</div>
+                            <div class="update-info">
+                                <i class="fas fa-calendar-alt"></i> ${currentMesDashboard1}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="metric-card success">
+                            <div class="metric-label">Pessoal Ativo</div>
+                            <div class="metric-value">${formatCurrency(ativo, true)}</div>
+                            <div class="metric-change positive">
+                                ${formatPercent((ativo/bruta)*100)} do total
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="metric-card purple">
+                            <div class="metric-label">Inativos/Pensionistas</div>
+                            <div class="metric-value">${formatCurrency(inativo, true)}</div>
+                            <div class="metric-change warning">
+                                ${formatPercent((inativo/bruta)*100)} do total
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="metric-card info">
+                            <div class="metric-label">Despesa Líquida</div>
+                            <div class="metric-value">${formatCurrency(liquida, true)}</div>
+                            <div class="metric-change positive">
+                                ${formatPercent((liquida/bruta)*100)} da bruta
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = cardsHTML;
+        }
+
+        function updateResumoTable() {
+            const tbody = document.getElementById('resumoTableBody');
+            const tfoot = document.getElementById('resumoTableFooter');
+            const countElement = document.getElementById('resumoCountDashboard1');
+            
+            if (!tbody) return;
+            
+            if (Object.keys(allData).length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Nenhum dado encontrado. Verifique a conexão com o GitHub.</td></tr>';
+                return;
+            }
+            
+            let rowsHTML = '';
+            let footerHTML = '';
+            
+            if (currentPeriodoDashboard1 === 'anual') {
+                // Tabela anual
+                if (countElement) countElement.textContent = `Ano: ${currentAnoDashboard1}`;
+                
+                const anoData = allData[currentAnoDashboard1] || [];
+                if (anoData.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Nenhum dado encontrado para o ano selecionado.</td></tr>';
+                    return;
+                }
+                
+                // Calcular totais anuais
+                const totalBruta = anoData.reduce((sum, item) => sum + item.despesa_bruta, 0);
+                const totalAtivo = anoData.reduce((sum, item) => sum + item.pessoal_ativo, 0);
+                const totalVencimentos = anoData.reduce((sum, item) => sum + item.vencimentos_vantagens, 0);
+                const totalObrigacoes = anoData.reduce((sum, item) => sum + item.obrigacoes_patronais, 0);
+                const totalInativo = anoData.reduce((sum, item) => sum + item.inativos_pensionistas, 0);
+                const totalAposentadorias = anoData.reduce((sum, item) => sum + item.aposentadorias, 0);
+                const totalPensoes = anoData.reduce((sum, item) => sum + item.pensoes, 0);
+                const totalNaoComputadas = anoData.reduce((sum, item) => sum + item.despesas_nao_computadas, 0);
+                const totalLiquida = anoData.reduce((sum, item) => sum + item.despesa_liquida, 0);
+                const meses = anoData.length;
+                
+                rowsHTML = `
+                    <tr>
+                        <td><strong>DESPESA BRUTA COM PESSOAL</strong></td>
+                        <td class="text-end valor-monetario"><strong>${formatCurrency(totalBruta)}</strong></td>
+                        <td class="text-end"><strong>100.00%</strong></td>
+                        <td class="text-end valor-monetario">${formatCurrency(totalBruta/meses)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 20px;">Pessoal Ativo</td>
+                        <td class="text-end valor-monetario">${formatCurrency(totalAtivo)}</td>
+                        <td class="text-end">${formatPercent((totalAtivo/totalBruta)*100)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(totalAtivo/meses)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 40px;">Vencimentos, Vantagens e Outras Despesas Variáveis</td>
+                        <td class="text-end valor-monetario">${formatCurrency(totalVencimentos)}</td>
+                        <td class="text-end">${formatPercent((totalVencimentos/totalBruta)*100)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(totalVencimentos/meses)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 40px;">Obrigações Patronais</td>
+                        <td class="text-end valor-monetario">${formatCurrency(totalObrigacoes)}</td>
+                        <td class="text-end">${formatPercent((totalObrigacoes/totalBruta)*100)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(totalObrigacoes/meses)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 20px;">Pessoal Inativo e Pensionistas</td>
+                        <td class="text-end valor-monetario">${formatCurrency(totalInativo)}</td>
+                        <td class="text-end">${formatPercent((totalInativo/totalBruta)*100)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(totalInativo/meses)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 40px;">Aposentadorias, Reserva e Reformas</td>
+                        <td class="text-end valor-monetario">${formatCurrency(totalAposentadorias)}</td>
+                        <td class="text-end">${formatPercent((totalAposentadorias/totalBruta)*100)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(totalAposentadorias/meses)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 40px;">Pensões</td>
+                        <td class="text-end valor-monetario">${formatCurrency(totalPensoes)}</td>
+                        <td class="text-end">${formatPercent((totalPensoes/totalBruta)*100)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(totalPensoes/meses)}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DESPESAS NÃO COMPUTADAS</strong></td>
+                        <td class="text-end valor-monetario valor-negativo"><strong>${formatCurrency(totalNaoComputadas)}</strong></td>
+                        <td class="text-end valor-negativo"><strong>${formatPercent((totalNaoComputadas/totalBruta)*100)}</strong></td>
+                        <td class="text-end valor-monetario valor-negativo">${formatCurrency(totalNaoComputadas/meses)}</td>
+                    </tr>
+                `;
+                
+                footerHTML = `
+                    <tr class="table-total-row">
+                        <td><strong>DESPESA LÍQUIDA COM PESSOAL</strong></td>
+                        <td class="text-end valor-monetario"><strong>${formatCurrency(totalLiquida)}</strong></td>
+                        <td class="text-end"><strong>${formatPercent((totalLiquida/totalBruta)*100)}</strong></td>
+                        <td class="text-end valor-monetario"><strong>${formatCurrency(totalLiquida/meses)}</strong></td>
+                    </tr>
+                `;
+            } else {
+                // Tabela mensal
+                if (countElement) countElement.textContent = `Mês: ${currentMesDashboard1}`;
+                
+                const anoData = allData[currentAnoDashboard1] || [];
+                const mesData = anoData.find(item => item.mes_ano === currentMesDashboard1);
+                
+                if (!mesData) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Nenhum dado encontrado para o mês selecionado.</td></tr>';
+                    return;
+                }
+                
+                const bruta = mesData.despesa_bruta;
+                const ativo = mesData.pessoal_ativo;
+                const vencimentos = mesData.vencimentos_vantagens;
+                const obrigacoes = mesData.obrigacoes_patronais;
+                const inativo = mesData.inativos_pensionistas;
+                const aposentadorias = mesData.aposentadorias;
+                const pensoes = mesData.pensoes;
+                const naoComputadas = mesData.despesas_nao_computadas;
+                const liquida = mesData.despesa_liquida;
+                
+                rowsHTML = `
+                    <tr>
+                        <td><strong>DESPESA BRUTA COM PESSOAL</strong></td>
+                        <td class="text-end valor-monetario"><strong>${formatCurrency(bruta)}</strong></td>
+                        <td class="text-end"><strong>100.00%</strong></td>
+                        <td class="text-end valor-monetario">${formatCurrency(bruta)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 20px;">Pessoal Ativo</td>
+                        <td class="text-end valor-monetario">${formatCurrency(ativo)}</td>
+                        <td class="text-end">${formatPercent((ativo/bruta)*100)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(ativo)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 40px;">Vencimentos, Vantagens e Outras Despesas Variáveis</td>
+                        <td class="text-end valor-monetario">${formatCurrency(vencimentos)}</td>
+                        <td class="text-end">${formatPercent((vencimentos/bruta)*100)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(vencimentos)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 40px;">Obrigações Patronais</td>
+                        <td class="text-end valor-monetario">${formatCurrency(obrigacoes)}</td>
+                        <td class="text-end">${formatPercent((obrigacoes/bruta)*100)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(obrigacoes)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 20px;">Pessoal Inativo e Pensionistas</td>
+                        <td class="text-end valor-monetario">${formatCurrency(inativo)}</td>
+                        <td class="text-end">${formatPercent((inativo/bruta)*100)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(inativo)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 40px;">Aposentadorias, Reserva e Reformas</td>
+                        <td class="text-end valor-monetario">${formatCurrency(aposentadorias)}</td>
+                        <td class="text-end">${formatPercent((aposentadorias/bruta)*100)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(aposentadorias)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 40px;">Pensões</td>
+                        <td class="text-end valor-monetario">${formatCurrency(pensoes)}</td>
+                        <td class="text-end">${formatPercent((pensoes/bruta)*100)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(pensoes)}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DESPESAS NÃO COMPUTADAS</strong></td>
+                        <td class="text-end valor-monetario valor-negativo"><strong>${formatCurrency(naoComputadas)}</strong></td>
+                        <td class="text-end valor-negativo"><strong>${formatPercent((naoComputadas/bruta)*100)}</strong></td>
+                        <td class="text-end valor-monetario valor-negativo">${formatCurrency(naoComputadas)}</td>
+                    </tr>
+                `;
+                
+                footerHTML = `
+                    <tr class="table-total-row">
+                        <td><strong>DESPESA LÍQUIDA COM PESSOAL</strong></td>
+                        <td class="text-end valor-monetario"><strong>${formatCurrency(liquida)}</strong></td>
+                        <td class="text-end"><strong>${formatPercent((liquida/bruta)*100)}</strong></td>
+                        <td class="text-end valor-monetario"><strong>${formatCurrency(liquida)}</strong></td>
+                    </tr>
+                `;
+            }
+            
+            tbody.innerHTML = rowsHTML;
+            if (tfoot) tfoot.innerHTML = footerHTML;
+        }
+
+        function updateChartsDashboard1() {
+            updateDistribuicaoChart();
+            updateAtivoDetalhadoChart();
+        }
+
+        function updateDistribuicaoChart() {
+            const ctx = document.getElementById('chartDistribuicao')?.getContext('2d');
+            if (!ctx) return;
+            
+            let data = [];
+            let labels = [];
+            let backgroundColor = [];
+            
+            if (currentPeriodoDashboard1 === 'anual') {
+                const anoData = allData[currentAnoDashboard1] || [];
+                if (anoData.length === 0) return;
+                
+                const totalAtivo = anoData.reduce((sum, item) => sum + item.pessoal_ativo, 0);
+                const totalInativo = anoData.reduce((sum, item) => sum + item.inativos_pensionistas, 0);
+                const totalNaoComputadas = anoData.reduce((sum, item) => sum + item.despesas_nao_computadas, 0);
+                const totalBruta = anoData.reduce((sum, item) => sum + item.despesa_bruta, 0);
+                const outros = totalBruta - totalAtivo - totalInativo - totalNaoComputadas;
+                
+                data = [totalAtivo, totalInativo, totalNaoComputadas, outros];
+                labels = ['Pessoal Ativo', 'Inativos/Pensionistas', 'Não Computadas', 'Outras'];
+                backgroundColor = [
+                    chartColors.pessoalAtivo,
+                    chartColors.inativosPensionistas,
+                    chartColors.despesasNaoComputadas,
+                    '#95A5A6'
+                ];
+            } else {
+                const anoData = allData[currentAnoDashboard1] || [];
+                const mesData = anoData.find(item => item.mes_ano === currentMesDashboard1);
+                
+                if (!mesData) return;
+                
+                const ativo = mesData.pessoal_ativo;
+                const inativo = mesData.inativos_pensionistas;
+                const naoComputadas = mesData.despesas_nao_computadas;
+                const bruta = mesData.despesa_bruta;
+                const outros = bruta - ativo - inativo - naoComputadas;
+                
+                data = [ativo, inativo, naoComputadas, outros];
+                labels = ['Pessoal Ativo', 'Inativos/Pensionistas', 'Não Computadas', 'Outras'];
+                backgroundColor = [
+                    chartColors.pessoalAtivo,
+                    chartColors.inativosPensionistas,
+                    chartColors.despesasNaoComputadas,
+                    '#95A5A6'
+                ];
+            }
+            
+            if (charts.distribuicao) {
+                charts.distribuicao.destroy();
+            }
+            
+            charts.distribuicao = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColor,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true,
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${formatCurrency(value, true)} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateAtivoDetalhadoChart() {
+            const ctx = document.getElementById('chartAtivoDetalhado')?.getContext('2d');
+            if (!ctx) return;
+            
+            let vencimentosData = [];
+            let obrigacoesData = [];
+            let label = '';
+            
+            if (currentPeriodoDashboard1 === 'anual') {
+                const anoData = allData[currentAnoDashboard1] || [];
+                if (anoData.length === 0) return;
+                
+                const totalVencimentos = anoData.reduce((sum, item) => sum + item.vencimentos_vantagens, 0);
+                const totalObrigacoes = anoData.reduce((sum, item) => sum + item.obrigacoes_patronais, 0);
+                
+                vencimentosData = [totalVencimentos];
+                obrigacoesData = [totalObrigacoes];
+                label = `Ano ${currentAnoDashboard1}`;
+            } else {
+                const anoData = allData[currentAnoDashboard1] || [];
+                const mesData = anoData.find(item => item.mes_ano === currentMesDashboard1);
+                
+                if (!mesData) return;
+                
+                vencimentosData = [mesData.vencimentos_vantagens];
+                obrigacoesData = [mesData.obrigacoes_patronais];
+                label = currentMesDashboard1;
+            }
+            
+            if (charts.ativoDetalhado) {
+                charts.ativoDetalhado.destroy();
+            }
+            
+            charts.ativoDetalhado = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [label],
+                    datasets: [
+                        {
+                            label: 'Vencimentos e Vantagens',
+                            data: vencimentosData,
+                            backgroundColor: chartColors.vencimentos,
+                            borderColor: chartColors.vencimentos,
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Obrigações Patronais',
+                            data: obrigacoesData,
+                            backgroundColor: chartColors.obrigacoesPatronais,
+                            borderColor: chartColors.obrigacoesPatronais,
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value, true);
+                                },
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true,
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${formatCurrency(context.raw)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ==================== DASHBOARD 2: EVOLUÇÃO MENSAL ====================
+        function updateDashboard2() {
+            showLoading(true);
+            
+            const anoSelect = document.getElementById('anoDashboard2');
+            const categoriaSelect = document.getElementById('categoriaDashboard2');
+            
+            if (anoSelect) currentAnoDashboard2 = anoSelect.value;
+            if (categoriaSelect) currentChartCategory = categoriaSelect.value;
+            
+            updateEvolucaoChart();
+            updateEvolucaoTable();
+            
+            setTimeout(() => {
+                showLoading(false);
+            }, 300);
+        }
+
+        function initializeDashboard2() {
+            updateDashboard2();
+        }
+
+        function updateEvolucaoChart() {
+            const ctx = document.getElementById('chartEvolucao')?.getContext('2d');
+            if (!ctx) return;
+            
+            const anoData = allData[currentAnoDashboard2] || [];
+            if (anoData.length === 0) return;
+            
+            // Preparar dados baseado na categoria selecionada
+            let datasetData = [];
+            let datasetLabel = '';
+            let datasetColor = '';
+            let labels = [];
+            
+            switch(currentChartCategory) {
+                case 'total':
+                    datasetData = anoData.map(item => item.despesa_bruta);
+                    datasetLabel = 'Despesa Bruta Total';
+                    datasetColor = chartColors.despesaBruta;
+                    break;
+                case 'bruta':
+                    datasetData = anoData.map(item => item.despesa_bruta);
+                    datasetLabel = 'Despesa Bruta';
+                    datasetColor = chartColors.despesaBruta;
+                    break;
+                case 'liquida':
+                    datasetData = anoData.map(item => item.despesa_liquida);
+                    datasetLabel = 'Despesa Líquida';
+                    datasetColor = chartColors.despesaLiquida;
+                    break;
+                case 'ativo':
+                    datasetData = anoData.map(item => item.pessoal_ativo);
+                    datasetLabel = 'Pessoal Ativo';
+                    datasetColor = chartColors.pessoalAtivo;
+                    break;
+                case 'inativo':
+                    datasetData = anoData.map(item => item.inativos_pensionistas);
+                    datasetLabel = 'Inativos/Pensionistas';
+                    datasetColor = chartColors.inativosPensionistas;
+                    break;
+            }
+            
+            labels = anoData.map(item => item.mes_ano);
+            
+            // Se acumulado, calcular acumulado
+            if (isAccumulated) {
+                const accumulatedData = [];
+                let acumulado = 0;
+                for (let i = 0; i < datasetData.length; i++) {
+                    acumulado += datasetData[i];
+                    accumulatedData.push(acumulado);
+                }
+                datasetData = accumulatedData;
+                datasetLabel += ' (Acumulado)';
+            }
+            
+            if (charts.evolucao) {
+                charts.evolucao.destroy();
+            }
+            
+            charts.evolucao = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: datasetLabel,
+                        data: datasetData,
+                        backgroundColor: datasetColor + '20',
+                        borderColor: datasetColor,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: !isAccumulated,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value, true);
+                                },
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${formatCurrency(context.raw)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateEvolucaoTable() {
+            const tbody = document.getElementById('evolucaoTableBody');
+            const countElement = document.getElementById('resumoCountDashboard2');
+            
+            if (countElement) {
+                countElement.textContent = `Ano: ${currentAnoDashboard2}`;
+            }
+            
+            const anoData = allData[currentAnoDashboard2] || [];
+            if (anoData.length === 0) {
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Nenhum dado encontrado para o ano selecionado.</td></tr>';
+                }
+                return;
+            }
+            
+            let rowsHTML = '';
+            
+            for (let i = 0; i < anoData.length; i++) {
+                const item = anoData[i];
+                const bruta = item.despesa_bruta;
+                const liquida = item.despesa_liquida;
+                const ativo = item.pessoal_ativo;
+                const inativo = item.inativos_pensionistas;
+                
+                // Calcular variação em relação ao mês anterior
+                let variacao = '-';
+                if (i > 0) {
+                    const brutaAnterior = anoData[i-1].despesa_bruta;
+                    if (brutaAnterior > 0) {
+                        const variacaoPercentual = ((bruta - brutaAnterior) / brutaAnterior) * 100;
+                        variacao = `${variacaoPercentual.toFixed(2).replace('.', ',')}%`;
+                    }
+                }
+                
+                rowsHTML += `
+                    <tr>
+                        <td>${item.mes_ano}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(bruta, true)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(liquida, true)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(ativo, true)}</td>
+                        <td class="text-end valor-monetario">${formatCurrency(inativo, true)}</td>
+                        <td class="text-end ${variacao !== '-' && parseFloat(variacao) >= 0 ? 'valor-positivo' : 'valor-negativo'}">
+                            ${variacao}
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            if (tbody) {
+                tbody.innerHTML = rowsHTML;
+            }
+        }
+
+        // ==================== DASHBOARD 3: LIMITES DA LRF ====================
+        function updateDashboard3() {
+            const periodoData = limitesData[currentPeriodoLRF];
+            
+            if (!periodoData) {
+                // Dados não encontrados, usar valores padrão
+                updateLimitesComDadosPadrao();
+                return;
+            }
+            
+            updateLimitesComDados(periodoData);
+        }
+
+        function updateLimitesComDadosPadrao() {
+            // Valores padrão da LRF
+            const rclAjustada = 106657627122.43;
+            const percentualDespesa = 48.81;
+            const limiteMaximo = 49.00;
+            const limitePrudencial = 46.55;
+            const limiteAlerta = 44.10;
+            
+            // Atualizar cards
+            const limiteLegalPercentual = document.getElementById('limiteLegalPercentual');
+            const limitePrudencialPercentual = document.getElementById('limitePrudencialPercentual');
+            const limiteAlertaPercentual = document.getElementById('limiteAlertaPercentual');
+            const limiteLegalValor = document.getElementById('limiteLegalValor');
+            const limitePrudencialValor = document.getElementById('limitePrudencialValor');
+            const limiteAlertaValor = document.getElementById('limiteAlertaValor');
+            
+            if (limiteLegalPercentual) limiteLegalPercentual.textContent = `${limiteMaximo.toFixed(2).replace('.', ',')}%`;
+            if (limitePrudencialPercentual) limitePrudencialPercentual.textContent = `${limitePrudencial.toFixed(2).replace('.', ',')}%`;
+            if (limiteAlertaPercentual) limiteAlertaPercentual.textContent = `${limiteAlerta.toFixed(2).replace('.', ',')}%`;
+            if (limiteLegalValor) limiteLegalValor.textContent = formatCurrency(rclAjustada * (limiteMaximo/100), true);
+            if (limitePrudencialValor) limitePrudencialValor.textContent = formatCurrency(rclAjustada * (limitePrudencial/100), true);
+            if (limiteAlertaValor) limiteAlertaValor.textContent = formatCurrency(rclAjustada * (limiteAlerta/100), true);
+            
+            // Atualizar barra de progresso
+            const progressBar = document.getElementById('progressBar');
+            const despesaAtualPercentual = document.getElementById('despesaAtualPercentual');
+            
+            if (progressBar) progressBar.style.width = `${percentualDespesa}%`;
+            if (despesaAtualPercentual) despesaAtualPercentual.textContent = `${percentualDespesa.toFixed(2).replace('.', ',')}%`;
+            
+            // Determinar cor da barra
+            updateProgressBarColor(percentualDespesa, limiteAlerta, limitePrudencial, limiteMaximo);
+            
+            // Atualizar valores da RCL
+            const rclTotal = document.getElementById('rclTotal');
+            const despesaExecutada = document.getElementById('despesaExecutada');
+            
+            if (rclTotal) rclTotal.textContent = formatCurrency(rclAjustada, true);
+            if (despesaExecutada) despesaExecutada.textContent = formatCurrency(rclAjustada * (percentualDespesa/100), true);
+            
+            // Atualizar tabela
+            updateLimitesTable(rclAjustada, percentualDespesa);
+        }
+
+        function updateLimitesComDados(periodoData) {
+            const rcl = periodoData.rcl;
+            const transferenciasIndividuais = periodoData.transferencias_individuais;
+            const transferenciasBancada = periodoData.transferencias_bancada;
+            const rclAjustada = periodoData.rcl_ajustada;
+            const despesaTotalPessoal = periodoData.despesa_total_pessoal;
+            const percentualDespesa = periodoData.percentual_despesa;
+            const limiteMaximo = periodoData.limite_maximo;
+            const limitePrudencial = periodoData.limite_prudencial;
+            const limiteAlerta = periodoData.limite_alerta;
+            
+            // Atualizar cards
+            const limiteLegalPercentual = document.getElementById('limiteLegalPercentual');
+            const limitePrudencialPercentual = document.getElementById('limitePrudencialPercentual');
+            const limiteAlertaPercentual = document.getElementById('limiteAlertaPercentual');
+            const limiteLegalValor = document.getElementById('limiteLegalValor');
+            const limitePrudencialValor = document.getElementById('limitePrudencialValor');
+            const limiteAlertaValor = document.getElementById('limiteAlertaValor');
+            
+            if (limiteLegalPercentual) limiteLegalPercentual.textContent = `${limiteMaximo.toFixed(2).replace('.', ',')}%`;
+            if (limitePrudencialPercentual) limitePrudencialPercentual.textContent = `${limitePrudencial.toFixed(2).replace('.', ',')}%`;
+            if (limiteAlertaPercentual) limiteAlertaPercentual.textContent = `${limiteAlerta.toFixed(2).replace('.', ',')}%`;
+            
+            // Atualizar labels
+            const limiteLegalValorLabel = document.getElementById('limiteLegalValorLabel');
+            const limitePrudencialValorLabel = document.getElementById('limitePrudencialValorLabel');
+            const limiteAlertaValorLabel = document.getElementById('limiteAlertaValorLabel');
+            
+            if (limiteLegalValorLabel) limiteLegalValorLabel.textContent = `${limiteMaximo.toFixed(2).replace('.', ',')}%`;
+            if (limitePrudencialValorLabel) limitePrudencialValorLabel.textContent = `${limitePrudencial.toFixed(2).replace('.', ',')}%`;
+            if (limiteAlertaValorLabel) limiteAlertaValorLabel.textContent = `${limiteAlerta.toFixed(2).replace('.', ',')}%`;
+            
+            if (limiteLegalValor) limiteLegalValor.textContent = formatCurrency(rclAjustada * (limiteMaximo/100), true);
+            if (limitePrudencialValor) limitePrudencialValor.textContent = formatCurrency(rclAjustada * (limitePrudencial/100), true);
+            if (limiteAlertaValor) limiteAlertaValor.textContent = formatCurrency(rclAjustada * (limiteAlerta/100), true);
+            
+            // Atualizar barra de progresso
+            const progressBar = document.getElementById('progressBar');
+            const despesaAtualPercentual = document.getElementById('despesaAtualPercentual');
+            
+            if (progressBar) progressBar.style.width = `${percentualDespesa}%`;
+            if (despesaAtualPercentual) despesaAtualPercentual.textContent = `${percentualDespesa.toFixed(2).replace('.', ',')}%`;
+            
+            // Determinar cor da barra
+            updateProgressBarColor(percentualDespesa, limiteAlerta, limitePrudencial, limiteMaximo);
+            
+            // Atualizar valores da RCL
+            const rclTotal = document.getElementById('rclTotal');
+            const despesaExecutada = document.getElementById('despesaExecutada');
+            
+            if (rclTotal) rclTotal.textContent = formatCurrency(rcl, true);
+            if (despesaExecutada) despesaExecutada.textContent = formatCurrency(despesaTotalPessoal, true);
+            
+            // Atualizar tabela
+            updateLimitesTableCompleta(periodoData);
+        }
+
+        function updateProgressBarColor(percentual, limiteAlerta, limitePrudencial, limiteMaximo) {
+            const progressBar = document.getElementById('progressBar');
+            const limiteLegalCard = document.getElementById('limiteLegalCard');
+            const limitePrudencialCard = document.getElementById('limitePrudencialCard');
+            const limiteAlertaCard = document.getElementById('limiteAlertaCard');
+            
+            if (!progressBar || !limiteLegalCard || !limitePrudencialCard || !limiteAlertaCard) return;
+            
+            if (percentual <= limiteAlerta) {
+                progressBar.className = 'progress-bar-limite safe';
+                limiteLegalCard.className = 'limite-card safe';
+                limitePrudencialCard.className = 'limite-card safe';
+                limiteAlertaCard.className = 'limite-card safe';
+            } else if (percentual <= limitePrudencial) {
+                progressBar.className = 'progress-bar-limite warning';
+                limiteLegalCard.className = 'limite-card safe';
+                limitePrudencialCard.className = 'limite-card warning';
+                limiteAlertaCard.className = 'limite-card warning';
+            } else if (percentual <= limiteMaximo) {
+                progressBar.className = 'progress-bar-limite danger';
+                limiteLegalCard.className = 'limite-card warning';
+                limitePrudencialCard.className = 'limite-card danger';
+                limiteAlertaCard.className = 'limite-card danger';
+            } else {
+                progressBar.className = 'progress-bar-limite danger';
+                limiteLegalCard.className = 'limite-card danger';
+                limitePrudencialCard.className = 'limite-card danger';
+                limiteAlertaCard.className = 'limite-card danger';
+            }
+        }
+
+        function updateLimitesTable(rclAjustada, percentualDespesa) {
+            const tbody = document.getElementById('limitesTableBody');
+            if (!tbody) return;
+            
+            const rowsHTML = `
+                <tr>
+                    <td><strong>Receita Corrente Líquida – RCL</strong></td>
+                    <td class="text-end valor-monetario valor-positivo">${formatCurrency(rclAjustada)}</td>
+                    <td class="text-end">100.00%</td>
+                </tr>
+                <tr class="table-total-row">
+                    <td><strong>RECEITA CORRENTE LÍQUIDA AJUSTADA</strong></td>
+                    <td class="text-end valor-monetario valor-positivo"><strong>${formatCurrency(rclAjustada)}</strong></td>
+                    <td class="text-end"><strong>100.00%</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>DESPESA TOTAL COM PESSOAL</strong></td>
+                    <td class="text-end valor-monetario"><strong>${formatCurrency(rclAjustada * (percentualDespesa/100))}</strong></td>
+                    <td class="text-end"><strong>${formatPercent(percentualDespesa)}</strong></td>
+                </tr>
+            `;
+            
+            tbody.innerHTML = rowsHTML;
+        }
+
+        function updateLimitesTableCompleta(periodoData) {
+            const tbody = document.getElementById('limitesTableBody');
+            if (!tbody) return;
+            
+            const rowsHTML = `
+                <tr>
+                    <td><strong>Receita Corrente Líquida – RCL</strong></td>
+                    <td class="text-end valor-monetario valor-positivo">${formatCurrency(periodoData.rcl)}</td>
+                    <td class="text-end">100.00%</td>
+                </tr>
+                <tr>
+                    <td>(-) Transferências Obrigatórias da União relativas às emendas individuais</td>
+                    <td class="text-end valor-monetario valor-negativo">${formatCurrency(periodoData.transferencias_individuais)}</td>
+                    <td class="text-end">${formatPercent((periodoData.transferencias_individuais/periodoData.rcl)*100)}</td>
+                </tr>
+                <tr>
+                    <td>(-) Transferências obrigatórias da União relativas às emendas de bancada</td>
+                    <td class="text-end valor-monetario valor-negativo">${formatCurrency(periodoData.transferencias_bancada)}</td>
+                    <td class="text-end">${formatPercent((periodoData.transferencias_bancada/periodoData.rcl)*100)}</td>
+                </tr>
+                <tr class="table-total-row">
+                    <td><strong>RECEITA CORRENTE LÍQUIDA AJUSTADA</strong></td>
+                    <td class="text-end valor-monetario valor-positivo"><strong>${formatCurrency(periodoData.rcl_ajustada)}</strong></td>
+                    <td class="text-end"><strong>100.00%</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>DESPESA TOTAL COM PESSOAL</strong></td>
+                    <td class="text-end valor-monetario"><strong>${formatCurrency(periodoData.despesa_total_pessoal)}</strong></td>
+                    <td class="text-end"><strong>${formatPercent(periodoData.percentual_despesa)}</strong></td>
+                </tr>
+            `;
+            
+            tbody.innerHTML = rowsHTML;
+        }
+
+        // ==================== FUNÇÕES DE EXPORTAÇÃO E DOWNLOAD ====================
+        function exportDashboard1CSV() {
+            let headers = ['Descrição', 'Valor (R$)', '% do Total', 'Média Mensal'];
+            let rows = [];
+            let filename = '';
+            
+            if (currentPeriodoDashboard1 === 'anual') {
+                const anoData = allData[currentAnoDashboard1] || [];
+                if (anoData.length === 0) {
+                    alert('Nenhum dado disponível para exportação.');
+                    return;
+                }
+                
+                // Calcular totais anuais
+                const totalBruta = anoData.reduce((sum, item) => sum + item.despesa_bruta, 0);
+                const totalAtivo = anoData.reduce((sum, item) => sum + item.pessoal_ativo, 0);
+                const totalVencimentos = anoData.reduce((sum, item) => sum + item.vencimentos_vantagens, 0);
+                const totalObrigacoes = anoData.reduce((sum, item) => sum + item.obrigacoes_patronais, 0);
+                const totalInativo = anoData.reduce((sum, item) => sum + item.inativos_pensionistas, 0);
+                const totalAposentadorias = anoData.reduce((sum, item) => sum + item.aposentadorias, 0);
+                const totalPensoes = anoData.reduce((sum, item) => sum + item.pensoes, 0);
+                const totalNaoComputadas = anoData.reduce((sum, item) => sum + item.despesas_nao_computadas, 0);
+                const totalLiquida = anoData.reduce((sum, item) => sum + item.despesa_liquida, 0);
+                const meses = anoData.length;
+                
+                rows.push(['DESPESA BRUTA COM PESSOAL', totalBruta, '100.00', totalBruta/meses]);
+                rows.push(['Pessoal Ativo', totalAtivo, ((totalAtivo/totalBruta)*100).toFixed(2), totalAtivo/meses]);
+                rows.push(['Vencimentos, Vantagens e Outras Despesas Variáveis', totalVencimentos, ((totalVencimentos/totalBruta)*100).toFixed(2), totalVencimentos/meses]);
+                rows.push(['Obrigações Patronais', totalObrigacoes, ((totalObrigacoes/totalBruta)*100).toFixed(2), totalObrigacoes/meses]);
+                rows.push(['Pessoal Inativo e Pensionistas', totalInativo, ((totalInativo/totalBruta)*100).toFixed(2), totalInativo/meses]);
+                rows.push(['Aposentadorias, Reserva e Reformas', totalAposentadorias, ((totalAposentadorias/totalBruta)*100).toFixed(2), totalAposentadorias/meses]);
+                rows.push(['Pensões', totalPensoes, ((totalPensoes/totalBruta)*100).toFixed(2), totalPensoes/meses]);
+                rows.push(['DESPESAS NÃO COMPUTADAS', totalNaoComputadas, ((totalNaoComputadas/totalBruta)*100).toFixed(2), totalNaoComputadas/meses]);
+                rows.push(['DESPESA LÍQUIDA COM PESSOAL', totalLiquida, ((totalLiquida/totalBruta)*100).toFixed(2), totalLiquida/meses]);
+                
+                filename = `despesa_pessoal_anual_${currentAnoDashboard1}.csv`;
+            } else {
+                const anoData = allData[currentAnoDashboard1] || [];
+                const mesData = anoData.find(item => item.mes_ano === currentMesDashboard1);
+                
+                if (!mesData) {
+                    alert('Nenhum dado disponível para exportação.');
+                    return;
+                }
+                
+                const bruta = mesData.despesa_bruta;
+                const ativo = mesData.pessoal_ativo;
+                const vencimentos = mesData.vencimentos_vantagens;
+                const obrigacoes = mesData.obrigacoes_patronais;
+                const inativo = mesData.inativos_pensionistas;
+                const aposentadorias = mesData.aposentadorias;
+                const pensoes = mesData.pensoes;
+                const naoComputadas = mesData.despesas_nao_computadas;
+                const liquida = mesData.despesa_liquida;
+                
+                rows.push(['DESPESA BRUTA COM PESSOAL', bruta, '100.00', bruta]);
+                rows.push(['Pessoal Ativo', ativo, ((ativo/bruta)*100).toFixed(2), ativo]);
+                rows.push(['Vencimentos, Vantagens e Outras Despesas Variáveis', vencimentos, ((vencimentos/bruta)*100).toFixed(2), vencimentos]);
+                rows.push(['Obrigações Patronais', obrigacoes, ((obrigacoes/bruta)*100).toFixed(2), obrigacoes]);
+                rows.push(['Pessoal Inativo e Pensionistas', inativo, ((inativo/bruta)*100).toFixed(2), inativo]);
+                rows.push(['Aposentadorias, Reserva e Reformas', aposentadorias, ((aposentadorias/bruta)*100).toFixed(2), aposentadorias]);
+                rows.push(['Pensões', pensoes, ((pensoes/bruta)*100).toFixed(2), pensoes]);
+                rows.push(['DESPESAS NÃO COMPUTADAS', naoComputadas, ((naoComputadas/bruta)*100).toFixed(2), naoComputadas]);
+                rows.push(['DESPESA LÍQUIDA COM PESSOAL', liquida, ((liquida/bruta)*100).toFixed(2), liquida]);
+                
+                filename = `despesa_pessoal_mensal_${currentMesDashboard1.replace('/', '_')}.csv`;
+            }
+            
+            const csvContent = [
+                headers.join(';'),
+                ...rows.map(row => row.map(cell => `"${cell}"`).join(';'))
+            ].join('\n');
+            
+            downloadCSV(csvContent, filename);
+        }
+
+        function exportDashboard2CSV() {
+            const headers = ['Mês', 'Despesa Bruta (R$)', 'Despesa Líquida (R$)', 'Pessoal Ativo (R$)', 'Inativos/Pensionistas (R$)', 'Variação (%)'];
+            const rows = [];
+            
+            const anoData = allData[currentAnoDashboard2] || [];
+            if (anoData.length === 0) {
+                alert('Nenhum dado disponível para exportação.');
+                return;
+            }
+            
+            for (let i = 0; i < anoData.length; i++) {
+                const item = anoData[i];
+                const bruta = item.despesa_bruta;
+                const liquida = item.despesa_liquida;
+                const ativo = item.pessoal_ativo;
+                const inativo = item.inativos_pensionistas;
+                
+                let variacao = '';
+                if (i > 0) {
+                    const brutaAnterior = anoData[i-1].despesa_bruta;
+                    if (brutaAnterior > 0) {
+                        const variacaoPercentual = ((bruta - brutaAnterior) / brutaAnterior) * 100;
+                        variacao = variacaoPercentual.toFixed(2);
+                    }
+                }
+                
+                rows.push([
+                    item.mes_ano,
+                    bruta,
+                    liquida,
+                    ativo,
+                    inativo,
+                    variacao
+                ]);
+            }
+            
+            const csvContent = [
+                headers.join(';'),
+                ...rows.map(row => row.map(cell => `"${cell}"`).join(';'))
+            ].join('\n');
+            
+            downloadCSV(csvContent, `evolucao_despesa_${currentAnoDashboard2}.csv`);
+        }
+
+        function downloadQuadrimestreCSV() {
+            const anoSelect = document.getElementById('anoDownload');
+            const quadrimestreSelect = document.getElementById('quadrimestreDownload');
+            
+            if (!anoSelect || !quadrimestreSelect) {
+                alert('Elementos de seleção não encontrados.');
+                return;
+            }
+            
+            const ano = anoSelect.value;
+            const quadrimestre = quadrimestreSelect.value;
+            
+            let meses = [];
+            let nomeQuadrimestre = '';
+            
+            // Definir meses do quadrimestre
+            switch(quadrimestre) {
+                case '1': // Jan-Abr
+                    meses = ['01', '02', '03', '04'];
+                    nomeQuadrimestre = '1 Quadrimestre';
+                    break;
+                case '2': // Mai-Ago
+                    meses = ['05', '06', '07', '08'];
+                    nomeQuadrimestre = '2 Quadrimestre';
+                    break;
+                case '3': // Set-Dez
+                    meses = ['09', '10', '11', '12'];
+                    nomeQuadrimestre = '3 Quadrimestre';
+                    break;
+                default:
+                    alert('Quadrimestre inválido.');
+                    return;
+            }
+            
+            // Filtrar dados do ano e quadrimestre
+            const anoData = allData[ano] || [];
+            const quadrimestreData = anoData.filter(item => {
+                const mesNum = item.MES_NUM;
+                return meses.includes(mesNum.toString().padStart(2, '0'));
+            });
+            
+            if (quadrimestreData.length === 0) {
+                alert(`Nenhum dado encontrado para o ${nomeQuadrimestre} de ${ano}`);
+                return;
+            }
+            
+            const headers = ['mes_ano', 'despesa_bruta', 'pessoal_ativo', 'vencimentos_vantagens', 'obrigacoes_patronais', 
+                           'inativos_pensionistas', 'aposentadorias', 'pensoes', 'despesas_nao_computadas', 'despesa_liquida'];
+            const rows = quadrimestreData.map(item => [
+                item.mes_ano,
+                item.despesa_bruta,
+                item.pessoal_ativo,
+                item.vencimentos_vantagens,
+                item.obrigacoes_patronais,
+                item.inativos_pensionistas,
+                item.aposentadorias,
+                item.pensoes,
+                item.despesas_nao_computadas,
+                item.despesa_liquida
+            ]);
+            
+            const csvContent = [
+                headers.join(';'),
+                ...rows.map(row => row.map(cell => `"${cell}"`).join(';'))
+            ].join('\n');
+            
+            const filename = `Anexo I - Despesa com Pessoal - ${nomeQuadrimestre} ${ano}.csv`;
+            downloadCSV(csvContent, filename);
+        }
+
+        function downloadCSV(content, filename) {
+            try {
+                const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                console.error('Erro ao baixar CSV:', error);
+                alert('Erro ao baixar o arquivo CSV.');
+            }
+        }
+
+        async function forceUpdateFromGitHub() {
+            showLoading(true);
+            
+            try {
+                await loadAllDataFromGitHub();
+                await determineLatestData();
+                updateFilterOptions();
+                updateDashboard1();
+                updateDashboard2();
+                updateDashboard3();
+                
+                showSuccess('Dados atualizados com sucesso do GitHub!');
+            } catch (error) {
+                console.error('Erro ao atualizar dados:', error);
+                showError('Erro ao atualizar dados do GitHub.');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function printDashboard1() {
+            window.print();
+        }
+
+        function printDashboard2() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
