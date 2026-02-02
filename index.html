@@ -1,20 +1,18 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Despesa com Pessoal - Governo de Minas Gerais</title>
-    
-    <!-- ==================== ESTILOS E BIBLIOTECAS ==================== -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
-    
+    <title>Dashboard - Despesa com Pessoal MG</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <!-- PapaParse para CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    
     <style>
         /* ==================== VARIÁVEIS DE CORES ==================== */
         :root {
@@ -733,42 +731,61 @@
                 height: 180px;
             }
         }
+        
+        /* ==================== ESTILOS ADICIONAIS ==================== */
+        .card-stats {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            height: 100%;
+        }
     </style>
 </head>
 <body>
-
     <!-- ==================== HEADER PRINCIPAL ==================== -->
     <header class="main-header">
         <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="logo-container">
-                    <div class="logo">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div>
-                        <h1 class="header-title">Despesa com Pessoal - Governo de MG</h1>
-                        <p class="header-subtitle">Governo do Estado de Minas Gerais - RGF - Anexo 1 (LRF)</p>
-                        <div class="header-info">
-                            <a href="https://dados.mg.gov.br/" target="_blank" class="link-legislacao">
-                                <i class="fas fa-external-link-alt"></i> Portal de Dados Abertos MG
-                            </a>
-                            <span class="badge-atualizacao-header">
-                                <i class="fas fa-sync-alt"></i> Atualização: <span id="data-atualizacao-header">Carregando...</span>
-                            </span>
+            <div class="row align-items-center">
+                <div class="col-md-8 col-12">
+                    <div class="logo-container">
+                        <div class="logo">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h1 class="header-title">Dashboard de Despesa com Pessoal</h1>
+                            <p class="header-subtitle">Estado de Minas Gerais - Monitoramento em Tempo Real</p>
+                            <div class="header-info">
+                                <a href="http://www.planalto.gov.br/ccivil_03/leis/lcp/lcp101.htm" 
+                                   target="_blank" 
+                                   class="link-legislacao">
+                                    <i class="fas fa-balance-scale me-1"></i> Lei de Responsabilidade Fiscal (LRF)
+                                </a>
+                                <span class="badge-atualizacao-header">
+                                    <i class="fas fa-sync-alt"></i> Atualização: <span id="data-atualizacao-header">Carregando...</span>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Informação de Fonte de Dados -->
-                <div class="text-end">
-                    <div class="btn-export" style="background: rgba(255, 255, 255, 0.2); color: white; border-color: white;">
-                        <i class="fas fa-database me-2"></i> Fonte: GitHub
+                <div class="col-md-4 col-12 text-md-end text-center mt-md-0 mt-3">
+                    <div class="d-inline-block bg-white p-2 rounded">
+                        <small class="text-muted">Última atualização:</small>
+                        <div id="data-ultima-atualizacao" class="fw-bold text-primary">--/--/----</div>
                     </div>
-                    <small class="text-white d-block mt-1" style="font-size: 10px;">Atualização automática</small>
                 </div>
             </div>
         </div>
     </header>
+
+    <!-- ==================== LOADING OVERLAY ==================== -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="text-center">
+            <div class="spinner"></div>
+            <p class="mt-3 text-primary fw-bold">Carregando dados...</p>
+        </div>
+    </div>
 
     <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
     <div class="container">
@@ -811,8 +828,7 @@
                             <div class="mb-3">
                                 <label for="anoDashboard1" class="form-label filter-label">Ano</label>
                                 <select class="form-select" id="anoDashboard1">
-                                    <!-- Opções serão carregadas dinamicamente -->
-                                    <option value="">Carregando...</option>
+                                    <option value="">Todos os anos</option>
                                 </select>
                             </div>
                         </div>
@@ -829,8 +845,7 @@
                             <div class="mb-3">
                                 <label for="mesDashboard1" class="form-label filter-label">Mês</label>
                                 <select class="form-select" id="mesDashboard1">
-                                    <!-- Opções serão carregadas dinamicamente -->
-                                    <option value="">Carregando...</option>
+                                    <option value="">Todos os meses</option>
                                 </select>
                             </div>
                         </div>
@@ -863,9 +878,6 @@
                 <!-- Cards de Estatísticas Dashboard 1 -->
                 <div class="row mb-4" id="summaryCards">
                     <!-- Cards serão carregados aqui -->
-                    <div class="col-12 text-center">
-                        <p class="text-muted">Carregando dados...</p>
-                    </div>
                 </div>
 
                 <!-- Gráficos Dashboard 1 -->
@@ -909,7 +921,7 @@
                     <div class="table-header">
                         <h3 class="table-title">Despesa com Pessoal - Resumo</h3>
                         <div class="d-flex align-items-center gap-3 ms-auto">
-                            <span class="table-badge" id="resumoCountDashboard1">Carregando dados...</span>
+                            <span class="table-badge" id="resumoCountDashboard1">0 registros</span>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -924,13 +936,7 @@
                             </thead>
                             <tbody id="resumoTableBody">
                                 <!-- Dados serão carregados aqui -->
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted">Carregando dados...</td>
-                                </tr>
                             </tbody>
-                            <tfoot id="resumoTableFooter">
-                                <!-- Total geral será carregado aqui -->
-                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -947,8 +953,7 @@
                             <div class="mb-3">
                                 <label for="anoDashboard2" class="form-label filter-label">Ano</label>
                                 <select class="form-select" id="anoDashboard2">
-                                    <!-- Opções serão carregadas dinamicamente -->
-                                    <option value="">Carregando...</option>
+                                    <option value="">Todos os anos</option>
                                 </select>
                             </div>
                         </div>
@@ -1013,7 +1018,7 @@
                     <div class="table-header">
                         <h3 class="table-title">Evolução Mensal da Despesa</h3>
                         <div class="d-flex align-items-center gap-3 ms-auto">
-                            <span class="table-badge" id="resumoCountDashboard2">Carregando dados...</span>
+                            <span class="table-badge" id="resumoCountDashboard2">0 registros</span>
                         </div>
                     </div>
                     <div class="table-fixed-header-container">
@@ -1030,9 +1035,6 @@
                             </thead>
                             <tbody id="evolucaoTableBody">
                                 <!-- Dados serão carregados aqui -->
-                                <tr>
-                                    <td colspan="6" class="text-center text-muted">Carregando dados...</td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -1050,8 +1052,7 @@
                             <div class="mb-3">
                                 <label for="periodoLRF" class="form-label filter-label">Período de 12 Meses</label>
                                 <select class="form-select" id="periodoLRF">
-                                    <!-- Opções serão carregadas dinamicamente -->
-                                    <option value="">Carregando...</option>
+                                    <option value="">Selecione um período</option>
                                 </select>
                             </div>
                         </div>
@@ -1064,7 +1065,7 @@
                         <div class="limite-card safe" id="limiteLegalCard">
                             <div class="label">LIMITE LEGAL</div>
                             <div class="porcentagem" id="limiteLegalPercentual">49.00%</div>
-                            <div class="valor" id="limiteLegalValor">Carregando...</div>
+                            <div class="valor" id="limiteLegalValor">R$ 0,00</div>
                             <div class="limite-info">
                                 <span>Máximo permitido</span>
                             </div>
@@ -1074,7 +1075,7 @@
                         <div class="limite-card warning" id="limitePrudencialCard">
                             <div class="label">LIMITE PRUDENCIAL</div>
                             <div class="porcentagem" id="limitePrudencialPercentual">46.55%</div>
-                            <div class="valor" id="limitePrudencialValor">Carregando...</div>
+                            <div class="valor" id="limitePrudencialValor">R$ 0,00</div>
                             <div class="limite-info">
                                 <span>Recomendação</span>
                             </div>
@@ -1084,7 +1085,7 @@
                         <div class="limite-card danger" id="limiteAlertaCard">
                             <div class="label">LIMITE DE ALERTA</div>
                             <div class="porcentagem" id="limiteAlertaPercentual">44.10%</div>
-                            <div class="valor" id="limiteAlertaValor">Carregando...</div>
+                            <div class="valor" id="limiteAlertaValor">R$ 0,00</div>
                             <div class="limite-info">
                                 <span>Atenção necessária</span>
                             </div>
@@ -1098,7 +1099,7 @@
                         <div class="chart-container">
                             <div class="chart-header">
                                 <h4 class="chart-title">Despesa com Pessoal em Relação à RCL</h4>
-                                <span class="badge bg-primary" id="despesaAtualPercentual">Carregando...</span>
+                                <span class="badge bg-primary" id="despesaAtualPercentual">0%</span>
                             </div>
                             <div class="p-4">
                                 <div class="progress-limite">
@@ -1118,13 +1119,13 @@
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label class="form-label filter-label">Receita Corrente Líquida (RCL)</label>
-                                                <div class="valor-monetario valor-positivo" id="rclTotal">Carregando...</div>
+                                                <div class="valor-monetario valor-positivo" id="rclTotal">R$ 0,00</div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label class="form-label filter-label">Despesa com Pessoal Executada</label>
-                                                <div class="valor-monetario" id="despesaExecutada">Carregando...</div>
+                                                <div class="valor-monetario" id="despesaExecutada">R$ 0,00</div>
                                             </div>
                                         </div>
                                     </div>
@@ -1150,9 +1151,6 @@
                             </thead>
                             <tbody id="limitesTableBody">
                                 <!-- Dados serão carregados aqui -->
-                                <tr>
-                                    <td colspan="3" class="text-center text-muted">Carregando dados...</td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -1170,8 +1168,7 @@
                             <div class="mb-3">
                                 <label for="anoDownload" class="form-label filter-label">Ano</label>
                                 <select class="form-select" id="anoDownload">
-                                    <!-- Opções serão carregadas dinamicamente -->
-                                    <option value="">Carregando...</option>
+                                    <option value="">Selecione um ano</option>
                                 </select>
                             </div>
                         </div>
@@ -1200,7 +1197,7 @@
                     </div>
                     <div class="p-4">
                         <div class="row">
-                            <div class="col-md-6 col-12">
+                            <div class="col-md-6 col-12 mb-3">
                                 <div class="card-stats">
                                     <i class="fas fa-database fa-3x mb-3" style="color: var(--primary-dark);"></i>
                                     <h4>Fonte dos Dados</h4>
@@ -1272,1244 +1269,580 @@
         </div>
     </div>
 
-    <!-- ==================== FOOTER ==================== -->
-    <footer class="footer mt-4 pt-4 border-top">
-        <div class="container text-center text-muted">
-            <p class="mb-1">
-                <i class="fas fa-sync-alt me-2"></i> 
-                Última atualização — 
-                <span id="footer-atualizacao">Carregando...</span>
-            </p>
-            <p class="mb-0" style="font-size: 0.85rem;">
-                © 2025 Governo do Estado de Minas Gerais - Lei de Responsabilidade Fiscal
-            </p>
-            <p class="mt-2 mb-0 small">
-                <a href="https://dados.mg.gov.br" style="color: var(--primary-dark); text-decoration: none; font-weight: 600;">
-                    <i class="fas fa-external-link-alt"></i> dados.mg.gov.br
-                </a>
-                | 
-                <a href="https://github.com/transparencia-mg/despesa-pessoal-mg" 
-                   style="color: var(--primary-dark); text-decoration: none; font-weight: 600;">
-                    <i class="fab fa-github"></i> GitHub
-                </a>
-            </p>
-        </div>
-    </footer>
-
-    <!-- ==================== LOADING OVERLAY ==================== -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner"></div>
-    </div>
-
     <!-- ==================== SCRIPTS ==================== -->
-
-    <!-- PapaParse (TEM QUE VIR PRIMEIRO) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    
-    <!-- jQuery e DataTables -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    
-    <!-- Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // ============================================
-        // VARIÁVEIS GLOBAIS
-        // ============================================
+        // ==================== VARIÁVEIS GLOBAIS ====================
         let despesaMensalData = [];
         let limitesLRFData = [];
-        let allData = {};
-        let limitesData = {};
-        let currentAnoDashboard1 = '';
-        let currentPeriodoDashboard1 = 'mensal';
-        let currentMesDashboard1 = '';
-        let currentCategoriaDashboard1 = 'total';
-        let currentAnoDashboard2 = '';
+        let dashboardData = {};
+        let chartDistribuicao = null;
+        let chartAtivoDetalhado = null;
+        let chartEvolucao = null;
         let currentChartCategory = 'total';
-        let currentPeriodoLRF = '';
-        let isAccumulated = false;
-        let charts = {};
+
+        // ==================== FUNÇÕES DE UTILIDADE ====================
         
-        // URLs dos CSVs no GitHub - CORRIGIDAS
-        const GITHUB_BASE_URL = 'https://raw.githubusercontent.com/transparencia-mg/despesa-pessoal-mg/main/dataset/data/';
-        const DESPESA_MENSAL_CSV = 'despesa_pessoal_mensal.csv';
-        const LIMITES_LRF_CSV = 'limites_lrf.csv';
-        const GITHUB_API_URL = 'https://api.github.com/repos/transparencia-mg/despesa-pessoal-mg/commits?path=dataset/data&per_page=1';
-
-        // Cores dos gráficos
-        const chartColors = {
-            despesaBruta: '#1A5276',
-            pessoalAtivo: '#3498DB',
-            vencimentos: '#2980B9',
-            obrigacoesPatronais: '#27AE60',
-            inativosPensionistas: '#8E44AD',
-            aposentadorias: '#9B59B6',
-            pensoes: '#E74C3C',
-            despesasNaoComputadas: '#F39C12',
-            despesaLiquida: '#17A589',
-            limiteMaximo: '#2ECC71',
-            limitePrudencial: '#F1C40F',
-            limiteAlerta: '#E74C3C'
-        };
-
-        // Mapeamento de meses
-        const monthNames = {
-            '01': 'Janeiro', '02': 'Fevereiro', '03': 'Março', '04': 'Abril',
-            '05': 'Maio', '06': 'Junho', '07': 'Julho', '08': 'Agosto',
-            '09': 'Setembro', '10': 'Outubro', '11': 'Novembro', '12': 'Dezembro'
-        };
-
-        // ============================================
-        // INICIALIZAÇÃO DO DASHBOARD
-        // ============================================
-        document.addEventListener('DOMContentLoaded', async function() {
-            console.log('=== INICIANDO DASHBOARD DESPESA COM PESSOAL ===');
-            console.log('Carregando dados do GitHub...');
-
+        // Função para converter valores brasileiros para números
+        function converterValor(valor) {
+            if (!valor || valor === '-' || valor.trim() === '-') return 0;
+            
+            let valorStr = String(valor).trim();
+            valorStr = valorStr.replace(/\./g, '').replace(',', '.');
+            valorStr = valorStr.replace(/\s/g, '');
+            
+            const num = parseFloat(valorStr);
+            return isNaN(num) ? 0 : num;
+        }
+        
+        // Função para formatar valores monetários
+        function formatarMoeda(valor) {
+            if (valor === undefined || valor === null || valor === 0) return 'R$ 0,00';
+            
+            const num = typeof valor === 'string' ? parseFloat(valor) : valor;
+            
+            if (isNaN(num)) return 'R$ 0,00';
+            
+            if (num >= 1000000000) {
+                return `R$ ${(num / 1000000000).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} bi`;
+            } else if (num >= 1000000) {
+                return `R$ ${(num / 1000000).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} mi`;
+            } else if (num >= 1000) {
+                return `R$ ${(num / 1000).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} mil`;
+            } else {
+                return `R$ ${num.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            }
+        }
+        
+        // Função para formatar porcentagem
+        function formatarPorcentagem(valor) {
+            if (valor === undefined || valor === null) return '0%';
+            return `${valor.toFixed(2)}%`;
+        }
+        
+        // Função para converter formato de mês
+        function formatarMesAno(mesAno) {
+            if (!mesAno) return '';
+            
+            const mesAnoNormalizado = mesAno.includes('-') ? mesAno.replace('-', '_') : mesAno;
+            const partes = mesAnoNormalizado.split('_');
+            
+            if (partes.length >= 2) {
+                const mes = partes[0];
+                const ano = '20' + partes[1];
+                
+                const meses = {
+                    'jan': 'Jan', 'fev': 'Fev', 'mar': 'Mar', 'abr': 'Abr',
+                    'mai': 'Mai', 'jun': 'Jun', 'jul': 'Jul', 'ago': 'Ago',
+                    'set': 'Set', 'out': 'Out', 'nov': 'Nov', 'dez': 'Dez'
+                };
+                
+                return `${meses[mes] || mes}/${ano}`;
+            }
+            return mesAno;
+        }
+        
+        // Função para converter formato de período LRF
+        function formatarPeriodoLRF(periodo) {
+            if (!periodo) return '';
+            
+            const partes = periodo.split('_a_');
+            if (partes.length === 2) {
+                const inicio = formatarMesAno(partes[0]);
+                const fim = formatarMesAno(partes[1]);
+                return `${inicio} a ${fim}`;
+            }
+            
+            return periodo.replace(/_/g, '/').replace('a/', ' a ');
+        }
+        
+        // Função para obter número do mês
+        function getMesNumero(mesAbrev) {
+            const meses = {
+                'jan': 1, 'fev': 2, 'mar': 3, 'abr': 4,
+                'mai': 5, 'jun': 6, 'jul': 7, 'ago': 8,
+                'set': 9, 'out': 10, 'nov': 11, 'dez': 12
+            };
+            return meses[mesAbrev] || 0;
+        }
+        
+        // Função para mostrar/esconder loading
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        }
+        
+        // ==================== FUNÇÕES DE PROCESSAMENTO DE DADOS ====================
+        
+        // Processar dados de despesa mensal
+        function processDespesaMensalData(csvData) {
+            const processedData = [];
+            
+            csvData.forEach(row => {
+                if (row.unnamed_0 && row.despesa_bruta_com_pessoal_i) {
+                    const mesAno = row.unnamed_0;
+                    const mesAnoNormalizado = mesAno.replace('-', '_');
+                    
+                    const despesaBruta = converterValor(row.despesa_bruta_com_pessoal_i);
+                    const pessoalAtivo = converterValor(row.pessoal_ativo);
+                    const vencimentos = converterValor(row.vencimentos_vantagens_e_outras_despesas_variaveis);
+                    const pessoalInativo = converterValor(row.pessoal_inativo_e_pensionistas);
+                    const despesaLiquida = converterValor(row.despesa_liquida_com_pessoal_iii_i_ii);
+                    const aposentadorias = converterValor(row.aposentadorias_reserva_e_reformas);
+                    const pensoes = converterValor(row.pensoes);
+                    const obrigacoesPatronais = converterValor(row.obrigacoes_patronais);
+                    
+                    if (despesaBruta > 0) {
+                        processedData.push({
+                            MES_ANO: mesAnoNormalizado,
+                            MES_ORIGINAL: mesAno,
+                            DESPESA_BRUTA: despesaBruta,
+                            PESSOAL_ATIVO: pessoalAtivo,
+                            VENCIMENTOS: vencimentos,
+                            PESSOAL_INATIVO: pessoalInativo,
+                            DESPESA_LIQUIDA: despesaLiquida,
+                            APOSENTADORIAS: aposentadorias,
+                            PENSÕES: pensoes,
+                            OBRIGACOES_PATRONAIS: obrigacoesPatronais,
+                            MES_FORMATADO: formatarMesAno(mesAno),
+                            ANO: '20' + mesAno.split('-')[1],
+                            MES_NUM: getMesNumero(mesAno.split('-')[0])
+                        });
+                    }
+                }
+            });
+            
+            // Ordenar por data
+            processedData.sort((a, b) => {
+                const [mesA, anoA] = a.MES_ANO.split('_');
+                const [mesB, anoB] = b.MES_ANO.split('_');
+                
+                const anoNumA = parseInt(anoA);
+                const anoNumB = parseInt(anoB);
+                
+                if (anoNumA !== anoNumB) {
+                    return anoNumA - anoNumB;
+                }
+                
+                return getMesNumero(mesA) - getMesNumero(mesB);
+            });
+            
+            return processedData;
+        }
+        
+        // Processar dados de limites LRF
+        function processLimitesLRFData(csvData) {
+            const processedLimites = [];
+            
+            csvData.forEach(row => {
+                if (row.unnamed_0) {
+                    const limiteMaximo = converterValor(row.limite_maximo_ix_incisos_i_ii_e_iii_art_20_da_lrf_49_00);
+                    const limitePrudencial = converterValor(row.limite_prudencial_x_paragrafo_unico_art_22_da_lrf_46_55);
+                    const limiteAlerta = converterValor(row.limite_de_alerta_xi_inciso_ii_do_SS_1o_do_art_59_da_lrf_44_10);
+                    const despesaTotal = converterValor(row.despesa_total_com_pessoal_dtp_sobre_a_rcl_vii_iii_a_iii_b);
+                    const rcl = converterValor(row.receita_corrente_liquida_rcl_iv);
+                    const rclAjustada = converterValor(row.receita_corrente_liquida_ajustada_para_calculo_dos_limites_da_despesa_com_pessoal_vii_iv_v_vi);
+                    
+                    if (limiteMaximo > 0) {
+                        processedLimites.push({
+                            PERIODO: row.unnamed_0,
+                            LIMITE_MAXIMO: limiteMaximo,
+                            LIMITE_PRUDENCIAL: limitePrudencial,
+                            LIMITE_ALERTA: limiteAlerta,
+                            DESPESA_TOTAL: despesaTotal,
+                            RCL: rcl,
+                            RCL_AJUSTADA: rclAjustada,
+                            FORMATADO: formatarPeriodoLRF(row.unnamed_0),
+                            PERCENTUAL_UTILIZADO: despesaTotal > 0 ? (despesaTotal / limiteMaximo * 100) : 0
+                        });
+                    }
+                }
+            });
+            
+            return processedLimites;
+        }
+        
+        // ==================== FUNÇÕES DE CARREGAMENTO ====================
+        
+        // Carregar dados do CSV
+        async function loadCSVData(url) {
+            return new Promise((resolve, reject) => {
+                Papa.parse(url, {
+                    download: true,
+                    header: true,
+                    delimiter: ';',
+                    skipEmptyLines: true,
+                    encoding: 'UTF-8',
+                    complete: function(results) {
+                        resolve(results.data);
+                    },
+                    error: function(error) {
+                        reject(error);
+                    }
+                });
+            });
+        }
+        
+        // Carregar dados de despesa mensal
+        async function loadDespesaMensalData() {
+            try {
+                const url = 'https://raw.githubusercontent.com/transparencia-mg/despesa-pessoal-mg/main/dataset/data/despesa_pessoal_mensal.csv';
+                const rawData = await loadCSVData(url);
+                return processDespesaMensalData(rawData);
+            } catch (error) {
+                console.error('Erro ao carregar despesa mensal:', error);
+                return [];
+            }
+        }
+        
+        // Carregar dados de limites LRF
+        async function loadLimitesLRFData() {
+            try {
+                const url = 'https://raw.githubusercontent.com/transparencia-mg/despesa-pessoal-mg/main/dataset/data/limites_lrf.csv';
+                const rawData = await loadCSVData(url);
+                return processLimitesLRFData(rawData);
+            } catch (error) {
+                console.error('Erro ao carregar limites LRF:', error);
+                return [];
+            }
+        }
+        
+        // Carregar todos os dados
+        async function loadAllData() {
             showLoading(true);
             
             try {
-                // Carregar dados do GitHub
-                await loadAllDataFromGitHub();
+                const [despesaData, limitesData] = await Promise.all([
+                    loadDespesaMensalData(),
+                    loadLimitesLRFData()
+                ]);
                 
-                // Determinar dados mais recentes
-                await determineLatestData();
+                despesaMensalData = despesaData;
+                limitesLRFData = limitesData;
                 
-                // Atualizar interface
-                updateDataAtualizacao();
+                processDashboardData();
                 updateFilterOptions();
                 updateDashboard1();
-                initializeDashboard2();
-                updateDashboard3();
-                setupEventListeners();
                 
-                console.log('Dashboard inicializado com sucesso!');
-                console.log(`Dados carregados: ${despesaMensalData.length} registros mensais`);
-                console.log(`Períodos LRF carregados: ${Object.keys(limitesData).length}`);
+                showLoading(false);
                 
             } catch (error) {
-                console.error('Erro ao carregar dados:', error);
-                showError('Erro ao carregar dados do GitHub. Por favor, tente novamente.');
-            } finally {
+                console.error("Erro ao carregar dados:", error);
                 showLoading(false);
+                alert("Erro ao carregar dados. Verifique o console para mais detalhes.");
             }
-        });
-
-        // ==================== CARREGAR DADOS DO GITHUB ====================
-        async function loadAllDataFromGitHub() {
-            console.log('Carregando dados do GitHub...');
-            
-            // Carregar dados de despesa mensal
-            await loadDespesaMensalData();
-            
-            // Carregar dados de limites LRF
-            await loadLimitesLRFData();
-            
-            console.log('Dados carregados com sucesso!');
         }
-
-        async function loadDespesaMensalData() {
-            const url = `${GITHUB_BASE_URL}${DESPESA_MENSAL_CSV}`;
-            console.log(`Carregando despesa mensal: ${url}`);
-
-            return new Promise((resolve, reject) => {
-                // Primeiro, vamos tentar carregar os dados de forma simples
-                fetch(url)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Erro HTTP: ${response.status}`);
-                        }
-                        return response.text();
-                    })
-                    .then(csvText => {
-                        console.log('CSV carregado com sucesso. Tamanho:', csvText.length);
-                        
-                        if (!csvText || csvText.trim().length === 0) {
-                            console.warn('CSV vazio ou sem conteúdo');
-                            despesaMensalData = [];
-                            resolve();
-                            return;
-                        }
-                        
-                        // Tentar diferentes delimitadores
-                        const delimiters = [';', ',', '\t'];
-                        let parsedData = null;
-                        
-                        for (let delimiter of delimiters) {
-                            try {
-                                const result = Papa.parse(csvText, {
-                                    delimiter: delimiter,
-                                    header: true,
-                                    skipEmptyLines: true,
-                                    encoding: 'UTF-8'
-                                });
-                                
-                                if (result.data && result.data.length > 0) {
-                                    console.log(`Delimitador '${delimiter}' funcionou com ${result.data.length} registros`);
-                                    parsedData = result;
-                                    break;
-                                }
-                            } catch (e) {
-                                console.log(`Delimitador '${delimiter}' falhou:`, e.message);
-                            }
-                        }
-                        
-                        if (!parsedData || parsedData.data.length === 0) {
-                            console.warn('Não foi possível parsear o CSV com nenhum delimitador');
-                            despesaMensalData = [];
-                            resolve();
-                            return;
-                        }
-                        
-                        // Processar os dados
-                        despesaMensalData = parsedData.data.map(row => {
-                            // Normalizar nomes de colunas
-                            const normalizedRow = {};
-                            Object.keys(row).forEach(key => {
-                                normalizedRow[key.toLowerCase().replace(/[^a-z0-9]/g, '_')] = row[key];
-                            });
-                            
-                            // Extrair valores
-                            const mes_ano = normalizedRow.mes_ano || normalizedRow.mesano || '';
-                            const despesa_bruta = parseFloat(normalizedRow.despesa_bruta || normalizedRow.despesabruta || 0);
-                            const pessoal_ativo = parseFloat(normalizedRow.pessoal_ativo || normalizedRow.pessoalativo || 0);
-                            const vencimentos_vantagens = parseFloat(normalizedRow.vencimentos_vantagens || normalizedRow.vencimentosvantagens || 0);
-                            const obrigacoes_patronais = parseFloat(normalizedRow.obrigacoes_patronais || normalizedRow.obrigacoespatronais || 0);
-                            const inativos_pensionistas = parseFloat(normalizedRow.inativos_pensionistas || normalizedRow.inativospensionistas || 0);
-                            const aposentadorias = parseFloat(normalizedRow.aposentadorias || 0);
-                            const pensoes = parseFloat(normalizedRow.pensoes || 0);
-                            const despesas_nao_computadas = parseFloat(normalizedRow.despesas_nao_computadas || normalizedRow.despesasnaocomputadas || 0);
-                            const despesa_liquida = parseFloat(normalizedRow.despesa_liquida || normalizedRow.despesaliquida || 0);
-                            
-                            // Extrair ano e mês
-                            let ano = '';
-                            let mes = '';
-                            let mes_num = 0;
-                            
-                            if (mes_ano) {
-                                // Tentar diferentes formatos
-                                const formats = [
-                                    // Formato "MM/AAAA"
-                                    () => {
-                                        const match = mes_ano.match(/(\d{1,2})[\/\-](\d{4})/);
-                                        if (match) {
-                                            mes = parseInt(match[1]).toString().padStart(2, '0');
-                                            ano = match[2];
-                                            mes_num = parseInt(mes);
-                                            return true;
-                                        }
-                                        return false;
-                                    },
-                                    // Formato "MMM-AAAA" ou "MMM/AAAA"
-                                    () => {
-                                        const match = mes_ano.match(/([a-z]{3})[\/\-](\d{4})/i);
-                                        if (match) {
-                                            const mesStr = match[1].toLowerCase();
-                                            ano = match[2];
-                                            mes_num = getMonthNumber(mesStr);
-                                            mes = mes_num.toString().padStart(2, '0');
-                                            return true;
-                                        }
-                                        return false;
-                                    },
-                                    // Formato "AAAA-MM"
-                                    () => {
-                                        const match = mes_ano.match(/(\d{4})[\/\-](\d{1,2})/);
-                                        if (match) {
-                                            ano = match[1];
-                                            mes = parseInt(match[2]).toString().padStart(2, '0');
-                                            mes_num = parseInt(mes);
-                                            return true;
-                                        }
-                                        return false;
-                                    }
-                                ];
-                                
-                                for (let format of formats) {
-                                    if (format()) break;
-                                }
-                            }
-                            
-                            return {
-                                mes_ano: mes_ano,
-                                despesa_bruta: despesa_bruta,
-                                pessoal_ativo: pessoal_ativo,
-                                vencimentos_vantagens: vencimentos_vantagens,
-                                obrigacoes_patronais: obrigacoes_patronais,
-                                inativos_pensionistas: inativos_pensionistas,
-                                aposentadorias: aposentadorias,
-                                pensoes: pensoes,
-                                despesas_nao_computadas: despesas_nao_computadas,
-                                despesa_liquida: despesa_liquida,
-                                ANO: ano,
-                                MES: mes,
-                                MES_NUM: mes_num
-                            };
-                        }).filter(item => item.mes_ano !== '' && item.despesa_bruta > 0);
-                        
-                        console.log(`Dados de despesa mensal processados: ${despesaMensalData.length} registros`);
-                        
-                        if (despesaMensalData.length > 0) {
-                            console.log('Primeiros registros:', despesaMensalData.slice(0, 3));
-                            organizeDataByYear();
-                        } else {
-                            // Usar dados de exemplo se não houver dados
-                            console.log('Usando dados de exemplo para demonstração');
-                            despesaMensalData = getSampleData();
-                            organizeDataByYear();
-                        }
-                        
-                        resolve();
-                    })
-                    .catch(error => {
-                        console.error('Erro ao carregar CSV:', error);
-                        // Usar dados de exemplo em caso de erro
-                        console.log('Usando dados de exemplo devido a erro');
-                        despesaMensalData = getSampleData();
-                        organizeDataByYear();
-                        resolve();
-                    });
-            });
-        }
-
-        async function loadLimitesLRFData() {
-            const url = `${GITHUB_BASE_URL}${LIMITES_LRF_CSV}`;
-            console.log(`Carregando limites LRF: ${url}`);
-
-            return new Promise((resolve, reject) => {
-                fetch(url)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Erro HTTP: ${response.status}`);
-                        }
-                        return response.text();
-                    })
-                    .then(csvText => {
-                        console.log('CSV de limites carregado. Tamanho:', csvText.length);
-                        
-                        if (!csvText || csvText.trim().length === 0) {
-                            console.warn('CSV de limites vazio ou sem conteúdo');
-                            limitesLRFData = [];
-                            organizeLimitesData();
-                            resolve();
-                            return;
-                        }
-                        
-                        // Tentar diferentes delimitadores
-                        const delimiters = [';', ',', '\t'];
-                        let parsedData = null;
-                        
-                        for (let delimiter of delimiters) {
-                            try {
-                                const result = Papa.parse(csvText, {
-                                    delimiter: delimiter,
-                                    header: true,
-                                    skipEmptyLines: true,
-                                    encoding: 'UTF-8'
-                                });
-                                
-                                if (result.data && result.data.length > 0) {
-                                    console.log(`Delimitador '${delimiter}' funcionou com ${result.data.length} registros`);
-                                    parsedData = result;
-                                    break;
-                                }
-                            } catch (e) {
-                                console.log(`Delimitador '${delimiter}' falhou:`, e.message);
-                            }
-                        }
-                        
-                        if (!parsedData || parsedData.data.length === 0) {
-                            console.warn('Não foi possível parsear o CSV de limites');
-                            limitesLRFData = [];
-                            organizeLimitesData();
-                            resolve();
-                            return;
-                        }
-                        
-                        // Processar os dados
-                        limitesLRFData = parsedData.data.map(row => {
-                            // Normalizar nomes de colunas
-                            const normalizedRow = {};
-                            Object.keys(row).forEach(key => {
-                                normalizedRow[key.toLowerCase().replace(/[^a-z0-9]/g, '_')] = row[key];
-                            });
-                            
-                            return {
-                                periodo: normalizedRow.periodo || '',
-                                rcl: parseFloat(normalizedRow.rcl || 0),
-                                transferencias_individuais: parseFloat(normalizedRow.transferencias_individuais || normalizedRow.transferenciasindividuais || 0),
-                                transferencias_bancada: parseFloat(normalizedRow.transferencias_bancada || normalizedRow.transferenciasbancada || 0),
-                                rcl_ajustada: parseFloat(normalizedRow.rcl_ajustada || normalizedRow.rclajustada || 0),
-                                despesa_total_pessoal: parseFloat(normalizedRow.despesa_total_pessoal || normalizedRow.despesatotalpessoal || 0),
-                                percentual_despesa: parseFloat(normalizedRow.percentual_despesa || normalizedRow.percentualdespesa || 0),
-                                limite_maximo: parseFloat(normalizedRow.limite_maximo || normalizedRow.limitemaximo || 49.0),
-                                limite_prudencial: parseFloat(normalizedRow.limite_prudencial || normalizedRow.limiteprudencial || 46.55),
-                                limite_alerta: parseFloat(normalizedRow.limite_alerta || normalizedRow.limitealerta || 44.1)
-                            };
-                        }).filter(item => item.periodo !== '');
-                        
-                        console.log(`Dados de limites LRF processados: ${limitesLRFData.length} períodos`);
-                        
-                        if (limitesLRFData.length === 0) {
-                            // Usar dados de exemplo
-                            console.log('Usando dados de exemplo para limites LRF');
-                            limitesLRFData = getSampleLimitesData();
-                        }
-                        
-                        organizeLimitesData();
-                        resolve();
-                    })
-                    .catch(error => {
-                        console.error('Erro ao carregar CSV de limites:', error);
-                        // Usar dados de exemplo
-                        console.log('Usando dados de exemplo para limites LRF devido a erro');
-                        limitesLRFData = getSampleLimitesData();
-                        organizeLimitesData();
-                        resolve();
-                    });
-            });
-        }
-
-        // ==================== DADOS DE EXEMPLO ====================
-        function getSampleData() {
-            // Dados de exemplo para demonstração
-            const sampleData = [];
-            const anos = ['2023', '2024'];
-            const meses = [
-                { num: '01', nome: 'Jan' }, { num: '02', nome: 'Fev' }, { num: '03', nome: 'Mar' },
-                { num: '04', nome: 'Abr' }, { num: '05', nome: 'Mai' }, { num: '06', nome: 'Jun' },
-                { num: '07', nome: 'Jul' }, { num: '08', nome: 'Ago' }, { num: '09', nome: 'Set' },
-                { num: '10', nome: 'Out' }, { num: '11', nome: 'Nov' }, { num: '12', nome: 'Dez' }
-            ];
-            
-            anos.forEach(ano => {
-                meses.forEach(mes => {
-                    const despesa_bruta = 1000000000 + Math.random() * 500000000; // Entre 1bi e 1.5bi
-                    const pessoal_ativo = despesa_bruta * 0.6; // 60%
-                    const vencimentos_vantagens = pessoal_ativo * 0.7; // 70% do pessoal ativo
-                    const obrigacoes_patronais = pessoal_ativo * 0.3; // 30% do pessoal ativo
-                    const inativos_pensionistas = despesa_bruta * 0.35; // 35%
-                    const aposentadorias = inativos_pensionistas * 0.6; // 60% dos inativos
-                    const pensoes = inativos_pensionistas * 0.4; // 40% dos inativos
-                    const despesas_nao_computadas = despesa_bruta * 0.05; // 5%
-                    const despesa_liquida = despesa_bruta - despesas_nao_computadas;
-                    
-                    sampleData.push({
-                        mes_ano: `${mes.nome}/${ano}`,
-                        despesa_bruta: despesa_bruta,
-                        pessoal_ativo: pessoal_ativo,
-                        vencimentos_vantagens: vencimentos_vantagens,
-                        obrigacoes_patronais: obrigacoes_patronais,
-                        inativos_pensionistas: inativos_pensionistas,
-                        aposentadorias: aposentadorias,
-                        pensoes: pensoes,
-                        despesas_nao_computadas: despesas_nao_computadas,
-                        despesa_liquida: despesa_liquida,
-                        ANO: ano,
-                        MES: mes.nome.toLowerCase(),
-                        MES_NUM: parseInt(mes.num)
-                    });
-                });
-            });
-            
-            return sampleData;
-        }
-
-        function getSampleLimitesData() {
-            // Dados de exemplo para limites LRF
-            return [
-                {
-                    periodo: 'Jan/2024 a Dez/2024',
-                    rcl: 106657627122.43,
-                    transferencias_individuais: 1500000000,
-                    transferencias_bancada: 800000000,
-                    rcl_ajustada: 104357627122.43,
-                    despesa_total_pessoal: 50925000000,
-                    percentual_despesa: 48.81,
-                    limite_maximo: 49.00,
-                    limite_prudencial: 46.55,
-                    limite_alerta: 44.10
-                },
-                {
-                    periodo: 'Set/2023 a Ago/2024',
-                    rcl: 103257627122.43,
-                    transferencias_individuais: 1450000000,
-                    transferencias_bancada: 750000000,
-                    rcl_ajustada: 101057627122.43,
-                    despesa_total_pessoal: 49025000000,
-                    percentual_despesa: 48.52,
-                    limite_maximo: 49.00,
-                    limite_prudencial: 46.55,
-                    limite_alerta: 44.10
-                }
-            ];
-        }
-
-        function organizeDataByYear() {
-            allData = {};
+        
+        // Processar dados do dashboard
+        function processDashboardData() {
+            const dadosPorAno = {};
             
             despesaMensalData.forEach(item => {
                 const ano = item.ANO;
-                if (!ano) return;
                 
-                if (!allData[ano]) {
-                    allData[ano] = [];
+                if (!dadosPorAno[ano]) {
+                    dadosPorAno[ano] = [];
                 }
                 
-                allData[ano].push(item);
+                dadosPorAno[ano].push(item);
             });
             
-            // Ordenar dados de cada ano por mês
-            Object.keys(allData).forEach(ano => {
-                allData[ano].sort((a, b) => {
-                    const mesA = a.MES_NUM || 0;
-                    const mesB = b.MES_NUM || 0;
-                    return mesA - mesB;
-                });
-            });
+            const anosOrdenados = Object.keys(dadosPorAno).sort((a, b) => b - a);
             
-            console.log(`Dados organizados por ano: ${Object.keys(allData).join(', ')}`);
-        }
-
-        function organizeLimitesData() {
-            limitesData = {};
-            
-            limitesLRFData.forEach(item => {
-                const periodo = item.periodo;
-                if (!periodo) return;
+            anosOrdenados.forEach(ano => {
+                const dadosAno = dadosPorAno[ano];
+                const totalAno = dadosAno.reduce((sum, item) => sum + item.DESPESA_BRUTA, 0);
+                const mediaAnual = totalAno / dadosAno.length;
                 
-                limitesData[periodo] = item;
+                dadosAno.sort((a, b) => a.MES_NUM - b.MES_NUM);
+                
+                const ultimoMes = dadosAno[dadosAno.length - 1];
+                
+                dadosPorAno[ano] = {
+                    dados: dadosAno,
+                    total: totalAno,
+                    media: mediaAnual,
+                    ultimoMes: ultimoMes,
+                    meses: dadosAno.length
+                };
             });
             
-            console.log(`Períodos LRF disponíveis: ${Object.keys(limitesData).join(', ')}`);
-        }
-
-        function getMonthNumber(mesStr) {
-            const meses = {
-                'jan': 1, 'jan.': 1, 'january': 1,
-                'fev': 2, 'fev.': 2, 'feb': 2, 'february': 2,
-                'mar': 3, 'mar.': 3, 'march': 3,
-                'abr': 4, 'abr.': 4, 'apr': 4, 'april': 4,
-                'mai': 5, 'mai.': 5, 'may': 5,
-                'jun': 6, 'jun.': 6, 'june': 6,
-                'jul': 7, 'jul.': 7, 'july': 7,
-                'ago': 8, 'ago.': 8, 'aug': 8, 'august': 8,
-                'set': 9, 'set.': 9, 'sep': 9, 'september': 9,
-                'out': 10, 'out.': 10, 'oct': 10, 'october': 10,
-                'nov': 11, 'nov.': 11, 'november': 11,
-                'dez': 12, 'dez.': 12, 'dec': 12, 'december': 12
+            dashboardData = {
+                porAno: dadosPorAno,
+                anos: anosOrdenados,
+                todosDados: despesaMensalData
             };
-            return meses[mesStr.toLowerCase()] || 0;
         }
-
-        async function determineLatestData() {
-            // Determinar ano mais recente
-            const anos = Object.keys(allData).sort((a, b) => b - a);
-            currentAnoDashboard1 = anos[0] || '';
-            currentAnoDashboard2 = anos[0] || '';
-            
-            // Determinar mês mais recente do ano atual
-            if (currentAnoDashboard1 && allData[currentAnoDashboard1]) {
-                const mesesAno = allData[currentAnoDashboard1];
-                if (mesesAno.length > 0) {
-                    const ultimoMes = mesesAno[mesesAno.length - 1];
-                    currentMesDashboard1 = ultimoMes.mes_ano || '';
-                }
-            }
-            
-            // Determinar período LRF mais recente
-            const periodosLRF = Object.keys(limitesData).sort();
-            if (periodosLRF.length > 0) {
-                currentPeriodoLRF = periodosLRF[periodosLRF.length - 1];
-            }
-            
-            console.log(`Dados mais recentes: Ano ${currentAnoDashboard1}, Mês ${currentMesDashboard1}, Período LRF ${currentPeriodoLRF}`);
-        }
-
-        // ==================== FUNÇÕES DE ATUALIZAÇÃO ====================
-        function updateDataAtualizacao() {
-            try {
-                const now = new Date();
-                const dataFormatada = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
-                
-                const headerElement = document.getElementById('data-atualizacao-header');
-                const footerElement = document.getElementById('footer-atualizacao');
-                
-                if (headerElement) headerElement.textContent = dataFormatada;
-                if (footerElement) footerElement.textContent = dataFormatada;
-            } catch (error) {
-                console.error('Erro ao atualizar data:', error);
-            }
-        }
-
+        
+        // ==================== FUNÇÕES DE ATUALIZAÇÃO DE UI ====================
+        
+        // Atualizar opções de filtro
         function updateFilterOptions() {
-            // Dashboard 1 - Ano
-            const anoSelect1 = document.getElementById('anoDashboard1');
-            if (anoSelect1) {
-                anoSelect1.innerHTML = '';
-                const anos = Object.keys(allData).sort((a, b) => b - a);
-                if (anos.length === 0) {
-                    anoSelect1.innerHTML = '<option value="">Nenhum dado disponível</option>';
-                } else {
-                    anos.forEach(ano => {
-                        const option = document.createElement('option');
-                        option.value = ano;
-                        option.textContent = ano;
-                        if (ano === currentAnoDashboard1) option.selected = true;
-                        anoSelect1.appendChild(option);
-                    });
-                }
-            }
-            
-            // Dashboard 1 - Mês
-            updateMesOptions();
-            
-            // Dashboard 1 - Período
-            const periodoSelect1 = document.getElementById('periodoDashboard1');
-            if (periodoSelect1) {
-                periodoSelect1.value = currentPeriodoDashboard1;
-                toggleMesVisibility();
-            }
-            
-            // Dashboard 2 - Ano
-            const anoSelect2 = document.getElementById('anoDashboard2');
-            if (anoSelect2) {
-                anoSelect2.innerHTML = '';
-                const anos = Object.keys(allData).sort((a, b) => b - a);
-                if (anos.length === 0) {
-                    anoSelect2.innerHTML = '<option value="">Nenhum dado disponível</option>';
-                } else {
-                    anos.forEach(ano => {
-                        const option = document.createElement('option');
-                        option.value = ano;
-                        option.textContent = ano;
-                        if (ano === currentAnoDashboard2) option.selected = true;
-                        anoSelect2.appendChild(option);
-                    });
-                }
-            }
-            
-            // Dashboard 3 - Período LRF
-            const periodoLRFSelect = document.getElementById('periodoLRF');
-            if (periodoLRFSelect) {
-                periodoLRFSelect.innerHTML = '';
-                
-                const periodos = Object.keys(limitesData).sort();
-                if (periodos.length === 0) {
-                    periodoLRFSelect.innerHTML = '<option value="">Nenhum dado disponível</option>';
-                } else {
-                    periodos.forEach(periodo => {
-                        const option = document.createElement('option');
-                        option.value = periodo;
-                        option.textContent = periodo;
-                        if (periodo === currentPeriodoLRF) option.selected = true;
-                        periodoLRFSelect.appendChild(option);
-                    });
-                }
-            }
-            
-            // Dashboard 4 - Ano para download
-            const anoDownloadSelect = document.getElementById('anoDownload');
-            if (anoDownloadSelect) {
-                anoDownloadSelect.innerHTML = '';
-                const anos = Object.keys(allData).sort((a, b) => b - a);
-                if (anos.length === 0) {
-                    anoDownloadSelect.innerHTML = '<option value="">Nenhum dado disponível</option>';
-                } else {
-                    anos.forEach(ano => {
-                        const option = document.createElement('option');
-                        option.value = ano;
-                        option.textContent = ano;
-                        if (ano === currentAnoDashboard1) option.selected = true;
-                        anoDownloadSelect.appendChild(option);
-                    });
-                }
-            }
-        }
-
-        function updateMesOptions() {
-            const mesSelect = document.getElementById('mesDashboard1');
-            if (mesSelect && currentAnoDashboard1 && allData[currentAnoDashboard1]) {
-                mesSelect.innerHTML = '';
-                
-                const mesesAno = allData[currentAnoDashboard1];
-                if (mesesAno.length === 0) {
-                    mesSelect.innerHTML = '<option value="">Nenhum mês disponível</option>';
-                } else {
-                    mesesAno.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.mes_ano;
-                        option.textContent = item.mes_ano;
-                        if (item.mes_ano === currentMesDashboard1) option.selected = true;
-                        mesSelect.appendChild(option);
-                    });
-                }
-            }
-        }
-
-        function toggleMesVisibility() {
-            const mesContainer = document.getElementById('mesDashboard1Container');
-            if (mesContainer) {
-                if (currentPeriodoDashboard1 === 'mensal') {
-                    mesContainer.style.display = 'block';
-                } else {
-                    mesContainer.style.display = 'none';
-                }
-            }
-        }
-
-        // ==================== CONFIGURAR EVENT LISTENERS ====================
-        function setupEventListeners() {
             // Dashboard 1
-            const aplicarFiltrosBtn = document.getElementById('aplicarFiltros');
-            const limparFiltrosBtn = document.getElementById('limparFiltros');
-            const exportCSV1Btn = document.getElementById('exportCSVDashboard1');
-            const print1Btn = document.getElementById('printDashboard1');
+            const anoSelect1 = document.getElementById('anoDashboard1');
+            const mesSelect1 = document.getElementById('mesDashboard1');
             
-            if (aplicarFiltrosBtn) aplicarFiltrosBtn.addEventListener('click', updateDashboard1);
-            if (limparFiltrosBtn) limparFiltrosBtn.addEventListener('click', resetFiltersDashboard1);
-            if (exportCSV1Btn) exportCSV1Btn.addEventListener('click', exportDashboard1CSV);
-            if (print1Btn) print1Btn.addEventListener('click', printDashboard1);
+            anoSelect1.innerHTML = '<option value="">Todos os anos</option>';
+            mesSelect1.innerHTML = '<option value="">Todos os meses</option>';
             
-            // Mudanças nos filtros Dashboard 1
-            const anoDashboard1 = document.getElementById('anoDashboard1');
-            const periodoDashboard1 = document.getElementById('periodoDashboard1');
-            const mesDashboard1 = document.getElementById('mesDashboard1');
+            dashboardData.anos.forEach(ano => {
+                const option = document.createElement('option');
+                option.value = ano;
+                option.textContent = ano;
+                anoSelect1.appendChild(option);
+            });
             
-            if (anoDashboard1) {
-                anoDashboard1.addEventListener('change', function() {
-                    currentAnoDashboard1 = this.value;
-                    updateMesOptions();
-                    updateDashboard1();
-                });
-            }
+            const meses = [
+                {num: 1, nome: 'Janeiro'}, {num: 2, nome: 'Fevereiro'},
+                {num: 3, nome: 'Março'}, {num: 4, nome: 'Abril'},
+                {num: 5, nome: 'Maio'}, {num: 6, nome: 'Junho'},
+                {num: 7, nome: 'Julho'}, {num: 8, nome: 'Agosto'},
+                {num: 9, nome: 'Setembro'}, {num: 10, nome: 'Outubro'},
+                {num: 11, nome: 'Novembro'}, {num: 12, nome: 'Dezembro'}
+            ];
             
-            if (periodoDashboard1) {
-                periodoDashboard1.addEventListener('change', function() {
-                    currentPeriodoDashboard1 = this.value;
-                    toggleMesVisibility();
-                    updateDashboard1();
-                });
-            }
-            
-            if (mesDashboard1) {
-                mesDashboard1.addEventListener('change', function() {
-                    currentMesDashboard1 = this.value;
-                    updateDashboard1();
-                });
-            }
+            meses.forEach(mes => {
+                const option = document.createElement('option');
+                option.value = mes.num;
+                option.textContent = mes.nome;
+                mesSelect1.appendChild(option);
+            });
             
             // Dashboard 2
-            const aplicarFiltros2Btn = document.getElementById('aplicarFiltrosDashboard2');
-            const exportCSV2Btn = document.getElementById('exportCSVDashboard2');
-            const print2Btn = document.getElementById('printDashboard2');
-            const toggleAccumulated = document.getElementById('toggleAccumulated');
-            
-            if (aplicarFiltros2Btn) aplicarFiltros2Btn.addEventListener('click', updateDashboard2);
-            if (exportCSV2Btn) exportCSV2Btn.addEventListener('click', exportDashboard2CSV);
-            if (print2Btn) print2Btn.addEventListener('click', printDashboard2);
-            if (toggleAccumulated) {
-                toggleAccumulated.addEventListener('change', function() {
-                    isAccumulated = this.checked;
-                    updateEvolucaoChart();
-                });
-            }
+            const anoSelect2 = document.getElementById('anoDashboard2');
+            anoSelect2.innerHTML = '<option value="">Todos os anos</option>';
+            dashboardData.anos.forEach(ano => {
+                const option = document.createElement('option');
+                option.value = ano;
+                option.textContent = ano;
+                anoSelect2.appendChild(option);
+            });
             
             // Dashboard 3
-            const periodoLRF = document.getElementById('periodoLRF');
-            if (periodoLRF) {
-                periodoLRF.addEventListener('change', function() {
-                    currentPeriodoLRF = this.value;
-                    updateDashboard3();
-                });
-            }
+            const periodoLRFSelect = document.getElementById('periodoLRF');
+            periodoLRFSelect.innerHTML = '<option value="">Selecione um período</option>';
+            limitesLRFData.forEach(limite => {
+                const option = document.createElement('option');
+                option.value = limite.PERIODO;
+                option.textContent = limite.FORMATADO;
+                periodoLRFSelect.appendChild(option);
+            });
             
             // Dashboard 4
-            const downloadQuadrimestreBtn = document.getElementById('downloadQuadrimestreCSV');
-            const atualizarDadosBtn = document.getElementById('atualizarDadosGitHub');
+            const anoDownloadSelect = document.getElementById('anoDownload');
+            anoDownloadSelect.innerHTML = '<option value="">Selecione um ano</option>';
+            dashboardData.anos.forEach(ano => {
+                const option = document.createElement('option');
+                option.value = ano;
+                option.textContent = ano;
+                anoDownloadSelect.appendChild(option);
+            });
             
-            if (downloadQuadrimestreBtn) downloadQuadrimestreBtn.addEventListener('click', downloadQuadrimestreCSV);
-            if (atualizarDadosBtn) {
-                atualizarDadosBtn.addEventListener('click', async function() {
-                    await forceUpdateFromGitHub();
-                });
+            // Atualizar informações do header
+            if (despesaMensalData.length > 0) {
+                const ultimoRegistro = despesaMensalData[despesaMensalData.length - 1];
+                document.getElementById('data-atualizacao-header').textContent = ultimoRegistro.MES_FORMATADO;
+                
+                const dataAtual = new Date();
+                document.getElementById('data-ultima-atualizacao').textContent = 
+                    dataAtual.toLocaleDateString('pt-BR');
             }
         }
-
-        // ==================== FUNÇÕES UTILITÁRIAS ====================
-        function showLoading(show) {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-                overlay.style.display = show ? 'flex' : 'none';
-            }
-        }
-
-        function showError(message) {
-            const container = document.querySelector('.container');
-            if (!container) return;
-            
-            // Remover alertas antigos
-            const oldAlerts = container.querySelectorAll('.alert');
-            oldAlerts.forEach(alert => alert.remove());
-            
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'alert alert-danger alert-dismissible fade show';
-            errorDiv.innerHTML = `
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            container.prepend(errorDiv);
-        }
-
-        function showSuccess(message) {
-            const container = document.querySelector('.container');
-            if (!container) return;
-            
-            // Remover alertas antigos
-            const oldAlerts = container.querySelectorAll('.alert');
-            oldAlerts.forEach(alert => alert.remove());
-            
-            const successDiv = document.createElement('div');
-            successDiv.className = 'alert alert-success alert-dismissible fade show';
-            successDiv.innerHTML = `
-                <i class="fas fa-check-circle me-2"></i>
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            container.prepend(successDiv);
-        }
-
-        function formatCurrency(value, compact = false) {
-            if (value === null || value === undefined || isNaN(value)) return 'R$ 0,00';
-            
-            if (compact && value >= 1000000000) {
-                return `R$ ${(value / 1000000000).toFixed(2).replace('.', ',')} bi`;
-            } else if (compact && value >= 1000000) {
-                return `R$ ${(value / 1000000).toFixed(2).replace('.', ',')} mi`;
-            } else {
-                return new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                }).format(value);
-            }
-        }
-
-        function formatPercent(value) {
-            if (value === null || value === undefined || isNaN(value)) return '0,00%';
-            return `${value.toFixed(2).replace('.', ',')}%`;
-        }
-
+        
         // ==================== DASHBOARD 1: VISÃO GERAL ====================
-        function resetFiltersDashboard1() {
-            // Resetar para valores padrão
-            const anos = Object.keys(allData).sort((a, b) => b - a);
-            currentAnoDashboard1 = anos[0] || '';
-            currentPeriodoDashboard1 = 'mensal';
-            
-            if (currentAnoDashboard1 && allData[currentAnoDashboard1]) {
-                const mesesAno = allData[currentAnoDashboard1];
-                if (mesesAno.length > 0) {
-                    currentMesDashboard1 = mesesAno[mesesAno.length - 1].mes_ano || '';
-                }
-            }
-            
-            updateFilterOptions();
-            updateDashboard1();
-        }
-
+        
         function updateDashboard1() {
-            showLoading(true);
+            const anoSelecionado = document.getElementById('anoDashboard1').value;
+            const mesSelecionado = document.getElementById('mesDashboard1').value;
+            const categoriaSelecionada = document.getElementById('categoriaDashboard1').value;
             
-            // Atualizar valores dos filtros
-            const categoriaSelect = document.getElementById('categoriaDashboard1');
-            if (categoriaSelect) {
-                currentCategoriaDashboard1 = categoriaSelect.value;
+            let dadosFiltrados = [];
+            
+            if (anoSelecionado) {
+                dadosFiltrados = dashboardData.porAno[anoSelecionado]?.dados || [];
+            } else {
+                dadosFiltrados = [...dashboardData.todosDados];
             }
             
-            updateSummaryCards();
-            updateResumoTable();
-            updateChartsDashboard1();
+            if (mesSelecionado) {
+                const mesNum = parseInt(mesSelecionado);
+                dadosFiltrados = dadosFiltrados.filter(item => item.MES_NUM === mesNum);
+            }
             
-            setTimeout(() => {
-                showLoading(false);
-            }, 300);
+            updateSummaryCards(dadosFiltrados);
+            updateChartDistribuicao(dadosFiltrados, categoriaSelecionada);
+            updateChartAtivoDetalhado(dadosFiltrados);
+            updateResumoTable(dadosFiltrados);
         }
-
-        function updateSummaryCards() {
-            const container = document.getElementById('summaryCards');
-            if (!container) return;
+        
+        function updateSummaryCards(dados) {
+            const summaryCards = document.getElementById('summaryCards');
+            summaryCards.innerHTML = '';
             
-            if (Object.keys(allData).length === 0) {
-                container.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Nenhum dado encontrado. Verifique a conexão com o GitHub.</p></div>';
+            if (dados.length === 0) {
+                summaryCards.innerHTML = `
+                    <div class="col-12 text-center">
+                        <p class="text-muted">Nenhum dado disponível para os filtros selecionados</p>
+                    </div>
+                `;
                 return;
             }
             
-            let cardsHTML = '';
+            const ultimoMes = dados[dados.length - 1];
+            const totalAno = dados.reduce((sum, item) => sum + item.DESPESA_BRUTA, 0);
+            const mediaMensal = totalAno / dados.length;
             
-            if (currentPeriodoDashboard1 === 'anual') {
-                // Dados anuais
-                const anoData = allData[currentAnoDashboard1] || [];
-                if (anoData.length === 0) {
-                    container.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Nenhum dado encontrado para o ano selecionado.</p></div>';
-                    return;
+            // Calcular variação mensal
+            let variacaoMensal = 0;
+            if (dados.length >= 2) {
+                const mesAnterior = dados[dados.length - 2];
+                if (mesAnterior && mesAnterior.DESPESA_BRUTA > 0) {
+                    variacaoMensal = ((ultimoMes.DESPESA_BRUTA - mesAnterior.DESPESA_BRUTA) / mesAnterior.DESPESA_BRUTA * 100);
                 }
-                
-                // Calcular totais anuais
-                const totalBruta = anoData.reduce((sum, item) => sum + item.despesa_bruta, 0);
-                const totalAtivo = anoData.reduce((sum, item) => sum + item.pessoal_ativo, 0);
-                const totalInativo = anoData.reduce((sum, item) => sum + item.inativos_pensionistas, 0);
-                const totalLiquida = anoData.reduce((sum, item) => sum + item.despesa_liquida, 0);
-                const mediaMensal = totalBruta / anoData.length;
-                
-                cardsHTML = `
-                    <div class="col-md-3 col-6">
-                        <div class="metric-card primary">
-                            <div class="metric-label">Despesa Bruta Anual</div>
-                            <div class="metric-value">${formatCurrency(totalBruta, true)}</div>
-                            <div class="update-info">
-                                <i class="fas fa-calendar-alt"></i> ${currentAnoDashboard1}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="metric-card success">
-                            <div class="metric-label">Pessoal Ativo (Anual)</div>
-                            <div class="metric-value">${formatCurrency(totalAtivo, true)}</div>
-                            <div class="metric-change positive">
-                                ${formatPercent((totalAtivo/totalBruta)*100)} do total
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="metric-card purple">
-                            <div class="metric-label">Inativos/Pensionistas</div>
-                            <div class="metric-value">${formatCurrency(totalInativo, true)}</div>
-                            <div class="metric-change warning">
-                                ${formatPercent((totalInativo/totalBruta)*100)} do total
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="metric-card info">
-                            <div class="metric-label">Média Mensal</div>
-                            <div class="metric-value">${formatCurrency(mediaMensal, true)}</div>
-                            <div class="metric-change positive">
-                                ${anoData.length} meses considerados
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                // Dados mensais
-                const anoData = allData[currentAnoDashboard1] || [];
-                const mesData = anoData.find(item => item.mes_ano === currentMesDashboard1);
-                
-                if (!mesData) {
-                    container.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Nenhum dado encontrado para o mês selecionado.</p></div>';
-                    return;
-                }
-                
-                const bruta = mesData.despesa_bruta;
-                const ativo = mesData.pessoal_ativo;
-                const inativo = mesData.inativos_pensionistas;
-                const liquida = mesData.despesa_liquida;
-                
-                cardsHTML = `
-                    <div class="col-md-3 col-6">
-                        <div class="metric-card primary">
-                            <div class="metric-label">Despesa Bruta</div>
-                            <div class="metric-value">${formatCurrency(bruta, true)}</div>
-                            <div class="update-info">
-                                <i class="fas fa-calendar-alt"></i> ${currentMesDashboard1}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="metric-card success">
-                            <div class="metric-label">Pessoal Ativo</div>
-                            <div class="metric-value">${formatCurrency(ativo, true)}</div>
-                            <div class="metric-change positive">
-                                ${formatPercent((ativo/bruta)*100)} do total
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="metric-card purple">
-                            <div class="metric-label">Inativos/Pensionistas</div>
-                            <div class="metric-value">${formatCurrency(inativo, true)}</div>
-                            <div class="metric-change warning">
-                                ${formatPercent((inativo/bruta)*100)} do total
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="metric-card info">
-                            <div class="metric-label">Despesa Líquida</div>
-                            <div class="metric-value">${formatCurrency(liquida, true)}</div>
-                            <div class="metric-change positive">
-                                ${formatPercent((liquida/bruta)*100)} da bruta
-                            </div>
-                        </div>
-                    </div>
-                `;
             }
             
-            container.innerHTML = cardsHTML;
-        }
-
-        function updateResumoTable() {
-            const tbody = document.getElementById('resumoTableBody');
-            const tfoot = document.getElementById('resumoTableFooter');
-            const countElement = document.getElementById('resumoCountDashboard1');
+            // Calcular variação anual
+            let variacaoAnual = 0;
+            const anoAtual = ultimoMes.ANO;
+            const anoAnterior = (parseInt(anoAtual) - 1).toString();
             
-            if (!tbody) return;
-            
-            if (Object.keys(allData).length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Nenhum dado encontrado. Verifique a conexão com o GitHub.</td></tr>';
-                return;
+            if (dashboardData.porAno[anoAnterior]) {
+                const dadosAnoAnterior = dashboardData.porAno[anoAnterior].dados;
+                const totalAnoAnterior = dashboardData.porAno[anoAnterior].total;
+                const mediaAnoAnterior = totalAnoAnterior / dadosAnoAnterior.length;
+                
+                if (mediaAnoAnterior > 0) {
+                    variacaoAnual = ((mediaMensal - mediaAnoAnterior) / mediaAnoAnterior * 100);
+                }
             }
             
-            let rowsHTML = '';
-            let footerHTML = '';
+            const cards = [
+                {
+                    title: 'Despesa Bruta Atual',
+                    value: formatarMoeda(ultimoMes.DESPESA_BRUTA),
+                    change: variacaoMensal,
+                    changeLabel: 'vs mês anterior',
+                    colorClass: 'primary',
+                    icon: 'fas fa-money-bill-wave'
+                },
+                {
+                    title: 'Média Mensal',
+                    value: formatarMoeda(mediaMensal),
+                    change: variacaoAnual,
+                    changeLabel: 'vs ano anterior',
+                    colorClass: 'info',
+                    icon: 'fas fa-chart-line'
+                },
+                {
+                    title: 'Pessoal Ativo',
+                    value: formatarMoeda(ultimoMes.PESSOAL_ATIVO),
+                    percentage: (ultimoMes.PESSOAL_ATIVO / ultimoMes.DESPESA_BRUTA * 100).toFixed(1) + '%',
+                    colorClass: 'success',
+                    icon: 'fas fa-user-tie'
+                },
+                {
+                    title: 'Inativos/Pensionistas',
+                    value: formatarMoeda(ultimoMes.PESSOAL_INATIVO),
+                    percentage: (ultimoMes.PESSOAL_INATIVO / ultimoMes.DESPESA_BRUTA * 100).toFixed(1) + '%',
+                    colorClass: 'warning',
+                    icon: 'fas fa-users'
+                }
+            ];
             
-            if (currentPeriodoDashboard1 === 'anual') {
-                // Tabela anual
-                if (countElement) countElement.textContent = `Ano: ${currentAnoDashboard1}`;
+            cards.forEach(card => {
+                const changeClass = card.change > 0 ? 'danger' : (card.change < 0 ? 'positive' : 'warning');
+                const changeSign = card.change > 0 ? '+' : '';
                 
-                const anoData = allData[currentAnoDashboard1] || [];
-                if (anoData.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Nenhum dado encontrado para o ano selecionado.</td></tr>';
-                    return;
-                }
-                
-                // Calcular totais anuais
-                const totalBruta = anoData.reduce((sum, item) => sum + item.despesa_bruta, 0);
-                const totalAtivo = anoData.reduce((sum, item) => sum + item.pessoal_ativo, 0);
-                const totalVencimentos = anoData.reduce((sum, item) => sum + item.vencimentos_vantagens, 0);
-                const totalObrigacoes = anoData.reduce((sum, item) => sum + item.obrigacoes_patronais, 0);
-                const totalInativo = anoData.reduce((sum, item) => sum + item.inativos_pensionistas, 0);
-                const totalAposentadorias = anoData.reduce((sum, item) => sum + item.aposentadorias, 0);
-                const totalPensoes = anoData.reduce((sum, item) => sum + item.pensoes, 0);
-                const totalNaoComputadas = anoData.reduce((sum, item) => sum + item.despesas_nao_computadas, 0);
-                const totalLiquida = anoData.reduce((sum, item) => sum + item.despesa_liquida, 0);
-                const meses = anoData.length;
-                
-                rowsHTML = `
-                    <tr>
-                        <td><strong>DESPESA BRUTA COM PESSOAL</strong></td>
-                        <td class="text-end valor-monetario"><strong>${formatCurrency(totalBruta)}</strong></td>
-                        <td class="text-end"><strong>100.00%</strong></td>
-                        <td class="text-end valor-monetario">${formatCurrency(totalBruta/meses)}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 20px;">Pessoal Ativo</td>
-                        <td class="text-end valor-monetario">${formatCurrency(totalAtivo)}</td>
-                        <td class="text-end">${formatPercent((totalAtivo/totalBruta)*100)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(totalAtivo/meses)}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 40px;">Vencimentos, Vantagens e Outras Despesas Variáveis</td>
-                        <td class="text-end valor-monetario">${formatCurrency(totalVencimentos)}</td>
-                        <td class="text-end">${formatPercent((totalVencimentos/totalBruta)*100)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(totalVencimentos/meses)}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 40px;">Obrigações Patronais</td>
-                        <td class="text-end valor-monetario">${formatCurrency(totalObrigacoes)}</td>
-                        <td class="text-end">${formatPercent((totalObrigacoes/totalBruta)*100)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(totalObrigacoes/meses)}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 20px;">Pessoal Inativo e Pensionistas</td>
-                        <td class="text-end valor-monetario">${formatCurrency(totalInativo)}</td>
-                        <td class="text-end">${formatPercent((totalInativo/totalBruta)*100)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(totalInativo/meses)}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 40px;">Aposentadorias, Reserva e Reformas</td>
-                        <td class="text-end valor-monetario">${formatCurrency(totalAposentadorias)}</td>
-                        <td class="text-end">${formatPercent((totalAposentadorias/totalBruta)*100)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(totalAposentadorias/meses)}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 40px;">Pensões</td>
-                        <td class="text-end valor-monetario">${formatCurrency(totalPensoes)}</td>
-                        <td class="text-end">${formatPercent((totalPensoes/totalBruta)*100)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(totalPensoes/meses)}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>DESPESAS NÃO COMPUTADAS</strong></td>
-                        <td class="text-end valor-monetario valor-negativo"><strong>${formatCurrency(totalNaoComputadas)}</strong></td>
-                        <td class="text-end valor-negativo"><strong>${formatPercent((totalNaoComputadas/totalBruta)*100)}</strong></td>
-                        <td class="text-end valor-monetario valor-negativo">${formatCurrency(totalNaoComputadas/meses)}</td>
-                    </tr>
+                const cardHTML = `
+                    <div class="col-md-3 col-6">
+                        <div class="metric-card ${card.colorClass}">
+                            <div class="metric-label">${card.title}</div>
+                            <div class="metric-value">${card.value}</div>
+                            ${card.percentage ? `
+                                <div class="metric-change ${parseFloat(card.percentage) > 50 ? 'warning' : 'positive'}">
+                                    ${card.percentage} do total
+                                </div>
+                            ` : `
+                                <div class="metric-change ${changeClass}">
+                                    ${changeSign}${card.change ? card.change.toFixed(1) + '%' : '0%'} ${card.changeLabel || ''}
+                                </div>
+                            `}
+                            <div class="mt-2">
+                                <i class="${card.icon}" style="color: var(--${card.colorClass === 'primary' ? 'primary-dark' : card.colorClass}); opacity: 0.5;"></i>
+                            </div>
+                        </div>
+                    </div>
                 `;
                 
-                footerHTML = `
-                    <tr class="table-total-row">
-                        <td><strong>DESPESA LÍQUIDA COM PESSOAL</strong></td>
-                        <td class="text-end valor-monetario"><strong>${formatCurrency(totalLiquida)}</strong></td>
-                        <td class="text-end"><strong>${formatPercent((totalLiquida/totalBruta)*100)}</strong></td>
-                        <td class="text-end valor-monetario"><strong>${formatCurrency(totalLiquida/meses)}</strong></td>
-                    </tr>
-                `;
-            } else {
-                // Tabela mensal
-                if (countElement) countElement.textContent = `Mês: ${currentMesDashboard1}`;
-                
-                const anoData = allData[currentAnoDashboard1] || [];
-                const mesData = anoData.find(item => item.mes_ano === currentMesDashboard1);
-                
-                if (!mesData) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Nenhum dado encontrado para o mês selecionado.</td></tr>';
-                    return;
-                }
-                
-                const bruta = mesData.despesa_bruta;
-                const ativo = mesData.pessoal_ativo;
-                const vencimentos = mesData.vencimentos_vantagens;
-                const obrigacoes = mesData.obrigacoes_patronais;
-                const inativo = mesData.inativos_pensionistas;
-                const aposentadorias = mesData.aposentadorias;
-                const pensoes = mesData.pensoes;
-                const naoComputadas = mesData.despesas_nao_computadas;
-                const liquida = mesData.despesa_liquida;
-                
-                rowsHTML = `
-                    <tr>
-                        <td><strong>DESPESA BRUTA COM PESSOAL</strong></td>
-                        <td class="text-end valor-monetario"><strong>${formatCurrency(bruta)}</strong></td>
-                        <td class="text-end"><strong>100.00%</strong></td>
-                        <td class="text-end valor-monetario">${formatCurrency(bruta)}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 20px;">Pessoal Ativo</td>
-                        <td class="text-end valor-monetario">${formatCurrency(ativo)}</td>
-                        <td class="text-end">${formatPercent((ativo/bruta)*100)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(ativo)}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 40px;">Vencimentos, Vantagens e Outras Despesas Variáveis</td>
-                        <td class="text-end valor-monetario">${formatCurrency(vencimentos)}</td>
-                        <td class="text-end">${formatPercent((vencimentos/bruta)*100)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(vencimentos)}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 40px;">Obrigações Patronais</td>
-                        <td class="text-end valor-monetario">${formatCurrency(obrigacoes)}</td>
-                        <td class="text-end">${formatPercent((obrigacoes/bruta)*100)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(obrigacoes)}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 20px;">Pessoal Inativo e Pensionistas</td>
-                        <td class="text-end valor-monetario">${formatCurrency(inativo)}</td>
-                        <td class="text-end">${formatPercent((inativo/bruta)*100)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(inativo)}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 40px;">Aposentadorias, Reserva e Reformas</td>
-                        <td class="text-end valor-monetario">${formatCurrency(aposentadorias)}</td>
-                        <td class="text-end">${formatPercent((aposentadorias/bruta)*100)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(aposentadorias)}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 40px;">Pensões</td>
-                        <td class="text-end valor-monetario">${formatCurrency(pensoes)}</td>
-                        <td class="text-end">${formatPercent((pensoes/bruta)*100)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(pensoes)}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>DESPESAS NÃO COMPUTADAS</strong></td>
-                        <td class="text-end valor-monetario valor-negativo"><strong>${formatCurrency(naoComputadas)}</strong></td>
-                        <td class="text-end valor-negativo"><strong>${formatPercent((naoComputadas/bruta)*100)}</strong></td>
-                        <td class="text-end valor-monetario valor-negativo">${formatCurrency(naoComputadas)}</td>
-                    </tr>
-                `;
-                
-                footerHTML = `
-                    <tr class="table-total-row">
-                        <td><strong>DESPESA LÍQUIDA COM PESSOAL</strong></td>
-                        <td class="text-end valor-monetario"><strong>${formatCurrency(liquida)}</strong></td>
-                        <td class="text-end"><strong>${formatPercent((liquida/bruta)*100)}</strong></td>
-                        <td class="text-end valor-monetario"><strong>${formatCurrency(liquida)}</strong></td>
-                    </tr>
-                `;
+                summaryCards.innerHTML += cardHTML;
+            });
+        }
+        
+        function updateChartDistribuicao(dados, categoria) {
+            const ctx = document.getElementById('chartDistribuicao').getContext('2d');
+            
+            if (chartDistribuicao) {
+                chartDistribuicao.destroy();
             }
             
-            tbody.innerHTML = rowsHTML;
-            if (tfoot) tfoot.innerHTML = footerHTML;
-        }
-
-        function updateChartsDashboard1() {
-            updateDistribuicaoChart();
-            updateAtivoDetalhadoChart();
-        }
-
-        function updateDistribuicaoChart() {
-            const ctx = document.getElementById('chartDistribuicao')?.getContext('2d');
-            if (!ctx) return;
+            const ultimoMes = dados[dados.length - 1];
+            if (!ultimoMes) return;
             
-            let data = [];
             let labels = [];
+            let values = [];
             let backgroundColor = [];
             
-            if (currentPeriodoDashboard1 === 'anual') {
-                const anoData = allData[currentAnoDashboard1] || [];
-                if (anoData.length === 0) return;
-                
-                const totalAtivo = anoData.reduce((sum, item) => sum + item.pessoal_ativo, 0);
-                const totalInativo = anoData.reduce((sum, item) => sum + item.inativos_pensionistas, 0);
-                const totalNaoComputadas = anoData.reduce((sum, item) => sum + item.despesas_nao_computadas, 0);
-                const totalBruta = anoData.reduce((sum, item) => sum + item.despesa_bruta, 0);
-                const outros = totalBruta - totalAtivo - totalInativo - totalNaoComputadas;
-                
-                data = [totalAtivo, totalInativo, totalNaoComputadas, outros];
-                labels = ['Pessoal Ativo', 'Inativos/Pensionistas', 'Não Computadas', 'Outras'];
-                backgroundColor = [
-                    chartColors.pessoalAtivo,
-                    chartColors.inativosPensionistas,
-                    chartColors.despesasNaoComputadas,
-                    '#95A5A6'
-                ];
-            } else {
-                const anoData = allData[currentAnoDashboard1] || [];
-                const mesData = anoData.find(item => item.mes_ano === currentMesDashboard1);
-                
-                if (!mesData) return;
-                
-                const ativo = mesData.pessoal_ativo;
-                const inativo = mesData.inativos_pensionistas;
-                const naoComputadas = mesData.despesas_nao_computadas;
-                const bruta = mesData.despesa_bruta;
-                const outros = bruta - ativo - inativo - naoComputadas;
-                
-                data = [ativo, inativo, naoComputadas, outros];
-                labels = ['Pessoal Ativo', 'Inativos/Pensionistas', 'Não Computadas', 'Outras'];
-                backgroundColor = [
-                    chartColors.pessoalAtivo,
-                    chartColors.inativosPensionistas,
-                    chartColors.despesasNaoComputadas,
-                    '#95A5A6'
-                ];
+            switch(categoria) {
+                case 'total':
+                    labels = ['Pessoal Ativo', 'Inativos/Pensionistas', 'Outras Despesas'];
+                    values = [
+                        ultimoMes.PESSOAL_ATIVO,
+                        ultimoMes.PESSOAL_INATIVO,
+                        ultimoMes.DESPESA_BRUTA - ultimoMes.PESSOAL_ATIVO - ultimoMes.PESSOAL_INATIVO
+                    ];
+                    backgroundColor = ['#3498DB', '#E74C3C', '#9B59B6'];
+                    break;
+                    
+                case 'ativo':
+                    labels = ['Vencimentos', 'Obrigações Patronais', 'Outras Despesas'];
+                    values = [
+                        ultimoMes.VENCIMENTOS,
+                        ultimoMes.OBRIGACOES_PATRONAIS,
+                        ultimoMes.PESSOAL_ATIVO - ultimoMes.VENCIMENTOS - ultimoMes.OBRIGACOES_PATRONAIS
+                    ];
+                    backgroundColor = ['#2ECC71', '#F39C12', '#3498DB'];
+                    break;
+                    
+                case 'inativo':
+                    labels = ['Aposentadorias', 'Pensões', 'Outras Despesas'];
+                    values = [
+                        ultimoMes.APOSENTADORIAS,
+                        ultimoMes.PENSÕES,
+                        ultimoMes.PESSOAL_INATIVO - ultimoMes.APOSENTADORIAS - ultimoMes.PENSÕES
+                    ];
+                    backgroundColor = ['#E74C3C', '#9B59B6', '#F39C12'];
+                    break;
+                    
+                case 'liquidada':
+                    labels = ['Despesa Bruta', 'Deduções', 'Despesa Líquida'];
+                    values = [
+                        ultimoMes.DESPESA_BRUTA,
+                        ultimoMes.DESPESA_BRUTA - ultimoMes.DESPESA_LIQUIDA,
+                        ultimoMes.DESPESA_LIQUIDA
+                    ];
+                    backgroundColor = ['#3498DB', '#F39C12', '#2ECC71'];
+                    break;
             }
             
-            if (charts.distribuicao) {
-                charts.distribuicao.destroy();
-            }
-            
-            charts.distribuicao = new Chart(ctx, {
+            chartDistribuicao = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: labels,
                     datasets: [{
-                        data: data,
+                        data: values,
                         backgroundColor: backgroundColor,
-                        borderWidth: 2,
+                        borderWidth: 1,
                         borderColor: '#fff'
                     }]
                 },
@@ -2523,18 +1856,17 @@
                                 padding: 15,
                                 usePointStyle: true,
                                 font: {
-                                    size: 10
+                                    size: 11
                                 }
                             }
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.raw || 0;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = Math.round((value / total) * 100);
-                                    return `${label}: ${formatCurrency(value, true)} (${percentage}%)`;
+                                    const value = context.raw;
+                                    const total = values.reduce((a, b) => a + b, 0);
+                                    const percentage = total > 0 ? (value / total * 100).toFixed(1) : 0;
+                                    return `${context.label}: ${formatarMoeda(value)} (${percentage}%)`;
                                 }
                             }
                         }
@@ -2542,57 +1874,52 @@
                 }
             });
         }
-
-        function updateAtivoDetalhadoChart() {
-            const ctx = document.getElementById('chartAtivoDetalhado')?.getContext('2d');
-            if (!ctx) return;
+        
+        function updateChartAtivoDetalhado(dados) {
+            const ctx = document.getElementById('chartAtivoDetalhado').getContext('2d');
             
-            let vencimentosData = [];
-            let obrigacoesData = [];
-            let label = '';
-            
-            if (currentPeriodoDashboard1 === 'anual') {
-                const anoData = allData[currentAnoDashboard1] || [];
-                if (anoData.length === 0) return;
-                
-                const totalVencimentos = anoData.reduce((sum, item) => sum + item.vencimentos_vantagens, 0);
-                const totalObrigacoes = anoData.reduce((sum, item) => sum + item.obrigacoes_patronais, 0);
-                
-                vencimentosData = [totalVencimentos];
-                obrigacoesData = [totalObrigacoes];
-                label = `Ano ${currentAnoDashboard1}`;
-            } else {
-                const anoData = allData[currentAnoDashboard1] || [];
-                const mesData = anoData.find(item => item.mes_ano === currentMesDashboard1);
-                
-                if (!mesData) return;
-                
-                vencimentosData = [mesData.vencimentos_vantagens];
-                obrigacoesData = [mesData.obrigacoes_patronais];
-                label = currentMesDashboard1;
+            if (chartAtivoDetalhado) {
+                chartAtivoDetalhado.destroy();
             }
             
-            if (charts.ativoDetalhado) {
-                charts.ativoDetalhado.destroy();
-            }
+            // Agrupar por ano
+            const dadosPorAno = {};
+            dados.forEach(item => {
+                if (!dadosPorAno[item.ANO]) {
+                    dadosPorAno[item.ANO] = [];
+                }
+                dadosPorAno[item.ANO].push(item);
+            });
             
-            charts.ativoDetalhado = new Chart(ctx, {
+            const anos = Object.keys(dadosPorAno).sort();
+            const labels = anos;
+            const ativoData = anos.map(ano => {
+                const dadosAno = dadosPorAno[ano];
+                return dadosAno.reduce((sum, item) => sum + item.PESSOAL_ATIVO, 0) / dadosAno.length;
+            });
+            
+            const inativoData = anos.map(ano => {
+                const dadosAno = dadosPorAno[ano];
+                return dadosAno.reduce((sum, item) => sum + item.PESSOAL_INATIVO, 0) / dadosAno.length;
+            });
+            
+            chartAtivoDetalhado = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: [label],
+                    labels: labels,
                     datasets: [
                         {
-                            label: 'Vencimentos e Vantagens',
-                            data: vencimentosData,
-                            backgroundColor: chartColors.vencimentos,
-                            borderColor: chartColors.vencimentos,
+                            label: 'Pessoal Ativo (Média)',
+                            data: ativoData,
+                            backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                            borderColor: '#3498DB',
                             borderWidth: 1
                         },
                         {
-                            label: 'Obrigações Patronais',
-                            data: obrigacoesData,
-                            backgroundColor: chartColors.obrigacoesPatronais,
-                            borderColor: chartColors.obrigacoesPatronais,
+                            label: 'Inativos/Pensionistas (Média)',
+                            data: inativoData,
+                            backgroundColor: 'rgba(231, 76, 60, 0.7)',
+                            borderColor: '#E74C3C',
                             borderWidth: 1
                         }
                     ]
@@ -2605,158 +1932,7 @@
                             beginAtZero: true,
                             ticks: {
                                 callback: function(value) {
-                                    return formatCurrency(value, true);
-                                },
-                                font: {
-                                    size: 10
-                                }
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                font: {
-                                    size: 10
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 15,
-                                usePointStyle: true,
-                                font: {
-                                    size: 10
-                                }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.dataset.label}: ${formatCurrency(context.raw)}`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // ==================== DASHBOARD 2: EVOLUÇÃO MENSAL ====================
-        function updateDashboard2() {
-            showLoading(true);
-            
-            const anoSelect = document.getElementById('anoDashboard2');
-            const categoriaSelect = document.getElementById('categoriaDashboard2');
-            
-            if (anoSelect) currentAnoDashboard2 = anoSelect.value;
-            if (categoriaSelect) currentChartCategory = categoriaSelect.value;
-            
-            updateEvolucaoChart();
-            updateEvolucaoTable();
-            
-            setTimeout(() => {
-                showLoading(false);
-            }, 300);
-        }
-
-        function initializeDashboard2() {
-            updateDashboard2();
-        }
-
-        function updateEvolucaoChart() {
-            const ctx = document.getElementById('chartEvolucao')?.getContext('2d');
-            if (!ctx) return;
-            
-            const anoData = allData[currentAnoDashboard2] || [];
-            if (anoData.length === 0) return;
-            
-            // Preparar dados baseado na categoria selecionada
-            let datasetData = [];
-            let datasetLabel = '';
-            let datasetColor = '';
-            let labels = [];
-            
-            switch(currentChartCategory) {
-                case 'total':
-                    datasetData = anoData.map(item => item.despesa_bruta);
-                    datasetLabel = 'Despesa Bruta Total';
-                    datasetColor = chartColors.despesaBruta;
-                    break;
-                case 'bruta':
-                    datasetData = anoData.map(item => item.despesa_bruta);
-                    datasetLabel = 'Despesa Bruta';
-                    datasetColor = chartColors.despesaBruta;
-                    break;
-                case 'liquida':
-                    datasetData = anoData.map(item => item.despesa_liquida);
-                    datasetLabel = 'Despesa Líquida';
-                    datasetColor = chartColors.despesaLiquida;
-                    break;
-                case 'ativo':
-                    datasetData = anoData.map(item => item.pessoal_ativo);
-                    datasetLabel = 'Pessoal Ativo';
-                    datasetColor = chartColors.pessoalAtivo;
-                    break;
-                case 'inativo':
-                    datasetData = anoData.map(item => item.inativos_pensionistas);
-                    datasetLabel = 'Inativos/Pensionistas';
-                    datasetColor = chartColors.inativosPensionistas;
-                    break;
-            }
-            
-            labels = anoData.map(item => item.mes_ano);
-            
-            // Se acumulado, calcular acumulado
-            if (isAccumulated) {
-                const accumulatedData = [];
-                let acumulado = 0;
-                for (let i = 0; i < datasetData.length; i++) {
-                    acumulado += datasetData[i];
-                    accumulatedData.push(acumulado);
-                }
-                datasetData = accumulatedData;
-                datasetLabel += ' (Acumulado)';
-            }
-            
-            if (charts.evolucao) {
-                charts.evolucao.destroy();
-            }
-            
-            charts.evolucao = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: datasetLabel,
-                        data: datasetData,
-                        backgroundColor: datasetColor + '20',
-                        borderColor: datasetColor,
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: !isAccumulated,
-                            ticks: {
-                                callback: function(value) {
-                                    return formatCurrency(value, true);
-                                },
-                                font: {
-                                    size: 10
-                                }
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                font: {
-                                    size: 10
+                                    return formatarMoeda(value);
                                 }
                             }
                         }
@@ -2773,7 +1949,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `${context.dataset.label}: ${formatCurrency(context.raw)}`;
+                                    return `${context.dataset.label}: ${formatarMoeda(context.raw)}`;
                                 }
                             }
                         }
@@ -2781,501 +1957,502 @@
                 }
             });
         }
-
-        function updateEvolucaoTable() {
-            const tbody = document.getElementById('evolucaoTableBody');
-            const countElement = document.getElementById('resumoCountDashboard2');
+        
+        function updateResumoTable(dados) {
+            const tableBody = document.getElementById('resumoTableBody');
+            const resumoCount = document.getElementById('resumoCountDashboard1');
             
-            if (countElement) {
-                countElement.textContent = `Ano: ${currentAnoDashboard2}`;
-            }
+            tableBody.innerHTML = '';
             
-            const anoData = allData[currentAnoDashboard2] || [];
-            if (anoData.length === 0) {
-                if (tbody) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Nenhum dado encontrado para o ano selecionado.</td></tr>';
-                }
+            if (dados.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">Nenhum dado disponível</td>
+                    </tr>
+                `;
+                resumoCount.textContent = '0 registros';
                 return;
             }
             
-            let rowsHTML = '';
+            const ultimoMes = dados[dados.length - 1];
+            const totalBruto = ultimoMes.DESPESA_BRUTA;
             
-            for (let i = 0; i < anoData.length; i++) {
-                const item = anoData[i];
-                const bruta = item.despesa_bruta;
-                const liquida = item.despesa_liquida;
-                const ativo = item.pessoal_ativo;
-                const inativo = item.inativos_pensionistas;
+            const categorias = [
+                { nome: 'Despesa Bruta com Pessoal', valor: ultimoMes.DESPESA_BRUTA },
+                { nome: 'Pessoal Ativo', valor: ultimoMes.PESSOAL_ATIVO },
+                { nome: 'Vencimentos e Vantagens', valor: ultimoMes.VENCIMENTOS },
+                { nome: 'Obrigações Patronais', valor: ultimoMes.OBRIGACOES_PATRONAIS },
+                { nome: 'Inativos e Pensionistas', valor: ultimoMes.PESSOAL_INATIVO },
+                { nome: 'Aposentadorias', valor: ultimoMes.APOSENTADORIAS },
+                { nome: 'Pensões', valor: ultimoMes.PENSÕES },
+                { nome: 'Despesa Líquida com Pessoal', valor: ultimoMes.DESPESA_LIQUIDA }
+            ];
+            
+            categorias.forEach(categoria => {
+                const porcentagem = totalBruto > 0 ? (categoria.valor / totalBruto * 100) : 0;
                 
-                // Calcular variação em relação ao mês anterior
-                let variacao = '-';
-                if (i > 0) {
-                    const brutaAnterior = anoData[i-1].despesa_bruta;
-                    if (brutaAnterior > 0) {
-                        const variacaoPercentual = ((bruta - brutaAnterior) / brutaAnterior) * 100;
-                        variacao = `${variacaoPercentual.toFixed(2).replace('.', ',')}%`;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${categoria.nome}</td>
+                    <td class="text-end valor-monetario">${formatarMoeda(categoria.valor)}</td>
+                    <td class="text-end">${porcentagem.toFixed(1)}%</td>
+                    <td class="text-end">${formatarMoeda(categoria.valor / 12)}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            resumoCount.textContent = `${dados.length} registros`;
+        }
+        
+        // ==================== DASHBOARD 2: EVOLUÇÃO MENSAL ====================
+        
+        function updateDashboard2() {
+            const anoSelecionado = document.getElementById('anoDashboard2').value;
+            const categoriaSelecionada = document.getElementById('categoriaDashboard2').value;
+            
+            let dadosFiltrados = [];
+            
+            if (anoSelecionado) {
+                dadosFiltrados = dashboardData.porAno[anoSelecionado]?.dados || [];
+            } else {
+                dadosFiltrados = [...dashboardData.todosDados];
+            }
+            
+            updateChartEvolucao(dadosFiltrados, categoriaSelecionada);
+            updateEvolucaoTable(dadosFiltrados);
+        }
+        
+        function updateChartEvolucao(dados, categoria) {
+            const ctx = document.getElementById('chartEvolucao').getContext('2d');
+            
+            if (chartEvolucao) {
+                chartEvolucao.destroy();
+            }
+            
+            const labels = dados.map(item => item.MES_FORMATADO);
+            let data = [];
+            
+            switch(categoria) {
+                case 'total':
+                    data = dados.map(item => item.DESPESA_BRUTA);
+                    break;
+                case 'bruta':
+                    data = dados.map(item => item.DESPESA_BRUTA);
+                    break;
+                case 'liquida':
+                    data = dados.map(item => item.DESPESA_LIQUIDA);
+                    break;
+                case 'ativo':
+                    data = dados.map(item => item.PESSOAL_ATIVO);
+                    break;
+                case 'inativo':
+                    data = dados.map(item => item.PESSOAL_INATIVO);
+                    break;
+            }
+            
+            const toggleAccumulated = document.getElementById('toggleAccumulated').checked;
+            let finalData = data;
+            let datasetLabel = '';
+            
+            switch(categoria) {
+                case 'total':
+                    datasetLabel = toggleAccumulated ? 'Despesa Total Acumulada' : 'Despesa Total';
+                    break;
+                case 'bruta':
+                    datasetLabel = toggleAccumulated ? 'Despesa Bruta Acumulada' : 'Despesa Bruta';
+                    break;
+                case 'liquida':
+                    datasetLabel = toggleAccumulated ? 'Despesa Líquida Acumulada' : 'Despesa Líquida';
+                    break;
+                case 'ativo':
+                    datasetLabel = toggleAccumulated ? 'Pessoal Ativo Acumulado' : 'Pessoal Ativo';
+                    break;
+                case 'inativo':
+                    datasetLabel = toggleAccumulated ? 'Inativos/Pensionistas Acumulado' : 'Inativos/Pensionistas';
+                    break;
+            }
+            
+            if (toggleAccumulated) {
+                finalData = [];
+                let acumulado = 0;
+                data.forEach(valor => {
+                    acumulado += valor;
+                    finalData.push(acumulado);
+                });
+            }
+            
+            chartEvolucao = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: datasetLabel,
+                        data: finalData,
+                        borderColor: '#3498DB',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: !toggleAccumulated,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatarMoeda(value);
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${formatarMoeda(context.raw)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateEvolucaoTable(dados) {
+            const tableBody = document.getElementById('evolucaoTableBody');
+            const resumoCount = document.getElementById('resumoCountDashboard2');
+            
+            tableBody.innerHTML = '';
+            
+            if (dados.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">Nenhum dado disponível</td>
+                    </tr>
+                `;
+                resumoCount.textContent = '0 registros';
+                return;
+            }
+            
+            dados.forEach((item, index) => {
+                let variacao = '--';
+                if (index > 0) {
+                    const mesAnterior = dados[index - 1];
+                    if (mesAnterior && mesAnterior.DESPESA_BRUTA > 0) {
+                        const variacaoValor = ((item.DESPESA_BRUTA - mesAnterior.DESPESA_BRUTA) / mesAnterior.DESPESA_BRUTA * 100);
+                        variacao = `${variacaoValor.toFixed(1)}%`;
                     }
                 }
                 
-                rowsHTML += `
-                    <tr>
-                        <td>${item.mes_ano}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(bruta, true)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(liquida, true)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(ativo, true)}</td>
-                        <td class="text-end valor-monetario">${formatCurrency(inativo, true)}</td>
-                        <td class="text-end ${variacao !== '-' && parseFloat(variacao) >= 0 ? 'valor-positivo' : 'valor-negativo'}">
-                            ${variacao}
-                        </td>
-                    </tr>
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${item.MES_FORMATADO}</strong></td>
+                    <td class="text-end valor-monetario">${formatarMoeda(item.DESPESA_BRUTA)}</td>
+                    <td class="text-end valor-monetario">${formatarMoeda(item.DESPESA_LIQUIDA)}</td>
+                    <td class="text-end valor-monetario">${formatarMoeda(item.PESSOAL_ATIVO)}</td>
+                    <td class="text-end valor-monetario">${formatarMoeda(item.PESSOAL_INATIVO)}</td>
+                    <td class="text-end ${variacao.includes('-') ? 'valor-positivo' : 'valor-negativo'}">
+                        ${variacao}
+                    </td>
                 `;
-            }
+                tableBody.appendChild(row);
+            });
             
-            if (tbody) {
-                tbody.innerHTML = rowsHTML;
-            }
+            resumoCount.textContent = `${dados.length} registros`;
         }
-
+        
         // ==================== DASHBOARD 3: LIMITES DA LRF ====================
+        
         function updateDashboard3() {
-            const periodoData = limitesData[currentPeriodoLRF];
+            const periodoSelecionado = document.getElementById('periodoLRF').value;
             
-            if (!periodoData) {
-                // Dados não encontrados, usar valores padrão
-                updateLimitesComDadosPadrao();
-                return;
-            }
+            if (!periodoSelecionado) return;
             
-            updateLimitesComDados(periodoData);
+            const limite = limitesLRFData.find(l => l.PERIODO === periodoSelecionado);
+            if (!limite) return;
+            
+            updateLimitesCards(limite);
+            updateProgressBar(limite);
+            updateLimitesTable(limite);
         }
-
-        function updateLimitesComDadosPadrao() {
-            // Valores padrão da LRF
-            const rclAjustada = 106657627122.43;
-            const percentualDespesa = 48.81;
-            const limiteMaximo = 49.00;
-            const limitePrudencial = 46.55;
-            const limiteAlerta = 44.10;
+        
+        function updateLimitesCards(limite) {
+            document.getElementById('limiteLegalValor').textContent = formatarMoeda(limite.LIMITE_MAXIMO);
+            document.getElementById('limitePrudencialValor').textContent = formatarMoeda(limite.LIMITE_PRUDENCIAL);
+            document.getElementById('limiteAlertaValor').textContent = formatarMoeda(limite.LIMITE_ALERTA);
             
-            // Atualizar cards
-            const limiteLegalPercentual = document.getElementById('limiteLegalPercentual');
-            const limitePrudencialPercentual = document.getElementById('limitePrudencialPercentual');
-            const limiteAlertaPercentual = document.getElementById('limiteAlertaPercentual');
-            const limiteLegalValor = document.getElementById('limiteLegalValor');
-            const limitePrudencialValor = document.getElementById('limitePrudencialValor');
-            const limiteAlertaValor = document.getElementById('limiteAlertaValor');
+            const percentualUtilizado = limite.PERCENTUAL_UTILIZADO;
+            document.getElementById('despesaAtualPercentual').textContent = percentualUtilizado.toFixed(1) + '%';
             
-            if (limiteLegalPercentual) limiteLegalPercentual.textContent = `${limiteMaximo.toFixed(2).replace('.', ',')}%`;
-            if (limitePrudencialPercentual) limitePrudencialPercentual.textContent = `${limitePrudencial.toFixed(2).replace('.', ',')}%`;
-            if (limiteAlertaPercentual) limiteAlertaPercentual.textContent = `${limiteAlerta.toFixed(2).replace('.', ',')}%`;
-            if (limiteLegalValor) limiteLegalValor.textContent = formatCurrency(rclAjustada * (limiteMaximo/100), true);
-            if (limitePrudencialValor) limitePrudencialValor.textContent = formatCurrency(rclAjustada * (limitePrudencial/100), true);
-            if (limiteAlertaValor) limiteAlertaValor.textContent = formatCurrency(rclAjustada * (limiteAlerta/100), true);
+            document.getElementById('rclTotal').textContent = formatarMoeda(limite.RCL_AJUSTADA);
+            document.getElementById('despesaExecutada').textContent = formatarMoeda(limite.DESPESA_TOTAL);
             
-            // Atualizar barra de progresso
-            const progressBar = document.getElementById('progressBar');
-            const despesaAtualPercentual = document.getElementById('despesaAtualPercentual');
-            
-            if (progressBar) progressBar.style.width = `${percentualDespesa}%`;
-            if (despesaAtualPercentual) despesaAtualPercentual.textContent = `${percentualDespesa.toFixed(2).replace('.', ',')}%`;
-            
-            // Determinar cor da barra
-            updateProgressBarColor(percentualDespesa, limiteAlerta, limitePrudencial, limiteMaximo);
-            
-            // Atualizar valores da RCL
-            const rclTotal = document.getElementById('rclTotal');
-            const despesaExecutada = document.getElementById('despesaExecutada');
-            
-            if (rclTotal) rclTotal.textContent = formatCurrency(rclAjustada, true);
-            if (despesaExecutada) despesaExecutada.textContent = formatCurrency(rclAjustada * (percentualDespesa/100), true);
-            
-            // Atualizar tabela
-            updateLimitesTable(rclAjustada, percentualDespesa);
-        }
-
-        function updateLimitesComDados(periodoData) {
-            const rcl = periodoData.rcl;
-            const transferenciasIndividuais = periodoData.transferencias_individuais;
-            const transferenciasBancada = periodoData.transferencias_bancada;
-            const rclAjustada = periodoData.rcl_ajustada;
-            const despesaTotalPessoal = periodoData.despesa_total_pessoal;
-            const percentualDespesa = periodoData.percentual_despesa;
-            const limiteMaximo = periodoData.limite_maximo;
-            const limitePrudencial = periodoData.limite_prudencial;
-            const limiteAlerta = periodoData.limite_alerta;
-            
-            // Atualizar cards
-            const limiteLegalPercentual = document.getElementById('limiteLegalPercentual');
-            const limitePrudencialPercentual = document.getElementById('limitePrudencialPercentual');
-            const limiteAlertaPercentual = document.getElementById('limiteAlertaPercentual');
-            const limiteLegalValor = document.getElementById('limiteLegalValor');
-            const limitePrudencialValor = document.getElementById('limitePrudencialValor');
-            const limiteAlertaValor = document.getElementById('limiteAlertaValor');
-            
-            if (limiteLegalPercentual) limiteLegalPercentual.textContent = `${limiteMaximo.toFixed(2).replace('.', ',')}%`;
-            if (limitePrudencialPercentual) limitePrudencialPercentual.textContent = `${limitePrudencial.toFixed(2).replace('.', ',')}%`;
-            if (limiteAlertaPercentual) limiteAlertaPercentual.textContent = `${limiteAlerta.toFixed(2).replace('.', ',')}%`;
-            
-            // Atualizar labels
-            const limiteLegalValorLabel = document.getElementById('limiteLegalValorLabel');
-            const limitePrudencialValorLabel = document.getElementById('limitePrudencialValorLabel');
-            const limiteAlertaValorLabel = document.getElementById('limiteAlertaValorLabel');
-            
-            if (limiteLegalValorLabel) limiteLegalValorLabel.textContent = `${limiteMaximo.toFixed(2).replace('.', ',')}%`;
-            if (limitePrudencialValorLabel) limitePrudencialValorLabel.textContent = `${limitePrudencial.toFixed(2).replace('.', ',')}%`;
-            if (limiteAlertaValorLabel) limiteAlertaValorLabel.textContent = `${limiteAlerta.toFixed(2).replace('.', ',')}%`;
-            
-            if (limiteLegalValor) limiteLegalValor.textContent = formatCurrency(rclAjustada * (limiteMaximo/100), true);
-            if (limitePrudencialValor) limitePrudencialValor.textContent = formatCurrency(rclAjustada * (limitePrudencial/100), true);
-            if (limiteAlertaValor) limiteAlertaValor.textContent = formatCurrency(rclAjustada * (limiteAlerta/100), true);
-            
-            // Atualizar barra de progresso
-            const progressBar = document.getElementById('progressBar');
-            const despesaAtualPercentual = document.getElementById('despesaAtualPercentual');
-            
-            if (progressBar) progressBar.style.width = `${percentualDespesa}%`;
-            if (despesaAtualPercentual) despesaAtualPercentual.textContent = `${percentualDespesa.toFixed(2).replace('.', ',')}%`;
-            
-            // Determinar cor da barra
-            updateProgressBarColor(percentualDespesa, limiteAlerta, limitePrudencial, limiteMaximo);
-            
-            // Atualizar valores da RCL
-            const rclTotal = document.getElementById('rclTotal');
-            const despesaExecutada = document.getElementById('despesaExecutada');
-            
-            if (rclTotal) rclTotal.textContent = formatCurrency(rcl, true);
-            if (despesaExecutada) despesaExecutada.textContent = formatCurrency(despesaTotalPessoal, true);
-            
-            // Atualizar tabela
-            updateLimitesTableCompleta(periodoData);
-        }
-
-        function updateProgressBarColor(percentual, limiteAlerta, limitePrudencial, limiteMaximo) {
-            const progressBar = document.getElementById('progressBar');
+            // Atualizar cores dos cards baseado no percentual
             const limiteLegalCard = document.getElementById('limiteLegalCard');
             const limitePrudencialCard = document.getElementById('limitePrudencialCard');
             const limiteAlertaCard = document.getElementById('limiteAlertaCard');
             
-            if (!progressBar || !limiteLegalCard || !limitePrudencialCard || !limiteAlertaCard) return;
-            
-            if (percentual <= limiteAlerta) {
-                progressBar.className = 'progress-bar-limite safe';
-                limiteLegalCard.className = 'limite-card safe';
-                limitePrudencialCard.className = 'limite-card safe';
-                limiteAlertaCard.className = 'limite-card safe';
-            } else if (percentual <= limitePrudencial) {
-                progressBar.className = 'progress-bar-limite warning';
-                limiteLegalCard.className = 'limite-card safe';
-                limitePrudencialCard.className = 'limite-card warning';
-                limiteAlertaCard.className = 'limite-card warning';
-            } else if (percentual <= limiteMaximo) {
-                progressBar.className = 'progress-bar-limite danger';
-                limiteLegalCard.className = 'limite-card warning';
-                limitePrudencialCard.className = 'limite-card danger';
-                limiteAlertaCard.className = 'limite-card danger';
-            } else {
-                progressBar.className = 'progress-bar-limite danger';
+            if (percentualUtilizado >= 90) {
                 limiteLegalCard.className = 'limite-card danger';
                 limitePrudencialCard.className = 'limite-card danger';
                 limiteAlertaCard.className = 'limite-card danger';
-            }
-        }
-
-        function updateLimitesTable(rclAjustada, percentualDespesa) {
-            const tbody = document.getElementById('limitesTableBody');
-            if (!tbody) return;
-            
-            const rowsHTML = `
-                <tr>
-                    <td><strong>Receita Corrente Líquida – RCL</strong></td>
-                    <td class="text-end valor-monetario valor-positivo">${formatCurrency(rclAjustada)}</td>
-                    <td class="text-end">100.00%</td>
-                </tr>
-                <tr class="table-total-row">
-                    <td><strong>RECEITA CORRENTE LÍQUIDA AJUSTADA</strong></td>
-                    <td class="text-end valor-monetario valor-positivo"><strong>${formatCurrency(rclAjustada)}</strong></td>
-                    <td class="text-end"><strong>100.00%</strong></td>
-                </tr>
-                <tr>
-                    <td><strong>DESPESA TOTAL COM PESSOAL</strong></td>
-                    <td class="text-end valor-monetario"><strong>${formatCurrency(rclAjustada * (percentualDespesa/100))}</strong></td>
-                    <td class="text-end"><strong>${formatPercent(percentualDespesa)}</strong></td>
-                </tr>
-            `;
-            
-            tbody.innerHTML = rowsHTML;
-        }
-
-        function updateLimitesTableCompleta(periodoData) {
-            const tbody = document.getElementById('limitesTableBody');
-            if (!tbody) return;
-            
-            const rowsHTML = `
-                <tr>
-                    <td><strong>Receita Corrente Líquida – RCL</strong></td>
-                    <td class="text-end valor-monetario valor-positivo">${formatCurrency(periodoData.rcl)}</td>
-                    <td class="text-end">100.00%</td>
-                </tr>
-                <tr>
-                    <td>(-) Transferências Obrigatórias da União relativas às emendas individuais</td>
-                    <td class="text-end valor-monetario valor-negativo">${formatCurrency(periodoData.transferencias_individuais)}</td>
-                    <td class="text-end">${formatPercent((periodoData.transferencias_individuais/periodoData.rcl)*100)}</td>
-                </tr>
-                <tr>
-                    <td>(-) Transferências obrigatórias da União relativas às emendas de bancada</td>
-                    <td class="text-end valor-monetario valor-negativo">${formatCurrency(periodoData.transferencias_bancada)}</td>
-                    <td class="text-end">${formatPercent((periodoData.transferencias_bancada/periodoData.rcl)*100)}</td>
-                </tr>
-                <tr class="table-total-row">
-                    <td><strong>RECEITA CORRENTE LÍQUIDA AJUSTADA</strong></td>
-                    <td class="text-end valor-monetario valor-positivo"><strong>${formatCurrency(periodoData.rcl_ajustada)}</strong></td>
-                    <td class="text-end"><strong>100.00%</strong></td>
-                </tr>
-                <tr>
-                    <td><strong>DESPESA TOTAL COM PESSOAL</strong></td>
-                    <td class="text-end valor-monetario"><strong>${formatCurrency(periodoData.despesa_total_pessoal)}</strong></td>
-                    <td class="text-end"><strong>${formatPercent(periodoData.percentual_despesa)}</strong></td>
-                </tr>
-            `;
-            
-            tbody.innerHTML = rowsHTML;
-        }
-
-        // ==================== FUNÇÕES DE EXPORTAÇÃO E DOWNLOAD ====================
-        function exportDashboard1CSV() {
-            let headers = ['Descrição', 'Valor (R$)', '% do Total', 'Média Mensal'];
-            let rows = [];
-            let filename = '';
-            
-            if (currentPeriodoDashboard1 === 'anual') {
-                const anoData = allData[currentAnoDashboard1] || [];
-                if (anoData.length === 0) {
-                    alert('Nenhum dado disponível para exportação.');
-                    return;
-                }
-                
-                // Calcular totais anuais
-                const totalBruta = anoData.reduce((sum, item) => sum + item.despesa_bruta, 0);
-                const totalAtivo = anoData.reduce((sum, item) => sum + item.pessoal_ativo, 0);
-                const totalVencimentos = anoData.reduce((sum, item) => sum + item.vencimentos_vantagens, 0);
-                const totalObrigacoes = anoData.reduce((sum, item) => sum + item.obrigacoes_patronais, 0);
-                const totalInativo = anoData.reduce((sum, item) => sum + item.inativos_pensionistas, 0);
-                const totalAposentadorias = anoData.reduce((sum, item) => sum + item.aposentadorias, 0);
-                const totalPensoes = anoData.reduce((sum, item) => sum + item.pensoes, 0);
-                const totalNaoComputadas = anoData.reduce((sum, item) => sum + item.despesas_nao_computadas, 0);
-                const totalLiquida = anoData.reduce((sum, item) => sum + item.despesa_liquida, 0);
-                const meses = anoData.length;
-                
-                rows.push(['DESPESA BRUTA COM PESSOAL', totalBruta, '100.00', totalBruta/meses]);
-                rows.push(['Pessoal Ativo', totalAtivo, ((totalAtivo/totalBruta)*100).toFixed(2), totalAtivo/meses]);
-                rows.push(['Vencimentos, Vantagens e Outras Despesas Variáveis', totalVencimentos, ((totalVencimentos/totalBruta)*100).toFixed(2), totalVencimentos/meses]);
-                rows.push(['Obrigações Patronais', totalObrigacoes, ((totalObrigacoes/totalBruta)*100).toFixed(2), totalObrigacoes/meses]);
-                rows.push(['Pessoal Inativo e Pensionistas', totalInativo, ((totalInativo/totalBruta)*100).toFixed(2), totalInativo/meses]);
-                rows.push(['Aposentadorias, Reserva e Reformas', totalAposentadorias, ((totalAposentadorias/totalBruta)*100).toFixed(2), totalAposentadorias/meses]);
-                rows.push(['Pensões', totalPensoes, ((totalPensoes/totalBruta)*100).toFixed(2), totalPensoes/meses]);
-                rows.push(['DESPESAS NÃO COMPUTADAS', totalNaoComputadas, ((totalNaoComputadas/totalBruta)*100).toFixed(2), totalNaoComputadas/meses]);
-                rows.push(['DESPESA LÍQUIDA COM PESSOAL', totalLiquida, ((totalLiquida/totalBruta)*100).toFixed(2), totalLiquida/meses]);
-                
-                filename = `despesa_pessoal_anual_${currentAnoDashboard1}.csv`;
+            } else if (percentualUtilizado >= 80) {
+                limiteLegalCard.className = 'limite-card warning';
+                limitePrudencialCard.className = 'limite-card warning';
+                limiteAlertaCard.className = 'limite-card warning';
             } else {
-                const anoData = allData[currentAnoDashboard1] || [];
-                const mesData = anoData.find(item => item.mes_ano === currentMesDashboard1);
-                
-                if (!mesData) {
-                    alert('Nenhum dado disponível para exportação.');
-                    return;
-                }
-                
-                const bruta = mesData.despesa_bruta;
-                const ativo = mesData.pessoal_ativo;
-                const vencimentos = mesData.vencimentos_vantagens;
-                const obrigacoes = mesData.obrigacoes_patronais;
-                const inativo = mesData.inativos_pensionistas;
-                const aposentadorias = mesData.aposentadorias;
-                const pensoes = mesData.pensoes;
-                const naoComputadas = mesData.despesas_nao_computadas;
-                const liquida = mesData.despesa_liquida;
-                
-                rows.push(['DESPESA BRUTA COM PESSOAL', bruta, '100.00', bruta]);
-                rows.push(['Pessoal Ativo', ativo, ((ativo/bruta)*100).toFixed(2), ativo]);
-                rows.push(['Vencimentos, Vantagens e Outras Despesas Variáveis', vencimentos, ((vencimentos/bruta)*100).toFixed(2), vencimentos]);
-                rows.push(['Obrigações Patronais', obrigacoes, ((obrigacoes/bruta)*100).toFixed(2), obrigacoes]);
-                rows.push(['Pessoal Inativo e Pensionistas', inativo, ((inativo/bruta)*100).toFixed(2), inativo]);
-                rows.push(['Aposentadorias, Reserva e Reformas', aposentadorias, ((aposentadorias/bruta)*100).toFixed(2), aposentadorias]);
-                rows.push(['Pensões', pensoes, ((pensoes/bruta)*100).toFixed(2), pensoes]);
-                rows.push(['DESPESAS NÃO COMPUTADAS', naoComputadas, ((naoComputadas/bruta)*100).toFixed(2), naoComputadas]);
-                rows.push(['DESPESA LÍQUIDA COM PESSOAL', liquida, ((liquida/bruta)*100).toFixed(2), liquida]);
-                
-                filename = `despesa_pessoal_mensal_${currentMesDashboard1.replace('/', '_')}.csv`;
+                limiteLegalCard.className = 'limite-card safe';
+                limitePrudencialCard.className = 'limite-card warning';
+                limiteAlertaCard.className = 'limite-card danger';
+            }
+        }
+        
+        function updateProgressBar(limite) {
+            const progressBar = document.getElementById('progressBar');
+            const percentualUtilizado = limite.PERCENTUAL_UTILIZADO;
+            
+            let width = Math.min(100, percentualUtilizado);
+            progressBar.style.width = width + '%';
+            
+            // Definir cor da barra de progresso
+            if (percentualUtilizado >= 90) {
+                progressBar.className = 'progress-bar-limite danger';
+            } else if (percentualUtilizado >= 80) {
+                progressBar.className = 'progress-bar-limite warning';
+            } else {
+                progressBar.className = 'progress-bar-limite safe';
             }
             
-            const csvContent = [
-                headers.join(';'),
-                ...rows.map(row => row.map(cell => `"${cell}"`).join(';'))
-            ].join('\n');
-            
-            downloadCSV(csvContent, filename);
+            // Atualizar labels
+            document.getElementById('limiteAlertaValorLabel').textContent = '44.10%';
+            document.getElementById('limitePrudencialValorLabel').textContent = '46.55%';
+            document.getElementById('limiteLegalValorLabel').textContent = '49.00%';
         }
-
-        function exportDashboard2CSV() {
-            const headers = ['Mês', 'Despesa Bruta (R$)', 'Despesa Líquida (R$)', 'Pessoal Ativo (R$)', 'Inativos/Pensionistas (R$)', 'Variação (%)'];
-            const rows = [];
+        
+        function updateLimitesTable(limite) {
+            const tableBody = document.getElementById('limitesTableBody');
+            tableBody.innerHTML = '';
             
-            const anoData = allData[currentAnoDashboard2] || [];
-            if (anoData.length === 0) {
-                alert('Nenhum dado disponível para exportação.');
+            const linhas = [
+                { descricao: 'Receita Corrente Líquida (RCL)', valor: limite.RCL, percentual: 100.00 },
+                { descricao: '(-) Transferências Obrigatórias da União', valor: 0, percentual: 0 },
+                { descricao: 'Receita Corrente Líquida Ajustada', valor: limite.RCL_AJUSTADA, percentual: 100.00 },
+                { descricao: 'Despesa Total com Pessoal (DTP)', valor: limite.DESPESA_TOTAL, percentual: limite.PERCENTUAL_UTILIZADO },
+                { descricao: 'Limite de Alerta (44.10% da RCL)', valor: limite.LIMITE_ALERTA, percentual: 44.10 },
+                { descricao: 'Limite Prudencial (46.55% da RCL)', valor: limite.LIMITE_PRUDENCIAL, percentual: 46.55 },
+                { descricao: 'Limite Legal (49.00% da RCL)', valor: limite.LIMITE_MAXIMO, percentual: 49.00 }
+            ];
+            
+            linhas.forEach(linha => {
+                const row = document.createElement('tr');
+                const percentualClass = linha.percentual >= 90 ? 'valor-negativo' : 
+                                      linha.percentual >= 80 ? 'valor-negativo' : 'valor-positivo';
+                
+                row.innerHTML = `
+                    <td>${linha.descricao}</td>
+                    <td class="text-end valor-monetario">${formatarMoeda(linha.valor)}</td>
+                    <td class="text-end ${percentualClass}">${linha.percentual.toFixed(2)}%</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // ==================== EVENT LISTENERS ====================
+        
+        // Dashboard 1
+        document.getElementById('aplicarFiltros').addEventListener('click', updateDashboard1);
+        document.getElementById('limparFiltros').addEventListener('click', function() {
+            document.getElementById('anoDashboard1').value = '';
+            document.getElementById('mesDashboard1').value = '';
+            document.getElementById('categoriaDashboard1').value = 'total';
+            updateDashboard1();
+        });
+        
+        document.getElementById('categoriaDashboard1').addEventListener('change', updateDashboard1);
+        
+        // Dashboard 2
+        document.getElementById('aplicarFiltrosDashboard2').addEventListener('click', updateDashboard2);
+        document.getElementById('categoriaDashboard2').addEventListener('change', updateDashboard2);
+        document.getElementById('toggleAccumulated').addEventListener('change', updateDashboard2);
+        
+        // Dashboard 3
+        document.getElementById('periodoLRF').addEventListener('change', updateDashboard3);
+        
+        // Dashboard 4
+        document.getElementById('atualizarDadosGitHub').addEventListener('click', loadAllData);
+        document.getElementById('downloadQuadrimestreCSV').addEventListener('click', function() {
+            const ano = document.getElementById('anoDownload').value;
+            const quadrimestre = document.getElementById('quadrimestreDownload').value;
+            
+            if (!ano) {
+                alert('Por favor, selecione um ano.');
                 return;
             }
             
-            for (let i = 0; i < anoData.length; i++) {
-                const item = anoData[i];
-                const bruta = item.despesa_bruta;
-                const liquida = item.despesa_liquida;
-                const ativo = item.pessoal_ativo;
-                const inativo = item.inativos_pensionistas;
-                
-                let variacao = '';
-                if (i > 0) {
-                    const brutaAnterior = anoData[i-1].despesa_bruta;
-                    if (brutaAnterior > 0) {
-                        const variacaoPercentual = ((bruta - brutaAnterior) / brutaAnterior) * 100;
-                        variacao = variacaoPercentual.toFixed(2);
+            // Filtrar dados pelo quadrimestre
+            let meses = [];
+            switch(quadrimestre) {
+                case '1': meses = [1, 2, 3, 4]; break; // Jan-Abr
+                case '2': meses = [5, 6, 7, 8]; break; // Mai-Ago
+                case '3': meses = [9, 10, 11, 12]; break; // Set-Dez
+            }
+            
+            const dadosFiltrados = despesaMensalData.filter(item => 
+                item.ANO === ano && meses.includes(item.MES_NUM)
+            );
+            
+            if (dadosFiltrados.length === 0) {
+                alert('Não há dados para o período selecionado.');
+                return;
+            }
+            
+            // Criar CSV
+            let csvContent = 'Mês;Despesa Bruta;Pessoal Ativo;Inativos/Pensionistas;Despesa Líquida\n';
+            
+            dadosFiltrados.forEach(item => {
+                csvContent += `${item.MES_FORMATADO};${item.DESPESA_BRUTA};${item.PESSOAL_ATIVO};${item.PESSOAL_INATIVO};${item.DESPESA_LIQUIDA}\n`;
+            });
+            
+            // Criar link de download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `despesa_pessoal_${ano}_quadrimestre_${quadrimestre}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert(`CSV baixado com sucesso! ${dadosFiltrados.length} registros exportados.`);
+        });
+        
+        // Exportar CSV Dashboard 1
+        document.getElementById('exportCSVDashboard1').addEventListener('click', function() {
+            const anoSelecionado = document.getElementById('anoDashboard1').value;
+            const mesSelecionado = document.getElementById('mesDashboard1').value;
+            
+            let dadosFiltrados = [];
+            
+            if (anoSelecionado) {
+                dadosFiltrados = dashboardData.porAno[anoSelecionado]?.dados || [];
+            } else {
+                dadosFiltrados = [...dashboardData.todosDados];
+            }
+            
+            if (mesSelecionado) {
+                const mesNum = parseInt(mesSelecionado);
+                dadosFiltrados = dadosFiltrados.filter(item => item.MES_NUM === mesNum);
+            }
+            
+            if (dadosFiltrados.length === 0) {
+                alert('Não há dados para exportar.');
+                return;
+            }
+            
+            let csvContent = 'Mês;Despesa Bruta;Pessoal Ativo;Vencimentos;Obrigações Patronais;Inativos/Pensionistas;Aposentadorias;Pensões;Despesa Líquida\n';
+            
+            dadosFiltrados.forEach(item => {
+                csvContent += `${item.MES_FORMATADO};${item.DESPESA_BRUTA};${item.PESSOAL_ATIVO};${item.VENCIMENTOS};${item.OBRIGACOES_PATRONAIS};${item.PESSOAL_INATIVO};${item.APOSENTADORIAS};${item.PENSÕES};${item.DESPESA_LIQUIDA}\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'despesa_pessoal_resumo.csv');
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert(`CSV exportado com sucesso! ${dadosFiltrados.length} registros exportados.`);
+        });
+        
+        // Exportar CSV Dashboard 2
+        document.getElementById('exportCSVDashboard2').addEventListener('click', function() {
+            const anoSelecionado = document.getElementById('anoDashboard2').value;
+            const categoriaSelecionada = document.getElementById('categoriaDashboard2').value;
+            
+            let dadosFiltrados = [];
+            
+            if (anoSelecionado) {
+                dadosFiltrados = dashboardData.porAno[anoSelecionado]?.dados || [];
+            } else {
+                dadosFiltrados = [...dashboardData.todosDados];
+            }
+            
+            if (dadosFiltrados.length === 0) {
+                alert('Não há dados para exportar.');
+                return;
+            }
+            
+            let csvContent = 'Mês;Despesa Bruta;Despesa Líquida;Pessoal Ativo;Inativos/Pensionistas;Variação Mês Anterior\n';
+            
+            dadosFiltrados.forEach((item, index) => {
+                let variacao = 0;
+                if (index > 0) {
+                    const mesAnterior = dadosFiltrados[index - 1];
+                    if (mesAnterior && mesAnterior.DESPESA_BRUTA > 0) {
+                        variacao = ((item.DESPESA_BRUTA - mesAnterior.DESPESA_BRUTA) / mesAnterior.DESPESA_BRUTA * 100);
                     }
                 }
                 
-                rows.push([
-                    item.mes_ano,
-                    bruta,
-                    liquida,
-                    ativo,
-                    inativo,
-                    variacao
-                ]);
-            }
-            
-            const csvContent = [
-                headers.join(';'),
-                ...rows.map(row => row.map(cell => `"${cell}"`).join(';'))
-            ].join('\n');
-            
-            downloadCSV(csvContent, `evolucao_despesa_${currentAnoDashboard2}.csv`);
-        }
-
-        function downloadQuadrimestreCSV() {
-            const anoSelect = document.getElementById('anoDownload');
-            const quadrimestreSelect = document.getElementById('quadrimestreDownload');
-            
-            if (!anoSelect || !quadrimestreSelect) {
-                alert('Elementos de seleção não encontrados.');
-                return;
-            }
-            
-            const ano = anoSelect.value;
-            const quadrimestre = quadrimestreSelect.value;
-            
-            let meses = [];
-            let nomeQuadrimestre = '';
-            
-            // Definir meses do quadrimestre
-            switch(quadrimestre) {
-                case '1': // Jan-Abr
-                    meses = ['01', '02', '03', '04'];
-                    nomeQuadrimestre = '1 Quadrimestre';
-                    break;
-                case '2': // Mai-Ago
-                    meses = ['05', '06', '07', '08'];
-                    nomeQuadrimestre = '2 Quadrimestre';
-                    break;
-                case '3': // Set-Dez
-                    meses = ['09', '10', '11', '12'];
-                    nomeQuadrimestre = '3 Quadrimestre';
-                    break;
-                default:
-                    alert('Quadrimestre inválido.');
-                    return;
-            }
-            
-            // Filtrar dados do ano e quadrimestre
-            const anoData = allData[ano] || [];
-            const quadrimestreData = anoData.filter(item => {
-                const mesNum = item.MES_NUM;
-                return meses.includes(mesNum.toString().padStart(2, '0'));
+                csvContent += `${item.MES_FORMATADO};${item.DESPESA_BRUTA};${item.DESPESA_LIQUIDA};${item.PESSOAL_ATIVO};${item.PESSOAL_INATIVO};${variacao.toFixed(1)}%\n`;
             });
             
-            if (quadrimestreData.length === 0) {
-                alert(`Nenhum dado encontrado para o ${nomeQuadrimestre} de ${ano}`);
-                return;
-            }
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
             
-            const headers = ['mes_ano', 'despesa_bruta', 'pessoal_ativo', 'vencimentos_vantagens', 'obrigacoes_patronais', 
-                           'inativos_pensionistas', 'aposentadorias', 'pensoes', 'despesas_nao_computadas', 'despesa_liquida'];
-            const rows = quadrimestreData.map(item => [
-                item.mes_ano,
-                item.despesa_bruta,
-                item.pessoal_ativo,
-                item.vencimentos_vantagens,
-                item.obrigacoes_patronais,
-                item.inativos_pensionistas,
-                item.aposentadorias,
-                item.pensoes,
-                item.despesas_nao_computadas,
-                item.despesa_liquida
-            ]);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'despesa_pessoal_evolucao.csv');
+            link.style.visibility = 'hidden';
             
-            const csvContent = [
-                headers.join(';'),
-                ...rows.map(row => row.map(cell => `"${cell}"`).join(';'))
-            ].join('\n');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
             
-            const filename = `Anexo I - Despesa com Pessoal - ${nomeQuadrimestre} ${ano}.csv`;
-            downloadCSV(csvContent, filename);
-        }
-
-        function downloadCSV(content, filename) {
-            try {
-                const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                const url = URL.createObjectURL(blob);
-                
-                link.setAttribute('href', url);
-                link.setAttribute('download', filename);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } catch (error) {
-                console.error('Erro ao baixar CSV:', error);
-                alert('Erro ao baixar o arquivo CSV.');
-            }
-        }
-
-        async function forceUpdateFromGitHub() {
-            showLoading(true);
-            
-            try {
-                await loadAllDataFromGitHub();
-                await determineLatestData();
-                updateFilterOptions();
-                updateDashboard1();
-                updateDashboard2();
-                updateDashboard3();
-                
-                showSuccess('Dados atualizados com sucesso do GitHub!');
-            } catch (error) {
-                console.error('Erro ao atualizar dados:', error);
-                showError('Erro ao atualizar dados do GitHub.');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        function printDashboard1() {
+            alert(`CSV exportado com sucesso! ${dadosFiltrados.length} registros exportados.`);
+        });
+        
+        // Imprimir Dashboard 1
+        document.getElementById('printDashboard1').addEventListener('click', function() {
             window.print();
-        }
-
-        function printDashboard2() {
+        });
+        
+        // Imprimir Dashboard 2
+        document.getElementById('printDashboard2').addEventListener('click', function() {
             window.print();
-        }
+        });
+        
+        // ==================== INICIALIZAÇÃO ====================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar tooltips do Bootstrap
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Carregar dados
+            loadAllData();
+        });
     </script>
 </body>
 </html>
