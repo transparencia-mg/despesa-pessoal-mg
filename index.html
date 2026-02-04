@@ -744,48 +744,55 @@
     </style>
 </head>
 <body>
-    <!-- ==================== HEADER PRINCIPAL ==================== -->
-    <header class="main-header">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8 col-12">
-                    <div class="logo-container">
-                        <div class="logo">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div>
-                            <h1 class="header-title">Dashboard de Despesa com Pessoal</h1>
-                            <p class="header-subtitle">Estado de Minas Gerais - Monitoramento em Tempo Real</p>
-                            <div class="header-info">
-                                <a href="http://www.planalto.gov.br/ccivil_03/leis/lcp/lcp101.htm" 
-                                   target="_blank" 
-                                   class="link-legislacao">
-                                    <i class="fas fa-balance-scale me-1"></i> Lei de Responsabilidade Fiscal (LRF)
-                                </a>
-                                <span class="badge-atualizacao-header">
-                                    <i class="fas fa-sync-alt"></i> Atualização: <span id="data-atualizacao-header">Carregando...</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 col-12 text-md-end text-center mt-md-0 mt-3">
-                    <div class="d-inline-block bg-white p-2 rounded">
-                        <small class="text-muted">Última atualização:</small>
-                        <div id="data-ultima-atualizacao" class="fw-bold text-primary">--/--/----</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
 
-    <!-- ==================== LOADING OVERLAY ==================== -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="text-center">
-            <div class="spinner"></div>
-            <p class="mt-3 text-primary fw-bold">Carregando dados...</p>
+    <!-- ==================== MENU DE NAVEGAÇÃO ==================== -->
+<div class="nav-tabs-container">
+    <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="dashboard1-tab" data-bs-toggle="tab" data-bs-target="#dashboard1" type="button" role="tab">
+                <i class="fas fa-chart-bar me-2"></i>Visão Geral
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="dashboard2-tab" data-bs-toggle="tab" data-bs-target="#dashboard2" type="button" role="tab">
+                <i class="fas fa-calendar-alt me-2"></i>Evolução Mensal
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="dashboard3-tab" data-bs-toggle="tab" data-bs-target="#dashboard3" type="button" role="tab">
+                <i class="fas fa-balance-scale me-2"></i>Limites da LRF
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="dashboard4-tab" data-bs-toggle="tab" data-bs-target="#dashboard4" type="button" role="tab">
+                <i class="fas fa-download me-2"></i>Downloads
+            </button>
+        </li>
+    </ul>
+</div>
+
+<!-- ==================== DATA DE ATUALIZAÇÃO (CENTRALIZADA) ==================== -->
+<div class="container text-center my-3" id="data-atualizacao-container">
+    <div class="d-inline-block bg-light p-2 rounded shadow-sm">
+        <small class="text-muted">
+            <i class="fas fa-clock me-1"></i>Última atualização dos dados:
+        </small>
+        <div id="data-ultima-atualizacao" class="fw-bold text-primary d-inline-block ms-2">
+            Carregando...
         </div>
+        <small class="text-muted d-block mt-1">
+            <i class="fas fa-code-branch me-1"></i>Fonte: GitHub Pages • Atualização automática
+        </small>
     </div>
+</div>
+
+<!-- ==================== LOADING OVERLAY ==================== -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="text-center">
+        <div class="spinner"></div>
+        <p class="mt-3 text-primary fw-bold">Carregando dados...</p>
+    </div>
+</div>
 
     <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
     <div class="container">
