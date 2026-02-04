@@ -31,83 +31,56 @@
         }
         
         /* ==================== ESTILOS GERAIS ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            overflow-x: hidden;
+        }
+        
         body {
             font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--background-light);
-            padding-bottom: 30px;
+            padding-top: 20px;
+            padding-bottom: 40px;
         }
         
-        /* ==================== HEADER PRINCIPAL ==================== */
-        .main-header {
-            background: linear-gradient(135deg, var(--primary-darker) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 20px 0;
+        /* Remover scroll do body */
+        body.no-scroll {
+            overflow: hidden;
+        }
+        
+        /* Espaçamento no topo da página */
+        .page-top-spacing {
+            margin-top: 20px;
+        }
+        
+        /* ==================== HEADER PRINCIPAL REMOVIDO ==================== */
+        
+        /* ==================== DATA DE ATUALIZAÇÃO ==================== */
+        #data-atualizacao-container {
+            margin-top: 20px;
             margin-bottom: 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            border-bottom: 4px solid var(--accent-blue);
+            animation: fadeIn 0.5s ease-in;
         }
         
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        #data-atualizacao-container .bg-light {
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+            min-width: 300px;
         }
         
-        .logo {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-bright) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 20px;
-            box-shadow: 0 3px 8px rgba(52, 152, 219, 0.25);
+        #data-atualizacao-container .bg-light:hover {
+            background-color: #F2F4F7 !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
-        .header-title {
-            font-weight: 700;
-            font-size: 22px;
-            margin: 0;
-            line-height: 1.2;
-        }
-        
-        .header-subtitle {
-            font-size: 14px;
-            opacity: 0.9;
-            margin: 5px 0 0 0;
-        }
-
-        .header-info {
-            margin-top: 8px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .link-legislacao {
-            color: rgba(255, 255, 255, 0.9);
-            text-decoration: none;
-            font-size: 12px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            transition: color 0.3s;
-        }
-        
-        .link-legislacao:hover {
-            color: white;
-            text-decoration: underline;
-        }
-        
-        .badge-atualizacao-header {
-            background-color: rgba(255, 255, 255, 0.15);
-            padding: 3px 8px;
-            border-radius: 15px;
-            font-size: 11px;
+        #data-ultima-atualizacao {
+            font-size: 1rem;
         }
         
         /* ==================== FILTROS ==================== */
@@ -269,7 +242,7 @@
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
         
         .table-header {
@@ -395,11 +368,12 @@
             font-size: 13px;
         }
         
-        /* Estilos específicos para valores monetários */
+        /* Estilos específicos para valores monetários SEM ABREVIAÇÃO */
         .valor-monetario {
             font-weight: 600;
             text-align: right;
             white-space: nowrap;
+            font-size: 13px;
         }
         
         .valor-positivo {
@@ -420,6 +394,7 @@
             transition: all 0.3s ease;
             font-size: 13px;
             color: white;
+            cursor: pointer;
         }
         
         .btn-primary-custom:hover {
@@ -438,6 +413,7 @@
             border-radius: 6px;
             transition: all 0.3s ease;
             font-size: 13px;
+            cursor: pointer;
         }
         
         .btn-secondary-custom:hover {
@@ -456,16 +432,18 @@
             font-weight: 600;
             font-size: 12px;
             transition: all 0.3s ease;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 6px;
             cursor: pointer;
+            text-decoration: none;
         }
         
         .btn-export:hover {
             background: var(--primary-dark);
             color: white;
             transform: translateY(-1px);
+            text-decoration: none;
         }
         
         /* ==================== MENU DE NAVEGAÇÃO ==================== */
@@ -493,6 +471,7 @@
             transition: all 0.3s ease;
             font-size: 13px;
             white-space: nowrap;
+            cursor: pointer;
         }
         
         .nav-tabs .nav-link:hover {
@@ -532,7 +511,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -638,29 +617,34 @@
             letter-spacing: 0.3px;
         }
         
+        /* ==================== RODAPÉ ==================== */
+        footer {
+            background: var(--primary-darker);
+            color: white;
+            padding: 20px 0;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .footer-content {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .footer-content a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+        
+        .footer-content a:hover {
+            text-decoration: underline;
+        }
+        
         /* ==================== RESPONSIVIDADE ==================== */
         @media (max-width: 768px) {
-            .main-header {
-                padding: 15px 0;
-                margin-bottom: 20px;
-            }
-            
-            .logo-container {
-                flex-direction: column;
-                text-align: center;
-                gap: 10px;
-            }
-            
-            .header-title {
-                font-size: 18px;
-            }
-            
-            .header-subtitle {
-                font-size: 12px;
-            }
-            
-            .header-info {
-                justify-content: center;
+            body {
+                padding-top: 10px;
+                padding-bottom: 20px;
             }
             
             .metric-value {
@@ -716,6 +700,11 @@
             .limite-card .porcentagem {
                 font-size: 20px;
             }
+            
+            #data-atualizacao-container .bg-light {
+                min-width: auto;
+                padding: 8px 15px;
+            }
         }
         
         @media (max-width: 576px) {
@@ -741,62 +730,18 @@
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
             height: 100%;
         }
+        
+        /* Animação */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
     <!-- ==================== MENU DE NAVEGAÇÃO ==================== -->
-<div class="nav-tabs-container">
-    <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="dashboard1-tab" data-bs-toggle="tab" data-bs-target="#dashboard1" type="button" role="tab">
-                <i class="fas fa-chart-bar me-2"></i>Visão Geral
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="dashboard2-tab" data-bs-toggle="tab" data-bs-target="#dashboard2" type="button" role="tab">
-                <i class="fas fa-calendar-alt me-2"></i>Evolução Mensal
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="dashboard3-tab" data-bs-toggle="tab" data-bs-target="#dashboard3" type="button" role="tab">
-                <i class="fas fa-balance-scale me-2"></i>Limites da LRF
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="dashboard4-tab" data-bs-toggle="tab" data-bs-target="#dashboard4" type="button" role="tab">
-                <i class="fas fa-download me-2"></i>Downloads
-            </button>
-        </li>
-    </ul>
-</div>
-
-<!-- ==================== DATA DE ATUALIZAÇÃO (CENTRALIZADA) ==================== -->
-<div class="container text-center my-3" id="data-atualizacao-container">
-    <div class="d-inline-block bg-light p-2 rounded shadow-sm">
-        <small class="text-muted">
-            <i class="fas fa-clock me-1"></i>Última atualização dos dados:
-        </small>
-        <div id="data-ultima-atualizacao" class="fw-bold text-primary d-inline-block ms-2">
-            Carregando...
-        </div>
-        <small class="text-muted d-block mt-1">
-            <i class="fas fa-code-branch me-1"></i>Fonte: GitHub Pages • Atualização automática
-        </small>
-    </div>
-</div>
-
-<!-- ==================== LOADING OVERLAY ==================== -->
-<div class="loading-overlay" id="loadingOverlay">
-    <div class="text-center">
-        <div class="spinner"></div>
-        <p class="mt-3 text-primary fw-bold">Carregando dados...</p>
-    </div>
-</div>
-
-    <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
-    <div class="container">
-        <!-- ==================== MENU DE NAVEGAÇÃO ==================== -->
+    <div class="container page-top-spacing">
         <div class="nav-tabs-container">
             <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
                 <li class="nav-item" role="presentation">
@@ -822,6 +767,26 @@
             </ul>
         </div>
 
+        <!-- ==================== DATA DE ATUALIZAÇÃO (CENTRALIZADA) ==================== -->
+        <div class="text-center my-4" id="data-atualizacao-container">
+            <div class="d-inline-block bg-light p-3 rounded shadow-sm">
+                <small class="text-muted">
+                    <i class="fas fa-clock me-1"></i>Última atualização dos dados:
+                </small>
+                <div id="data-ultima-atualizacao" class="fw-bold text-primary d-inline-block ms-2">
+                    Carregando...
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== LOADING OVERLAY ==================== -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="text-center">
+                <div class="spinner"></div>
+                <p class="mt-3 text-primary fw-bold">Carregando dados...</p>
+            </div>
+        </div>
+
         <!-- ==================== CONTEÚDO DAS ABAS ==================== -->
         <div class="tab-content" id="dashboardTabsContent">
             
@@ -831,39 +796,19 @@
                 <!-- Filtros Dashboard 1 -->
                 <div class="filter-container">
                     <div class="row">
-                        <div class="col-md-3 col-6">
+                        <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="anoDashboard1" class="form-label filter-label">Ano</label>
                                 <select class="form-select" id="anoDashboard1">
-                                    <option value="">Todos os anos</option>
+                                    <option value="">2025</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-3 col-6">
-                            <div class="mb-3">
-                                <label for="periodoDashboard1" class="form-label filter-label">Período</label>
-                                <select class="form-select" id="periodoDashboard1">
-                                    <option value="anual">Anual</option>
-                                    <option value="mensal" selected>Mensal</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-6" id="mesDashboard1Container">
+                        <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="mesDashboard1" class="form-label filter-label">Mês</label>
                                 <select class="form-select" id="mesDashboard1">
                                     <option value="">Todos os meses</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <div class="mb-3">
-                                <label for="categoriaDashboard1" class="form-label filter-label">Categoria</label>
-                                <select class="form-select" id="categoriaDashboard1">
-                                    <option value="total">Despesa Total</option>
-                                    <option value="ativo">Pessoal Ativo</option>
-                                    <option value="inativo">Inativos/Pensionistas</option>
-                                    <option value="liquidada">Despesa Líquida</option>
                                 </select>
                             </div>
                         </div>
@@ -1168,34 +1113,34 @@
             <!-- ==================== DASHBOARD 4: DOWNLOADS ==================== -->
             <div class="tab-pane fade" id="dashboard4" role="tabpanel">
                 
-                <!-- Download por Quadrimestre -->
-                <div class="filter-container">
-                    <div class="row">
-                        <div class="col-md-4 col-12">
-                            <div class="mb-3">
-                                <label for="anoDownload" class="form-label filter-label">Ano</label>
-                                <select class="form-select" id="anoDownload">
-                                    <option value="">Selecione um ano</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-12">
-                            <div class="mb-3">
-                                <label for="quadrimestreDownload" class="form-label filter-label">Quadrimestre</label>
-                                <select class="form-select" id="quadrimestreDownload">
-                                    <option value="1">1º Quadrimestre (Jan-Abr)</option>
-                                    <option value="2">2º Quadrimestre (Mai-Ago)</option>
-                                    <option value="3">3º Quadrimestre (Set-Dez)</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-12 d-flex align-items-end">
-                            <button class="btn-primary-custom w-100" id="downloadQuadrimestreCSV">
-                                <i class="fas fa-download me-2"></i>Baixar Quadrimestre
-                            </button>
-                        </div>
-                    </div>
-                </div>
+<!-- Download por Quadrimestre -->
+<div class="filter-container">
+    <div class="row align-items-center"> <!-- Adicionar align-items-center aqui -->
+        <div class="col-md-4 col-12">
+            <div class="mb-3">
+                <label for="anoDownload" class="form-label filter-label">Ano</label>
+                <select class="form-select" id="anoDownload">
+                    <option value="">Selecione um ano</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="mb-3">
+                <label for="quadrimestreDownload" class="form-label filter-label">Quadrimestre</label>
+                <select class="form-select" id="quadrimestreDownload">
+                    <option value="1">1º Quadrimestre (Jan-Abr)</option>
+                    <option value="2">2º Quadrimestre (Mai-Ago)</option>
+                    <option value="3">3º Quadrimestre (Set-Dez)</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4 col-12 d-flex align-items-end">
+            <button class="btn-primary-custom w-100" id="downloadQuadrimestreCSV">
+                <i class="fas fa-download me-2"></i>Baixar Quadrimestre
+            </button>
+        </div>
+    </div>
+</div>
 
                 <!-- Informações sobre os dados -->
                 <div class="table-container">
@@ -1290,6 +1235,67 @@
         let chartEvolucao = null;
         let currentChartCategory = 'total';
 
+        // ==================== FUNÇÃO PARA BUSCAR DATA DO GITHUB ====================
+        async function fetchGitHubLastUpdate() {
+            const GITHUB_OWNER = 'transparencia-mg';
+            const GITHUB_REPO = 'despesa-pessoal-mg';
+            const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/commits`;
+            
+            try {
+                console.log('Buscando última atualização do GitHub...');
+                
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                
+                const commits = await response.json();
+                
+                if (commits && commits.length > 0) {
+                    const lastCommit = commits[0];
+                    const lastUpdate = new Date(lastCommit.commit.committer.date);
+                    
+                    // Formatar data em português
+                    const formattedDate = formatDateToPortuguese(lastUpdate);
+                    
+                    // Atualizar elemento
+                    const updateElement = document.getElementById('data-ultima-atualizacao');
+                    if (updateElement) {
+                        updateElement.textContent = formattedDate;
+                        updateElement.innerHTML = `<i class="fas fa-check-circle text-success me-1"></i>${formattedDate}`;
+                    }
+                    
+                    return lastUpdate;
+                }
+            } catch (error) {
+                console.error('Erro ao buscar data do GitHub:', error);
+                
+                // Fallback: mostrar data atual
+                const updateElement = document.getElementById('data-ultima-atualizacao');
+                if (updateElement) {
+                    const today = new Date();
+                    updateElement.textContent = formatDateToPortuguese(today) + ' (aprox.)';
+                    updateElement.innerHTML = `<i class="fas fa-exclamation-triangle text-warning me-1"></i>${formatDateToPortuguese(today)} <small class="text-muted">(aprox.)</small>`;
+                }
+            }
+        }
+
+        // Função para formatar data em português
+        function formatDateToPortuguese(date) {
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
         // ==================== FUNÇÕES DE UTILIDADE ====================
         
         // Função para converter valores brasileiros para números
@@ -1304,7 +1310,7 @@
             return isNaN(num) ? 0 : num;
         }
         
-        // Função para formatar valores monetários
+        // Função para formatar valores monetários SEM ABREVIAÇÃO
         function formatarMoeda(valor) {
             if (valor === undefined || valor === null || valor === 0) return 'R$ 0,00';
             
@@ -1312,15 +1318,11 @@
             
             if (isNaN(num)) return 'R$ 0,00';
             
-            if (num >= 1000000000) {
-                return `R$ ${(num / 1000000000).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} bi`;
-            } else if (num >= 1000000) {
-                return `R$ ${(num / 1000000).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} mi`;
-            } else if (num >= 1000) {
-                return `R$ ${(num / 1000).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} mil`;
-            } else {
-                return `R$ ${num.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            }
+            // Formatar sem abreviação: R$ 5.920.545,00
+            return `R$ ${num.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}`;
         }
         
         // Função para formatar porcentagem
@@ -1377,7 +1379,17 @@
         
         // Função para mostrar/esconder loading
         function showLoading(show) {
-            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.style.display = show ? 'flex' : 'none';
+                
+                // Adicionar/remover classe para desativar scroll
+                if (show) {
+                    document.body.classList.add('no-scroll');
+                } else {
+                    document.body.classList.remove('no-scroll');
+                }
+            }
         }
         
         // ==================== FUNÇÕES DE PROCESSAMENTO DE DADOS ====================
@@ -1584,90 +1596,283 @@
         
         // ==================== FUNÇÕES DE ATUALIZAÇÃO DE UI ====================
         
-        // Atualizar opções de filtro
-        function updateFilterOptions() {
-            // Dashboard 1
-            const anoSelect1 = document.getElementById('anoDashboard1');
-            const mesSelect1 = document.getElementById('mesDashboard1');
+	// Atualizar opções de filtro
+function updateFilterOptions() {
+    // Dashboard 1
+    const anoSelect1 = document.getElementById('anoDashboard1');
+    const mesSelect1 = document.getElementById('mesDashboard1');
+    
+    // REMOVER opção vazia - deixar apenas os anos disponíveis
+    anoSelect1.innerHTML = '';
+    // REMOVER opção vazia - deixar apenas os meses
+    mesSelect1.innerHTML = '';
+    
+    if (dashboardData.anos && dashboardData.anos.length > 0) {
+        const anosOrdenados = [...dashboardData.anos].sort((a, b) => b - a);
+        const anoMaisRecente = anosOrdenados[0];
+
+        anosOrdenados.forEach(ano => {
+            const option = document.createElement('option');
+            option.value = ano;
+            option.textContent = ano;
+            anoSelect1.appendChild(option);
+        });
+        
+        // Selecionar automaticamente o ano mais recente
+        if (anosOrdenados.length > 0) {
+            anoSelect1.value = anoMaisRecente;
+        }
+        
+        // OBTER MESES DISPONÍVEIS PARA O ANO MAIS RECENTE
+        let mesesDisponiveis = [];
+        
+        if (despesaMensalData && despesaMensalData.length > 0) {
+            // Filtrar dados do ano mais recente
+            const dadosAnoRecente = despesaMensalData.filter(item => item.ANO === anoMaisRecente);
             
-            anoSelect1.innerHTML = '<option value="">Todos os anos</option>';
-            mesSelect1.innerHTML = '<option value="">Todos os meses</option>';
-            
-            dashboardData.anos.forEach(ano => {
+            if (dadosAnoRecente.length > 0) {
+                // Obter meses únicos e ordenar
+                const mesesUnicos = [...new Set(dadosAnoRecente.map(item => item.MES_NUM))];
+                mesesDisponiveis = mesesUnicos.sort((a, b) => a - b);
+                console.log('Meses disponíveis para', anoMaisRecente, ':', mesesDisponiveis);
+            }
+        }
+        
+        // Mapeamento de nomes dos meses
+        const nomesMeses = {
+            1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril',
+            5: 'Maio', 6: 'Junho', 7: 'Julho', 8: 'Agosto',
+            9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro'
+        };
+        
+        // ADICIONAR APENAS MESES QUE TÊM DADOS
+        if (mesesDisponiveis.length > 0) {
+            mesesDisponiveis.forEach(mesNum => {
                 const option = document.createElement('option');
-                option.value = ano;
-                option.textContent = ano;
-                anoSelect1.appendChild(option);
-            });
-            
-            const meses = [
-                {num: 1, nome: 'Janeiro'}, {num: 2, nome: 'Fevereiro'},
-                {num: 3, nome: 'Março'}, {num: 4, nome: 'Abril'},
-                {num: 5, nome: 'Maio'}, {num: 6, nome: 'Junho'},
-                {num: 7, nome: 'Julho'}, {num: 8, nome: 'Agosto'},
-                {num: 9, nome: 'Setembro'}, {num: 10, nome: 'Outubro'},
-                {num: 11, nome: 'Novembro'}, {num: 12, nome: 'Dezembro'}
-            ];
-            
-            meses.forEach(mes => {
-                const option = document.createElement('option');
-                option.value = mes.num;
-                option.textContent = mes.nome;
+                option.value = mesNum;
+                option.textContent = nomesMeses[mesNum] || `Mês ${mesNum}`;
                 mesSelect1.appendChild(option);
             });
             
-            // Dashboard 2
-            const anoSelect2 = document.getElementById('anoDashboard2');
-            anoSelect2.innerHTML = '<option value="">Todos os anos</option>';
-            dashboardData.anos.forEach(ano => {
+            // Selecionar o último mês disponível
+            const ultimoMesDisponivel = mesesDisponiveis[mesesDisponiveis.length - 1];
+            mesSelect1.value = ultimoMesDisponivel;
+            console.log('Mês selecionado:', ultimoMesDisponivel);
+            
+        } else {
+            // Se não há meses disponíveis
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Sem dados mensais';
+            option.disabled = true;
+            option.selected = true;
+            mesSelect1.appendChild(option);
+        }
+        
+    } else {
+        // Se não houver anos, adicionar uma opção desabilitada
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'Sem dados disponíveis';
+        option.disabled = true;
+        option.selected = true;
+        anoSelect1.appendChild(option);
+        
+        const optionMes = document.createElement('option');
+        optionMes.value = '';
+        optionMes.textContent = 'Sem dados disponíveis';
+        optionMes.disabled = true;
+        optionMes.selected = true;
+        mesSelect1.appendChild(optionMes);
+    }
+    
+    // ADICIONAR EVENTO PARA ATUALIZAR MESES QUANDO ANO MUDAR
+    anoSelect1.addEventListener('change', function() {
+        const anoSelecionado = this.value;
+        const mesSelect = document.getElementById('mesDashboard1');
+        
+        mesSelect.innerHTML = '';
+        
+        if (anoSelecionado) {
+            // Obter meses disponíveis para o ano selecionado
+            let mesesDisponiveis = [];
+            
+            if (despesaMensalData && despesaMensalData.length > 0) {
+                const dadosAno = despesaMensalData.filter(item => item.ANO === anoSelecionado);
+                
+                if (dadosAno.length > 0) {
+                    const mesesUnicos = [...new Set(dadosAno.map(item => item.MES_NUM))];
+                    mesesDisponiveis = mesesUnicos.sort((a, b) => a - b);
+                }
+            }
+            
+            // Mapeamento de nomes
+            const nomesMeses = {
+                1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril',
+                5: 'Maio', 6: 'Junho', 7: 'Julho', 8: 'Agosto',
+                9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro'
+            };
+            
+            // Adicionar apenas meses disponíveis
+            if (mesesDisponiveis.length > 0) {
+                mesesDisponiveis.forEach(mesNum => {
+                    const option = document.createElement('option');
+                    option.value = mesNum;
+                    option.textContent = nomesMeses[mesNum] || `Mês ${mesNum}`;
+                    mesSelect.appendChild(option);
+                });
+                
+                // Selecionar o último mês disponível
+                const ultimoMesDisponivel = mesesDisponiveis[mesesDisponiveis.length - 1];
+                mesSelect.value = ultimoMesDisponivel;
+                
+            } else {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'Sem dados mensais';
+                option.disabled = true;
+                option.selected = true;
+                mesSelect.appendChild(option);
+            }
+        }
+        
+        // Atualizar dashboard
+        updateDashboard1();
+    });
+    
+    // Dashboard 2
+    const anoSelect2 = document.getElementById('anoDashboard2');
+    if (anoSelect2) {
+        // REMOVER opção vazia
+        anoSelect2.innerHTML = '';
+        
+        if (dashboardData.anos && dashboardData.anos.length > 0) {
+            // Ordenar anos do mais recente para o mais antigo
+            const anosOrdenados = [...dashboardData.anos].sort((a, b) => parseInt(b) - parseInt(a));
+            
+            // Adicionar cada ano, selecionando o primeiro (mais recente)
+            anosOrdenados.forEach((ano, index) => {
                 const option = document.createElement('option');
                 option.value = ano;
                 option.textContent = ano;
+                
+                // Selecionar o primeiro ano (mais recente) por padrão
+                if (index === 0) {
+                    option.selected = true;
+                }
+                
                 anoSelect2.appendChild(option);
             });
             
-            // Dashboard 3
-            const periodoLRFSelect = document.getElementById('periodoLRF');
-            periodoLRFSelect.innerHTML = '<option value="">Selecione um período</option>';
-            limitesLRFData.forEach(limite => {
-                const option = document.createElement('option');
-                option.value = limite.PERIODO;
-                option.textContent = limite.FORMATADO;
-                periodoLRFSelect.appendChild(option);
-            });
+            // Se selecionou algum ano, atualizar o dashboard 2
+            if (anosOrdenados.length > 0) {
+                // Pequeno delay para garantir que o DOM foi atualizado
+                setTimeout(() => {
+                    updateDashboard2();
+                }, 50);
+            }
+        } else {
+            // Se não houver anos, adicionar uma opção desabilitada
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Sem dados disponíveis';
+            option.disabled = true;
+            option.selected = true;
+            anoSelect2.appendChild(option);
+        }
+    }
+            
+// Dashboard 3
+const periodoLRFSelect = document.getElementById('periodoLRF');
+if (periodoLRFSelect) {
+    periodoLRFSelect.innerHTML = '<option value="">Selecione um período</option>';
+    
+    if (limitesLRFData && limitesLRFData.length > 0) {
+        // Converter períodos para datas e encontrar o mais recente
+        let periodoMaisRecente = null;
+        let dataMaisRecente = null;
+        
+        limitesLRFData.forEach(limite => {
+            const option = document.createElement('option');
+            option.value = limite.PERIODO;
+            option.textContent = limite.FORMATADO;
+            periodoLRFSelect.appendChild(option);
+            
+            // Tentar extrair a data final do período
+            const periodo = limite.PERIODO;
+            
+            // Formato esperado: "mes_ano_a_mes_ano" (ex: "jan_22_a_dez_22")
+            if (periodo && periodo.includes('_a_')) {
+                try {
+                    const partes = periodo.split('_a_');
+                    if (partes.length === 2) {
+                        const dataFim = partes[1]; // Ex: "dez_22"
+                        const [mesFim, anoFim] = dataFim.split('_');
+                        
+                        // Converter para data
+                        const meses = {
+                            'jan': 0, 'fev': 1, 'mar': 2, 'abr': 3, 'mai': 4, 'jun': 5,
+                            'jul': 6, 'ago': 7, 'set': 8, 'out': 9, 'nov': 10, 'dez': 11
+                        };
+                        
+                        const mesNum = meses[mesFim.toLowerCase()];
+                        const anoNum = parseInt('20' + anoFim);
+                        
+                        if (mesNum !== undefined && !isNaN(anoNum)) {
+                            const data = new Date(anoNum, mesNum);
+                            
+                            // Verificar se é a data mais recente
+                            if (!dataMaisRecente || data > dataMaisRecente) {
+                                dataMaisRecente = data;
+                                periodoMaisRecente = limite.PERIODO;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Erro ao processar período:', periodo, error);
+                }
+            }
+        });
+        
+        // Selecionar o período mais recente
+        if (periodoMaisRecente) {
+            periodoLRFSelect.value = periodoMaisRecente;
+            console.log('Período mais recente selecionado:', periodoMaisRecente);
+            
+            // Atualizar o dashboard 3 automaticamente
+            setTimeout(() => {
+                updateDashboard3();
+            }, 50);
+        }
+    }
+}
             
             // Dashboard 4
             const anoDownloadSelect = document.getElementById('anoDownload');
-            anoDownloadSelect.innerHTML = '<option value="">Selecione um ano</option>';
-            dashboardData.anos.forEach(ano => {
-                const option = document.createElement('option');
-                option.value = ano;
-                option.textContent = ano;
-                anoDownloadSelect.appendChild(option);
-            });
-            
-            // Atualizar informações do header
-            if (despesaMensalData.length > 0) {
-                const ultimoRegistro = despesaMensalData[despesaMensalData.length - 1];
-                document.getElementById('data-atualizacao-header').textContent = ultimoRegistro.MES_FORMATADO;
-                
-                const dataAtual = new Date();
-                document.getElementById('data-ultima-atualizacao').textContent = 
-                    dataAtual.toLocaleDateString('pt-BR');
+            if (anoDownloadSelect) {
+                anoDownloadSelect.innerHTML = '<option value="">Selecione um ano</option>';
+                if (dashboardData.anos && dashboardData.anos.length > 0) {
+                    dashboardData.anos.forEach(ano => {
+                        const option = document.createElement('option');
+                        option.value = ano;
+                        option.textContent = ano;
+                        anoDownloadSelect.appendChild(option);
+                    });
+                }
             }
         }
         
         // ==================== DASHBOARD 1: VISÃO GERAL ====================
         
         function updateDashboard1() {
-            const anoSelecionado = document.getElementById('anoDashboard1').value;
-            const mesSelecionado = document.getElementById('mesDashboard1').value;
-            const categoriaSelecionada = document.getElementById('categoriaDashboard1').value;
+            const anoSelecionado = document.getElementById('anoDashboard1')?.value || '';
+            const mesSelecionado = document.getElementById('mesDashboard1')?.value || '';
+            const categoriaSelecionada = document.getElementById('categoriaDashboard1')?.value || 'total';
             
             let dadosFiltrados = [];
             
-            if (anoSelecionado) {
-                dadosFiltrados = dashboardData.porAno[anoSelecionado]?.dados || [];
+            if (anoSelecionado && dashboardData.porAno[anoSelecionado]) {
+                dadosFiltrados = dashboardData.porAno[anoSelecionado].dados || [];
             } else {
                 dadosFiltrados = [...dashboardData.todosDados];
             }
@@ -1685,6 +1890,8 @@
         
         function updateSummaryCards(dados) {
             const summaryCards = document.getElementById('summaryCards');
+            if (!summaryCards) return;
+            
             summaryCards.innerHTML = '';
             
             if (dados.length === 0) {
@@ -1787,7 +1994,10 @@
         }
         
         function updateChartDistribuicao(dados, categoria) {
-            const ctx = document.getElementById('chartDistribuicao').getContext('2d');
+            const canvas = document.getElementById('chartDistribuicao');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
             
             if (chartDistribuicao) {
                 chartDistribuicao.destroy();
@@ -1883,7 +2093,10 @@
         }
         
         function updateChartAtivoDetalhado(dados) {
-            const ctx = document.getElementById('chartAtivoDetalhado').getContext('2d');
+            const canvas = document.getElementById('chartAtivoDetalhado');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
             
             if (chartAtivoDetalhado) {
                 chartAtivoDetalhado.destroy();
@@ -1969,6 +2182,8 @@
             const tableBody = document.getElementById('resumoTableBody');
             const resumoCount = document.getElementById('resumoCountDashboard1');
             
+            if (!tableBody || !resumoCount) return;
+            
             tableBody.innerHTML = '';
             
             if (dados.length === 0) {
@@ -2014,13 +2229,13 @@
         // ==================== DASHBOARD 2: EVOLUÇÃO MENSAL ====================
         
         function updateDashboard2() {
-            const anoSelecionado = document.getElementById('anoDashboard2').value;
-            const categoriaSelecionada = document.getElementById('categoriaDashboard2').value;
+            const anoSelecionado = document.getElementById('anoDashboard2')?.value || '';
+            const categoriaSelecionada = document.getElementById('categoriaDashboard2')?.value || 'total';
             
             let dadosFiltrados = [];
             
-            if (anoSelecionado) {
-                dadosFiltrados = dashboardData.porAno[anoSelecionado]?.dados || [];
+            if (anoSelecionado && dashboardData.porAno[anoSelecionado]) {
+                dadosFiltrados = dashboardData.porAno[anoSelecionado].dados || [];
             } else {
                 dadosFiltrados = [...dashboardData.todosDados];
             }
@@ -2030,7 +2245,10 @@
         }
         
         function updateChartEvolucao(dados, categoria) {
-            const ctx = document.getElementById('chartEvolucao').getContext('2d');
+            const canvas = document.getElementById('chartEvolucao');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
             
             if (chartEvolucao) {
                 chartEvolucao.destroy();
@@ -2057,7 +2275,7 @@
                     break;
             }
             
-            const toggleAccumulated = document.getElementById('toggleAccumulated').checked;
+            const toggleAccumulated = document.getElementById('toggleAccumulated')?.checked || false;
             let finalData = data;
             let datasetLabel = '';
             
@@ -2140,6 +2358,8 @@
             const tableBody = document.getElementById('evolucaoTableBody');
             const resumoCount = document.getElementById('resumoCountDashboard2');
             
+            if (!tableBody || !resumoCount) return;
+            
             tableBody.innerHTML = '';
             
             if (dados.length === 0) {
@@ -2182,7 +2402,7 @@
         // ==================== DASHBOARD 3: LIMITES DA LRF ====================
         
         function updateDashboard3() {
-            const periodoSelecionado = document.getElementById('periodoLRF').value;
+            const periodoSelecionado = document.getElementById('periodoLRF')?.value || '';
             
             if (!periodoSelecionado) return;
             
@@ -2195,38 +2415,49 @@
         }
         
         function updateLimitesCards(limite) {
-            document.getElementById('limiteLegalValor').textContent = formatarMoeda(limite.LIMITE_MAXIMO);
-            document.getElementById('limitePrudencialValor').textContent = formatarMoeda(limite.LIMITE_PRUDENCIAL);
-            document.getElementById('limiteAlertaValor').textContent = formatarMoeda(limite.LIMITE_ALERTA);
+            const limiteLegalValor = document.getElementById('limiteLegalValor');
+            const limitePrudencialValor = document.getElementById('limitePrudencialValor');
+            const limiteAlertaValor = document.getElementById('limiteAlertaValor');
+            const despesaAtualPercentual = document.getElementById('despesaAtualPercentual');
+            const rclTotal = document.getElementById('rclTotal');
+            const despesaExecutada = document.getElementById('despesaExecutada');
+            
+            if (limiteLegalValor) limiteLegalValor.textContent = formatarMoeda(limite.LIMITE_MAXIMO);
+            if (limitePrudencialValor) limitePrudencialValor.textContent = formatarMoeda(limite.LIMITE_PRUDENCIAL);
+            if (limiteAlertaValor) limiteAlertaValor.textContent = formatarMoeda(limite.LIMITE_ALERTA);
             
             const percentualUtilizado = limite.PERCENTUAL_UTILIZADO;
-            document.getElementById('despesaAtualPercentual').textContent = percentualUtilizado.toFixed(1) + '%';
+            if (despesaAtualPercentual) despesaAtualPercentual.textContent = percentualUtilizado.toFixed(1) + '%';
             
-            document.getElementById('rclTotal').textContent = formatarMoeda(limite.RCL_AJUSTADA);
-            document.getElementById('despesaExecutada').textContent = formatarMoeda(limite.DESPESA_TOTAL);
+            if (rclTotal) rclTotal.textContent = formatarMoeda(limite.RCL_AJUSTADA);
+            if (despesaExecutada) despesaExecutada.textContent = formatarMoeda(limite.DESPESA_TOTAL);
             
             // Atualizar cores dos cards baseado no percentual
             const limiteLegalCard = document.getElementById('limiteLegalCard');
             const limitePrudencialCard = document.getElementById('limitePrudencialCard');
             const limiteAlertaCard = document.getElementById('limiteAlertaCard');
             
-            if (percentualUtilizado >= 90) {
-                limiteLegalCard.className = 'limite-card danger';
-                limitePrudencialCard.className = 'limite-card danger';
-                limiteAlertaCard.className = 'limite-card danger';
-            } else if (percentualUtilizado >= 80) {
-                limiteLegalCard.className = 'limite-card warning';
-                limitePrudencialCard.className = 'limite-card warning';
-                limiteAlertaCard.className = 'limite-card warning';
-            } else {
-                limiteLegalCard.className = 'limite-card safe';
-                limitePrudencialCard.className = 'limite-card warning';
-                limiteAlertaCard.className = 'limite-card danger';
+            if (limiteLegalCard && limitePrudencialCard && limiteAlertaCard) {
+                if (percentualUtilizado >= 90) {
+                    limiteLegalCard.className = 'limite-card danger';
+                    limitePrudencialCard.className = 'limite-card danger';
+                    limiteAlertaCard.className = 'limite-card danger';
+                } else if (percentualUtilizado >= 80) {
+                    limiteLegalCard.className = 'limite-card warning';
+                    limitePrudencialCard.className = 'limite-card warning';
+                    limiteAlertaCard.className = 'limite-card warning';
+                } else {
+                    limiteLegalCard.className = 'limite-card safe';
+                    limitePrudencialCard.className = 'limite-card warning';
+                    limiteAlertaCard.className = 'limite-card danger';
+                }
             }
         }
         
         function updateProgressBar(limite) {
             const progressBar = document.getElementById('progressBar');
+            if (!progressBar) return;
+            
             const percentualUtilizado = limite.PERCENTUAL_UTILIZADO;
             
             let width = Math.min(100, percentualUtilizado);
@@ -2242,13 +2473,19 @@
             }
             
             // Atualizar labels
-            document.getElementById('limiteAlertaValorLabel').textContent = '44.10%';
-            document.getElementById('limitePrudencialValorLabel').textContent = '46.55%';
-            document.getElementById('limiteLegalValorLabel').textContent = '49.00%';
+            const limiteAlertaLabel = document.getElementById('limiteAlertaValorLabel');
+            const limitePrudencialLabel = document.getElementById('limitePrudencialValorLabel');
+            const limiteLegalLabel = document.getElementById('limiteLegalValorLabel');
+            
+            if (limiteAlertaLabel) limiteAlertaLabel.textContent = '44.10%';
+            if (limitePrudencialLabel) limitePrudencialLabel.textContent = '46.55%';
+            if (limiteLegalLabel) limiteLegalLabel.textContent = '49.00%';
         }
         
         function updateLimitesTable(limite) {
             const tableBody = document.getElementById('limitesTableBody');
+            if (!tableBody) return;
+            
             tableBody.innerHTML = '';
             
             const linhas = [
@@ -2278,179 +2515,225 @@
         // ==================== EVENT LISTENERS ====================
         
         // Dashboard 1
-        document.getElementById('aplicarFiltros').addEventListener('click', updateDashboard1);
-        document.getElementById('limparFiltros').addEventListener('click', function() {
-            document.getElementById('anoDashboard1').value = '';
-            document.getElementById('mesDashboard1').value = '';
-            document.getElementById('categoriaDashboard1').value = 'total';
-            updateDashboard1();
-        });
+        const aplicarFiltrosBtn = document.getElementById('aplicarFiltros');
+        if (aplicarFiltrosBtn) {
+            aplicarFiltrosBtn.addEventListener('click', updateDashboard1);
+        }
         
-        document.getElementById('categoriaDashboard1').addEventListener('change', updateDashboard1);
+        const limparFiltrosBtn = document.getElementById('limparFiltros');
+        if (limparFiltrosBtn) {
+            limparFiltrosBtn.addEventListener('click', function() {
+                document.getElementById('anoDashboard1').value = '';
+                document.getElementById('mesDashboard1').value = '';
+                document.getElementById('categoriaDashboard1').value = 'total';
+                updateDashboard1();
+            });
+        }
+        
+        const categoriaDashboard1 = document.getElementById('categoriaDashboard1');
+        if (categoriaDashboard1) {
+            categoriaDashboard1.addEventListener('change', updateDashboard1);
+        }
         
         // Dashboard 2
-        document.getElementById('aplicarFiltrosDashboard2').addEventListener('click', updateDashboard2);
-        document.getElementById('categoriaDashboard2').addEventListener('change', updateDashboard2);
-        document.getElementById('toggleAccumulated').addEventListener('change', updateDashboard2);
+        const aplicarFiltrosDashboard2Btn = document.getElementById('aplicarFiltrosDashboard2');
+        if (aplicarFiltrosDashboard2Btn) {
+            aplicarFiltrosDashboard2Btn.addEventListener('click', updateDashboard2);
+        }
+        
+        const categoriaDashboard2 = document.getElementById('categoriaDashboard2');
+        if (categoriaDashboard2) {
+            categoriaDashboard2.addEventListener('change', updateDashboard2);
+        }
+        
+        const toggleAccumulated = document.getElementById('toggleAccumulated');
+        if (toggleAccumulated) {
+            toggleAccumulated.addEventListener('change', updateDashboard2);
+        }
         
         // Dashboard 3
-        document.getElementById('periodoLRF').addEventListener('change', updateDashboard3);
+        const periodoLRF = document.getElementById('periodoLRF');
+        if (periodoLRF) {
+            periodoLRF.addEventListener('change', updateDashboard3);
+        }
         
         // Dashboard 4
-        document.getElementById('atualizarDadosGitHub').addEventListener('click', loadAllData);
-        document.getElementById('downloadQuadrimestreCSV').addEventListener('click', function() {
-            const ano = document.getElementById('anoDownload').value;
-            const quadrimestre = document.getElementById('quadrimestreDownload').value;
-            
-            if (!ano) {
-                alert('Por favor, selecione um ano.');
-                return;
-            }
-            
-            // Filtrar dados pelo quadrimestre
-            let meses = [];
-            switch(quadrimestre) {
-                case '1': meses = [1, 2, 3, 4]; break; // Jan-Abr
-                case '2': meses = [5, 6, 7, 8]; break; // Mai-Ago
-                case '3': meses = [9, 10, 11, 12]; break; // Set-Dez
-            }
-            
-            const dadosFiltrados = despesaMensalData.filter(item => 
-                item.ANO === ano && meses.includes(item.MES_NUM)
-            );
-            
-            if (dadosFiltrados.length === 0) {
-                alert('Não há dados para o período selecionado.');
-                return;
-            }
-            
-            // Criar CSV
-            let csvContent = 'Mês;Despesa Bruta;Pessoal Ativo;Inativos/Pensionistas;Despesa Líquida\n';
-            
-            dadosFiltrados.forEach(item => {
-                csvContent += `${item.MES_FORMATADO};${item.DESPESA_BRUTA};${item.PESSOAL_ATIVO};${item.PESSOAL_INATIVO};${item.DESPESA_LIQUIDA}\n`;
-            });
-            
-            // Criar link de download
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            
-            link.setAttribute('href', url);
-            link.setAttribute('download', `despesa_pessoal_${ano}_quadrimestre_${quadrimestre}.csv`);
-            link.style.visibility = 'hidden';
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            alert(`CSV baixado com sucesso! ${dadosFiltrados.length} registros exportados.`);
-        });
+        const atualizarDadosGitHubBtn = document.getElementById('atualizarDadosGitHub');
+        if (atualizarDadosGitHubBtn) {
+            atualizarDadosGitHubBtn.addEventListener('click', loadAllData);
+        }
         
-        // Exportar CSV Dashboard 1
-        document.getElementById('exportCSVDashboard1').addEventListener('click', function() {
-            const anoSelecionado = document.getElementById('anoDashboard1').value;
-            const mesSelecionado = document.getElementById('mesDashboard1').value;
-            
-            let dadosFiltrados = [];
-            
-            if (anoSelecionado) {
-                dadosFiltrados = dashboardData.porAno[anoSelecionado]?.dados || [];
-            } else {
-                dadosFiltrados = [...dashboardData.todosDados];
-            }
-            
-            if (mesSelecionado) {
-                const mesNum = parseInt(mesSelecionado);
-                dadosFiltrados = dadosFiltrados.filter(item => item.MES_NUM === mesNum);
-            }
-            
-            if (dadosFiltrados.length === 0) {
-                alert('Não há dados para exportar.');
-                return;
-            }
-            
-            let csvContent = 'Mês;Despesa Bruta;Pessoal Ativo;Vencimentos;Obrigações Patronais;Inativos/Pensionistas;Aposentadorias;Pensões;Despesa Líquida\n';
-            
-            dadosFiltrados.forEach(item => {
-                csvContent += `${item.MES_FORMATADO};${item.DESPESA_BRUTA};${item.PESSOAL_ATIVO};${item.VENCIMENTOS};${item.OBRIGACOES_PATRONAIS};${item.PESSOAL_INATIVO};${item.APOSENTADORIAS};${item.PENSÕES};${item.DESPESA_LIQUIDA}\n`;
-            });
-            
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'despesa_pessoal_resumo.csv');
-            link.style.visibility = 'hidden';
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            alert(`CSV exportado com sucesso! ${dadosFiltrados.length} registros exportados.`);
-        });
-        
-        // Exportar CSV Dashboard 2
-        document.getElementById('exportCSVDashboard2').addEventListener('click', function() {
-            const anoSelecionado = document.getElementById('anoDashboard2').value;
-            const categoriaSelecionada = document.getElementById('categoriaDashboard2').value;
-            
-            let dadosFiltrados = [];
-            
-            if (anoSelecionado) {
-                dadosFiltrados = dashboardData.porAno[anoSelecionado]?.dados || [];
-            } else {
-                dadosFiltrados = [...dashboardData.todosDados];
-            }
-            
-            if (dadosFiltrados.length === 0) {
-                alert('Não há dados para exportar.');
-                return;
-            }
-            
-            let csvContent = 'Mês;Despesa Bruta;Despesa Líquida;Pessoal Ativo;Inativos/Pensionistas;Variação Mês Anterior\n';
-            
-            dadosFiltrados.forEach((item, index) => {
-                let variacao = 0;
-                if (index > 0) {
-                    const mesAnterior = dadosFiltrados[index - 1];
-                    if (mesAnterior && mesAnterior.DESPESA_BRUTA > 0) {
-                        variacao = ((item.DESPESA_BRUTA - mesAnterior.DESPESA_BRUTA) / mesAnterior.DESPESA_BRUTA * 100);
-                    }
+        const downloadQuadrimestreCSVBtn = document.getElementById('downloadQuadrimestreCSV');
+        if (downloadQuadrimestreCSVBtn) {
+            downloadQuadrimestreCSVBtn.addEventListener('click', function() {
+                const ano = document.getElementById('anoDownload')?.value || '';
+                const quadrimestre = document.getElementById('quadrimestreDownload')?.value || '1';
+                
+                if (!ano) {
+                    alert('Por favor, selecione um ano.');
+                    return;
                 }
                 
-                csvContent += `${item.MES_FORMATADO};${item.DESPESA_BRUTA};${item.DESPESA_LIQUIDA};${item.PESSOAL_ATIVO};${item.PESSOAL_INATIVO};${variacao.toFixed(1)}%\n`;
+                // Filtrar dados pelo quadrimestre
+                let meses = [];
+                switch(quadrimestre) {
+                    case '1': meses = [1, 2, 3, 4]; break; // Jan-Abr
+                    case '2': meses = [5, 6, 7, 8]; break; // Mai-Ago
+                    case '3': meses = [9, 10, 11, 12]; break; // Set-Dez
+                }
+                
+                const dadosFiltrados = despesaMensalData.filter(item => 
+                    item.ANO === ano && meses.includes(item.MES_NUM)
+                );
+                
+                if (dadosFiltrados.length === 0) {
+                    alert('Não há dados para o período selecionado.');
+                    return;
+                }
+                
+                // Criar CSV
+                let csvContent = 'Mês;Despesa Bruta;Pessoal Ativo;Inativos/Pensionistas;Despesa Líquida\n';
+                
+                dadosFiltrados.forEach(item => {
+                    csvContent += `${item.MES_FORMATADO};${item.DESPESA_BRUTA};${item.PESSOAL_ATIVO};${item.PESSOAL_INATIVO};${item.DESPESA_LIQUIDA}\n`;
+                });
+                
+                // Criar link de download
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', `despesa_pessoal_${ano}_quadrimestre_${quadrimestre}.csv`);
+                link.style.visibility = 'hidden';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                alert(`CSV baixado com sucesso! ${dadosFiltrados.length} registros exportados.`);
             });
-            
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'despesa_pessoal_evolucao.csv');
-            link.style.visibility = 'hidden';
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            alert(`CSV exportado com sucesso! ${dadosFiltrados.length} registros exportados.`);
-        });
+        }
+        
+        // Exportar CSV Dashboard 1
+        const exportCSVDashboard1Btn = document.getElementById('exportCSVDashboard1');
+        if (exportCSVDashboard1Btn) {
+            exportCSVDashboard1Btn.addEventListener('click', function() {
+                const anoSelecionado = document.getElementById('anoDashboard1')?.value || '';
+                const mesSelecionado = document.getElementById('mesDashboard1')?.value || '';
+                
+                let dadosFiltrados = [];
+                
+                if (anoSelecionado && dashboardData.porAno[anoSelecionado]) {
+                    dadosFiltrados = dashboardData.porAno[anoSelecionado].dados || [];
+                } else {
+                    dadosFiltrados = [...dashboardData.todosDados];
+                }
+                
+                if (mesSelecionado) {
+                    const mesNum = parseInt(mesSelecionado);
+                    dadosFiltrados = dadosFiltrados.filter(item => item.MES_NUM === mesNum);
+                }
+                
+                if (dadosFiltrados.length === 0) {
+                    alert('Não há dados para exportar.');
+                    return;
+                }
+                
+                let csvContent = 'Mês;Despesa Bruta;Pessoal Ativo;Vencimentos;Obrigações Patronais;Inativos/Pensionistas;Aposentadorias;Pensões;Despesa Líquida\n';
+                
+                dadosFiltrados.forEach(item => {
+                    csvContent += `${item.MES_FORMATADO};${item.DESPESA_BRUTA};${item.PESSOAL_ATIVO};${item.VENCIMENTOS};${item.OBRIGACOES_PATRONAIS};${item.PESSOAL_INATIVO};${item.APOSENTADORIAS};${item.PENSÕES};${item.DESPESA_LIQUIDA}\n`;
+                });
+                
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'despesa_pessoal_resumo.csv');
+                link.style.visibility = 'hidden';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                alert(`CSV exportado com sucesso! ${dadosFiltrados.length} registros exportados.`);
+            });
+        }
+        
+        // Exportar CSV Dashboard 2
+        const exportCSVDashboard2Btn = document.getElementById('exportCSVDashboard2');
+        if (exportCSVDashboard2Btn) {
+            exportCSVDashboard2Btn.addEventListener('click', function() {
+                const anoSelecionado = document.getElementById('anoDashboard2')?.value || '';
+                const categoriaSelecionada = document.getElementById('categoriaDashboard2')?.value || 'total';
+                
+                let dadosFiltrados = [];
+                
+                if (anoSelecionado && dashboardData.porAno[anoSelecionado]) {
+                    dadosFiltrados = dashboardData.porAno[anoSelecionado].dados || [];
+                } else {
+                    dadosFiltrados = [...dashboardData.todosDados];
+                }
+                
+                if (dadosFiltrados.length === 0) {
+                    alert('Não há dados para exportar.');
+                    return;
+                }
+                
+                let csvContent = 'Mês;Despesa Bruta;Despesa Líquida;Pessoal Ativo;Inativos/Pensionistas;Variação Mês Anterior\n';
+                
+                dadosFiltrados.forEach((item, index) => {
+                    let variacao = 0;
+                    if (index > 0) {
+                        const mesAnterior = dadosFiltrados[index - 1];
+                        if (mesAnterior && mesAnterior.DESPESA_BRUTA > 0) {
+                            variacao = ((item.DESPESA_BRUTA - mesAnterior.DESPESA_BRUTA) / mesAnterior.DESPESA_BRUTA * 100);
+                        }
+                    }
+                    
+                    csvContent += `${item.MES_FORMATADO};${item.DESPESA_BRUTA};${item.DESPESA_LIQUIDA};${item.PESSOAL_ATIVO};${item.PESSOAL_INATIVO};${variacao.toFixed(1)}%\n`;
+                });
+                
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'despesa_pessoal_evolucao.csv');
+                link.style.visibility = 'hidden';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                alert(`CSV exportado com sucesso! ${dadosFiltrados.length} registros exportados.`);
+            });
+        }
         
         // Imprimir Dashboard 1
-        document.getElementById('printDashboard1').addEventListener('click', function() {
-            window.print();
-        });
+        const printDashboard1Btn = document.getElementById('printDashboard1');
+        if (printDashboard1Btn) {
+            printDashboard1Btn.addEventListener('click', function() {
+                window.print();
+            });
+        }
         
         // Imprimir Dashboard 2
-        document.getElementById('printDashboard2').addEventListener('click', function() {
-            window.print();
-        });
+        const printDashboard2Btn = document.getElementById('printDashboard2');
+        if (printDashboard2Btn) {
+            printDashboard2Btn.addEventListener('click', function() {
+                window.print();
+            });
+        }
         
         // ==================== INICIALIZAÇÃO ====================
         
         document.addEventListener('DOMContentLoaded', function() {
+            // Buscar data do GitHub
+            fetchGitHubLastUpdate();
+            
             // Inicializar tooltips do Bootstrap
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -2459,6 +2742,9 @@
             
             // Carregar dados
             loadAllData();
+            
+            // Configurar intervalo para atualizar data do GitHub (opcional)
+            // setInterval(fetchGitHubLastUpdate, 10 * 60 * 1000); // A cada 10 minutos
         });
     </script>
 </body>
