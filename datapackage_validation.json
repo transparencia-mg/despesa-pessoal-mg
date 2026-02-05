@@ -1,11 +1,11 @@
 {
   "version": "4.16.6",
-  "time": 0.062,
+  "time": 0.065,
   "errors": [],
   "tasks": [
     {
       "resource": {
-        "description": "Insira a descrição/explicação detalhada deste recurso.",
+        "description": "Conjunto de dados referentes a despesa de pessoal do Estado de Minas Gerais.",
         "dialect": {
           "delimiter": ";"
         },
@@ -136,7 +136,7 @@
           ]
         },
         "scheme": "file",
-        "title": "Insira um título humanamente legível para este recurso.",
+        "title": "despesa_pessoal_mensal",
         "stats": {
           "hash": "ec3d0cda76c52d4decec61f7295c19e2",
           "bytes": 6529,
@@ -144,7 +144,7 @@
           "rows": 28
         }
       },
-      "time": 0.029,
+      "time": 0.03,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -12215,7 +12215,7 @@
     },
     {
       "resource": {
-        "description": "Insira a descrição/explicação detalhada deste recurso.",
+        "description": "Dados referentes aos limites da Lei de Responsabilidade Fiscal.",
         "dialect": {
           "delimiter": ";"
         },
@@ -12254,7 +12254,7 @@
           ]
         },
         "scheme": "file",
-        "title": "Insira um título humanamente legível para este recurso.",
+        "title": "limites_lrf",
         "stats": {
           "hash": "1eb67cf8e435606fd47cf96be070cd74",
           "bytes": 1456,
@@ -12262,7 +12262,7 @@
           "rows": 5
         }
       },
-      "time": 0.011,
+      "time": 0.012,
       "scope": [
         "hash-count-error",
         "byte-count-error",
