@@ -1,8 +1,8 @@
 name: despesa-pessoal-mg
-owner_org: ''
+owner_org: 'secretaria-de-estado-de-fazenda'
 profile: data-package
 resources:
-  - description: Insira a descrição/explicação detalhada deste recurso.
+  - description: Conjunto de dados referentes a despesa de pessoal do Estado de Minas Gerais.
     dialect:
       delimiter: ;
     encoding: utf-8-sig
@@ -72,8 +72,8 @@ resources:
         - name: ago_25
           type: string
     scheme: file
-    title: Insira um título humanamente legível para este recurso.
-  - description: Insira a descrição/explicação detalhada deste recurso.
+    title: despesa_pessoal_mensal
+  - description: Dados referentes aos limites da Lei de Responsabilidade Fiscal.
     dialect:
       delimiter: ;
     encoding: utf-8-sig
@@ -97,5 +97,5 @@ resources:
         - name: mai_2023_a_abr_2024
           type: string
     scheme: file
-    title: Insira um título humanamente legível para este recurso.
-title: Despesa pessoal mg
+    title: limites_lrf
+title: Despesa com Pessoal MG
