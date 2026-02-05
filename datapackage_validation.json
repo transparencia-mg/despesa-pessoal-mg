@@ -1,6 +1,6 @@
 {
   "version": "4.16.6",
-  "time": 0.063,
+  "time": 0.064,
   "errors": [],
   "tasks": [
     {
@@ -12256,13 +12256,13 @@
         "scheme": "file",
         "title": "Insira um título humanamente legível para este recurso.",
         "stats": {
-          "hash": "17c56a219e1a08fffa4d0663fd0177dc",
-          "bytes": 1448,
+          "hash": "1eb67cf8e435606fd47cf96be070cd74",
+          "bytes": 1456,
           "fields": 6,
           "rows": 5
         }
       },
-      "time": 0.011,
+      "time": 0.012,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -12291,7 +12291,7 @@
           "fieldNumber": 6,
           "fieldPosition": 7,
           "labels": [
-            "unnamed_0",
+            "mes_ano_a_mes_ano",
             "receita_corrente_liquida_rcl_iv",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_individuais_v_SS_1deg_art_166_da_cf",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_de_bancada_art_166_SS_16_da_cf_vi",
@@ -12323,7 +12323,7 @@
           "fieldNumber": 7,
           "fieldPosition": 8,
           "labels": [
-            "unnamed_0",
+            "mes_ano_a_mes_ano",
             "receita_corrente_liquida_rcl_iv",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_individuais_v_SS_1deg_art_166_da_cf",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_de_bancada_art_166_SS_16_da_cf_vi",
@@ -12355,7 +12355,7 @@
           "fieldNumber": 8,
           "fieldPosition": 9,
           "labels": [
-            "unnamed_0",
+            "mes_ano_a_mes_ano",
             "receita_corrente_liquida_rcl_iv",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_individuais_v_SS_1deg_art_166_da_cf",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_de_bancada_art_166_SS_16_da_cf_vi",
@@ -12387,7 +12387,7 @@
           "fieldNumber": 9,
           "fieldPosition": 10,
           "labels": [
-            "unnamed_0",
+            "mes_ano_a_mes_ano",
             "receita_corrente_liquida_rcl_iv",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_individuais_v_SS_1deg_art_166_da_cf",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_de_bancada_art_166_SS_16_da_cf_vi",
@@ -12419,7 +12419,7 @@
           "fieldNumber": 10,
           "fieldPosition": 11,
           "labels": [
-            "unnamed_0",
+            "mes_ano_a_mes_ano",
             "receita_corrente_liquida_rcl_iv",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_individuais_v_SS_1deg_art_166_da_cf",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_de_bancada_art_166_SS_16_da_cf_vi",
@@ -12446,12 +12446,44 @@
           "description": "The header of the data source contains label that does not exist in the provided schema."
         },
         {
+          "label": "mes_ano_a_mes_ano",
+          "fieldName": "unnamed_0",
+          "fieldNumber": 1,
+          "fieldPosition": 1,
+          "labels": [
+            "mes_ano_a_mes_ano",
+            "receita_corrente_liquida_rcl_iv",
+            "transferencias_obrigatorias_da_uniao_relativas_as_emendas_individuais_v_SS_1deg_art_166_da_cf",
+            "transferencias_obrigatorias_da_uniao_relativas_as_emendas_de_bancada_art_166_SS_16_da_cf_vi",
+            "transferencias_da_uniao_relativas_a_remuneracao_dos_agentes_comunitarios_de_saude_e_de_combate_as_endemias_cf_art_498_SS_11",
+            "outras_deducoes_constitucionais_ou_legais",
+            "receita_corrente_liquida_ajustada_para_calculo_dos_limites_da_despesa_com_pessoal_vii_iv_v_vi",
+            "despesa_total_com_pessoal_dtp_sobre_a_rcl_vii_iii_a_iii_b",
+            "limite_maximo_ix_incisos_i_ii_e_iii_art_20_da_lrf_49_00",
+            "limite_prudencial_x_paragrafo_unico_art_22_da_lrf_46_55",
+            "limite_de_alerta_xi_inciso_ii_do_SS_1o_do_art_59_da_lrf_44_10"
+          ],
+          "rowPositions": [
+            1
+          ],
+          "code": "incorrect-label",
+          "name": "Incorrect Label",
+          "tags": [
+            "#table",
+            "#header",
+            "#label"
+          ],
+          "note": "",
+          "message": "Label \"mes_ano_a_mes_ano\" in field unnamed_0 at position \"1\" does not match the field name in the schema",
+          "description": "One of the data source header does not match the field name defined in the schema."
+        },
+        {
           "label": "receita_corrente_liquida_rcl_iv",
           "fieldName": "set_2024_a_ago_2025",
           "fieldNumber": 2,
           "fieldPosition": 2,
           "labels": [
-            "unnamed_0",
+            "mes_ano_a_mes_ano",
             "receita_corrente_liquida_rcl_iv",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_individuais_v_SS_1deg_art_166_da_cf",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_de_bancada_art_166_SS_16_da_cf_vi",
@@ -12483,7 +12515,7 @@
           "fieldNumber": 3,
           "fieldPosition": 3,
           "labels": [
-            "unnamed_0",
+            "mes_ano_a_mes_ano",
             "receita_corrente_liquida_rcl_iv",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_individuais_v_SS_1deg_art_166_da_cf",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_de_bancada_art_166_SS_16_da_cf_vi",
@@ -12515,7 +12547,7 @@
           "fieldNumber": 4,
           "fieldPosition": 4,
           "labels": [
-            "unnamed_0",
+            "mes_ano_a_mes_ano",
             "receita_corrente_liquida_rcl_iv",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_individuais_v_SS_1deg_art_166_da_cf",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_de_bancada_art_166_SS_16_da_cf_vi",
@@ -12547,7 +12579,7 @@
           "fieldNumber": 5,
           "fieldPosition": 5,
           "labels": [
-            "unnamed_0",
+            "mes_ano_a_mes_ano",
             "receita_corrente_liquida_rcl_iv",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_individuais_v_SS_1deg_art_166_da_cf",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_de_bancada_art_166_SS_16_da_cf_vi",
@@ -12579,7 +12611,7 @@
           "fieldNumber": 6,
           "fieldPosition": 6,
           "labels": [
-            "unnamed_0",
+            "mes_ano_a_mes_ano",
             "receita_corrente_liquida_rcl_iv",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_individuais_v_SS_1deg_art_166_da_cf",
             "transferencias_obrigatorias_da_uniao_relativas_as_emendas_de_bancada_art_166_SS_16_da_cf_vi",
@@ -13382,13 +13414,13 @@
         }
       ],
       "stats": {
-        "errors": 35
+        "errors": 36
       },
       "valid": false
     }
   ],
   "stats": {
-    "errors": 343,
+    "errors": 344,
     "tasks": 2
   },
   "valid": false
