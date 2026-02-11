@@ -959,48 +959,45 @@
                     </div>
                 </div>
 
-                <!-- Ações Dashboard 1 -->
-                <div class="actions-container">
-                    <div class="export-buttons">
-                        <button class="btn-export" id="exportCSVDashboard1">
-                            <span class="material-icons" style="font-size: 14px;">file_download</span>
-                            Exportar CSV
-                        </button>
-                        <button class="btn-export" id="printDashboard1">
-                            <span class="material-icons" style="font-size: 14px;">print</span>
-                            Imprimir
-                        </button>
-                        <div style="position: relative;">
-                            <button class="btn-share" id="shareButton1">
-                                <span class="material-icons" style="font-size: 14px;">share</span>
-                                Compartilhar
+                    <!-- Barra de Ferramentas Dashboard 1 -->
+                    <div class="actions-container mb-4">
+                        <div class="export-buttons">
+                            <button class="btn-export" id="exportCSVDashboard1">
+                                <i class="material-icons me-2">description</i>Exportar CSV
                             </button>
-                            <div class="share-options" id="shareOptions1">
-                                <a href="#" class="share-option" onclick="copiarLink(); return false;">
-                                    <span class="material-icons" style="font-size: 14px;">link</span>
-                                    Copiar Link
-                                </a>
-                                <a href="#" class="share-option" onclick="compartilharFacebook(event);">
-                                    <span class="material-icons" style="font-size: 14px;">facebook</span>
-                                    Facebook
-                                </a>
-                                <a href="#" class="share-option" onclick="compartilharTwitter(event);">
-                                    <span class="material-icons" style="font-size: 14px;">x</span>
-                                    Twitter/X
-                                </a>
-                                <a href="#" class="share-option" onclick="compartilharLinkedIn(event);">
-                                    <span class="material-icons" style="font-size: 14px;">linkedin</span>
-                                    LinkedIn
-                                </a>
-                                <a href="#" class="share-option" onclick="compartilharWhatsApp(event);">
-                                    <span class="material-icons" style="font-size: 14px;">chat</span>
-                                    WhatsApp
-                                </a>
+                            <button class="btn-print" id="printDashboard1">
+                                <i class="material-icons me-2">print</i>Imprimir
+                            </button>
+                            <div class="share-wrapper">
+                                <button class="btn-share" id="shareDashboard1" onclick="toggleShareOptions(event, 'dashboard1')">
+                                    <i class="material-icons me-2">share</i>Compartilhar
+                                </button>
+                                <div class="share-options" id="shareOptions-dashboard1">
+                                    <a href="#" onclick="copiarLink(); return false;">
+                                        <i class="material-icons">link</i>Copiar link
+                                    </a>
+                                    <a href="#" onclick="compartilharFacebook(event);">
+                                        <i class="fab fa-facebook"></i>Facebook
+                                    </a>
+                                    <a href="#" onclick="compartilharTwitter(event);">
+                                        <i class="fab fa-twitter"></i>Twitter
+                                    </a>
+                                    <a href="#" onclick="compartilharLinkedIn(event);">
+                                        <i class="fab fa-linkedin"></i>LinkedIn
+                                    </a>
+                                    <a href="#" onclick="compartilharWhatsApp(event);">
+                                        <i class="fab fa-whatsapp"></i>WhatsApp
+                                    </a>
+                                </div>
                             </div>
-                            <span class="table-badge" id="resumoCountDashboard1">0 registros</span>
+                        </div>
+
+                        <div class="right-aligned-container">                             
+                                
+                                <span class="table-badge" id="totalCountDashboard1">0 registros</span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
                 <!-- Tabela Dashboard 1 -->
                 <div class="table-container">
