@@ -1824,6 +1824,25 @@ let mes = '';
 let mes_num = 0;
 
 // EXTRAIR ANO E MÊS - Formato "mai-23", "jan-25", etc.
+let mes_ano_raw = '';
+
+// PRIORIDADE 1: Coluna 'mes_ano' (formato atual do CSV)
+if (row['mes_ano'] !== undefined && row['mes_ano'] !== null && row['mes_ano'] !== '') {
+    mes_ano_raw = row['mes_ano'];
+} 
+// PRIORIDADE 2: Fallback para primeira coluna (CSV antigo)
+else {
+    const primeiraChave = Object.keys(row)[0];
+    mes_ano_raw = row[primeiraChave] || '';
+}
+
+// Variável que será usada no objeto retornado
+let mes_ano_formatado = mes_ano_raw;
+let ano = '';
+let mes = '';
+let mes_num = 0;
+
+// EXTRAIR ANO E MÊS - Formato "mai-23", "jan-25", etc.
 if (mes_ano_raw) {
     // Regex para capturar "mai-23", "jan-25", "dez-24"
     const match = mes_ano_raw.match(/([a-z]{3})-(\d{2})/i);
@@ -1836,6 +1855,12 @@ if (mes_ano_raw) {
         ano = `20${anoSuffix}`;
         mes_num = getMonthNumber(mesStr);
         mes = mes_num.toString().padStart(2, '0');
+        
+        // FORMATAR PARA EXIBIÇÃO: "Jan/2025", "Fev/2025"
+        const monthNames = {1:'Jan',2:'Fev',3:'Mar',4:'Abr',5:'Mai',6:'Jun',7:'Jul',8:'Ago',9:'Set',10:'Out',11:'Nov',12:'Dez'};
+        mes_ano_formatado = `${monthNames[mes_num]}/${ano}`;
+    }
+}
         
         // FORMATAR PARA EXIBIÇÃO: "Jan/2025", "Fev/2025"
         const monthNames = {1:'Jan',2:'Fev',3:'Mar',4:'Abr',5:'Mai',6:'Jun',7:'Jul',8:'Ago',9:'Set',10:'Out',11:'Nov',12:'Dez'};
