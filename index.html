@@ -1803,27 +1803,11 @@
                             let mes = '';
                             let mes_num = 0;
                             
-                    // O CSV TEM CABEÇALHO! A coluna se chama 'mes_ano'
-let mes_ano_raw = '';
+        // ============================================
+// EXTRAÇÃO DO MÊS/ANO - VERSÃO ÚNICA E CORRETA
+// ============================================
 
-// PRIORIDADE 1: Coluna 'mes_ano' (formato atual do CSV)
-if (row['mes_ano'] !== undefined && row['mes_ano'] !== null && row['mes_ano'] !== '') {
-    mes_ano_raw = row['mes_ano'];
-    console.log(`📅 Usando coluna 'mes_ano': ${mes_ano_raw}`);
-} 
-// PRIORIDADE 2: Fallback para primeira coluna (CSV antigo)
-else {
-    const primeiraChave = Object.keys(row)[0];
-    mes_ano_raw = row[primeiraChave] || '';
-    console.log(`⚠️ Usando fallback (primeira coluna): ${mes_ano_raw}`);
-}
-
-let mes_ano = mes_ano_raw;
-let ano = '';
-let mes = '';
-let mes_num = 0;
-
-// EXTRAIR ANO E MÊS - Formato "mai-23", "jan-25", etc.
+// NÃO USE normalizedRow AQUI! Use o row ORIGINAL
 let mes_ano_raw = '';
 
 // PRIORIDADE 1: Coluna 'mes_ano' (formato atual do CSV)
@@ -1844,7 +1828,6 @@ let mes_num = 0;
 
 // EXTRAIR ANO E MÊS - Formato "mai-23", "jan-25", etc.
 if (mes_ano_raw) {
-    // Regex para capturar "mai-23", "jan-25", "dez-24"
     const match = mes_ano_raw.match(/([a-z]{3})-(\d{2})/i);
     
     if (match) {
@@ -1859,8 +1842,44 @@ if (mes_ano_raw) {
         // FORMATAR PARA EXIBIÇÃO: "Jan/2025", "Fev/2025"
         const monthNames = {1:'Jan',2:'Fev',3:'Mar',4:'Abr',5:'Mai',6:'Jun',7:'Jul',8:'Ago',9:'Set',10:'Out',11:'Nov',12:'Dez'};
         mes_ano_formatado = `${monthNames[mes_num]}/${ano}`;
+        
+        console.log(`✅ Convertido: ${mes_ano_raw} → ${mes_ano_formatado} (Ano: ${ano})`);
     }
 }
+
+// ============================================
+// VALORES NUMÉRICOS - COM CORREÇÃO DE VÍRGULA/PONTO
+// ============================================
+
+const despesa_bruta = parseFloat((normalizedRow.despesa_bruta || normalizedRow.despesabruta || '0').replace(',', '.'));
+const pessoal_ativo = parseFloat((normalizedRow.pessoal_ativo || normalizedRow.pessoalativo || '0').replace(',', '.'));
+const vencimentos_vantagens = parseFloat((normalizedRow.vencimentos_vantagens || normalizedRow.vencimentosvantagens || '0').replace(',', '.'));
+const obrigacoes_patronais = parseFloat((normalizedRow.obrigacoes_patronais || normalizedRow.obrigacoespatronais || '0').replace(',', '.'));
+const inativos_pensionistas = parseFloat((normalizedRow.inativos_pensionistas || normalizedRow.inativospensionistas || '0').replace(',', '.'));
+const aposentadorias = parseFloat((normalizedRow.aposentadorias || '0').replace(',', '.'));
+const pensoes = parseFloat((normalizedRow.pensoes || '0').replace(',', '.'));
+const despesas_nao_computadas = parseFloat((normalizedRow.despesas_nao_computadas || normalizedRow.despesasnaocomputadas || '0').replace(',', '.'));
+const despesa_liquida = parseFloat((normalizedRow.despesa_liquida || normalizedRow.despesaliquida || '0').replace(',', '.'));
+
+// ============================================
+// RETORNO DO OBJETO
+// ============================================
+
+return {
+    mes_ano: mes_ano_formatado,  // ← NOME DIFERENTE, SEM CONFLITO!
+    despesa_bruta: despesa_bruta,
+    pessoal_ativo: pessoal_ativo,
+    vencimentos_vantagens: vencimentos_vantagens,
+    obrigacoes_patronais: obrigacoes_patronais,
+    inativos_pensionistas: inativos_pensionistas,
+    aposentadorias: aposentadorias,
+    pensoes: pensoes,
+    despesas_nao_computadas: despesas_nao_computadas,
+    despesa_liquida: despesa_liquida,
+    ANO: ano,
+    MES: mes,
+    MES_NUM: mes_num
+};
         
         // FORMATAR PARA EXIBIÇÃO: "Jan/2025", "Fev/2025"
         const monthNames = {1:'Jan',2:'Fev',3:'Mar',4:'Abr',5:'Mai',6:'Jun',7:'Jul',8:'Ago',9:'Set',10:'Out',11:'Nov',12:'Dez'};
