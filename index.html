@@ -1803,40 +1803,49 @@
                             let mes = '';
                             let mes_num = 0;
                             
-                            if (mes_ano) {
-                                const formats = [
-                                    () => { const m = mes_ano.match(/(\d{1,2})[\/\-](\d{4})/); if (m) { mes = parseInt(m[1]).toString().padStart(2, '0'); ano = m[2]; mes_num = parseInt(mes); return true; } return false; },
-                                    () => { const m = mes_ano.match(/([a-z]{3})[\/\-](\d{4})/i); if (m) { const mesStr = m[1].toLowerCase(); ano = m[2]; mes_num = getMonthNumber(mesStr); mes = mes_num.toString().padStart(2, '0'); return true; } return false; },
-                                    () => { const m = mes_ano.match(/(\d{4})[\/\-](\d{1,2})/); if (m) { ano = m[1]; mes = parseInt(m[2]).toString().padStart(2, '0'); mes_num = parseInt(mes); return true; } return false; }
-                                ];
-                                
-                                for (let format of formats) {
-                                    if (format()) break;
-                                }
-                            }
-                            
-                            return {
-                                mes_ano: mes_ano,
-                                despesa_bruta: despesa_bruta,
-                                pessoal_ativo: pessoal_ativo,
-                                vencimentos_vantagens: vencimentos_vantagens,
-                                obrigacoes_patronais: obrigacoes_patronais,
-                                inativos_pensionistas: inativos_pensionistas,
-                                aposentadorias: aposentadorias,
-                                pensoes: pensoes,
-                                despesas_nao_computadas: despesas_nao_computadas,
-                                despesa_liquida: despesa_liquida,
-                                ANO: ano,
-                                MES: mes,
-                                MES_NUM: mes_num
-                            };
-                        }).filter(item => item.mes_ano !== '' && item.despesa_bruta > 0);
-                        
-                        console.log(`Dados processados: ${despesaMensalData.length} registros`);
-                        
-                        if (despesaMensalData.length === 0) {
-                            despesaMensalData = getSampleData();
-                        }
+                    // O CSV TEM CABEÇALHO! A coluna se chama 'mes_ano'
+let mes_ano_raw = '';
+
+// PRIORIDADE 1: Coluna 'mes_ano' (formato atual do CSV)
+if (row['mes_ano'] !== undefined && row['mes_ano'] !== null && row['mes_ano'] !== '') {
+    mes_ano_raw = row['mes_ano'];
+    console.log(`📅 Usando coluna 'mes_ano': ${mes_ano_raw}`);
+} 
+// PRIORIDADE 2: Fallback para primeira coluna (CSV antigo)
+else {
+    const primeiraChave = Object.keys(row)[0];
+    mes_ano_raw = row[primeiraChave] || '';
+    console.log(`⚠️ Usando fallback (primeira coluna): ${mes_ano_raw}`);
+}
+
+let mes_ano = mes_ano_raw;
+let ano = '';
+let mes = '';
+let mes_num = 0;
+
+// EXTRAIR ANO E MÊS - Formato "mai-23", "jan-25", etc.
+if (mes_ano_raw) {
+    // Regex para capturar "mai-23", "jan-25", "dez-24"
+    const match = mes_ano_raw.match(/([a-z]{3})-(\d{2})/i);
+    
+    if (match) {
+        const mesStr = match[1].toLowerCase();
+        const anoSuffix = match[2];
+        
+        // CONVERTER 23 -> 2023, 24 -> 2024, 25 -> 2025
+        ano = `20${anoSuffix}`;
+        mes_num = getMonthNumber(mesStr);
+        mes = mes_num.toString().padStart(2, '0');
+        
+        // FORMATAR PARA EXIBIÇÃO: "Jan/2025", "Fev/2025"
+        const monthNames = {1:'Jan',2:'Fev',3:'Mar',4:'Abr',5:'Mai',6:'Jun',7:'Jul',8:'Ago',9:'Set',10:'Out',11:'Nov',12:'Dez'};
+        mes_ano = `${monthNames[mes_num]}/${ano}`;
+        
+        console.log(`✅ Convertido: ${mes_ano_raw} → ${mes_ano} (Ano: ${ano}, Mês: ${mes})`);
+    } else {
+        console.warn(`⚠️ Formato não reconhecido: ${mes_ano_raw}`);
+    }
+}
                         
                         organizeDataByYear();
                         resolve();
