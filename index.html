@@ -2379,7 +2379,11 @@ function formatFileSize(bytes) {
 function initXLSXSection() {
     renderizarListaXLSX();
 }
-
+        
+// Inicializar seção XLSX
+if (document.getElementById('xlsxFileList')) {
+    initXLSXSection();
+}
         // ============================================
         // RESET DE FILTROS
         // ============================================
