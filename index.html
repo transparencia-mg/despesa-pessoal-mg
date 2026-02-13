@@ -1061,88 +1061,53 @@
 <div class="tab-pane fade" id="dashboard4" role="tabpanel" aria-labelledby="dashboard4-tab">
     <div class="filter-container">
         
-        <!-- === SEÇÃO 1: DOWNLOAD DOS ARQUIVOS CSV === -->
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <h5 style="color: var(--primary-dark); font-weight: 600; margin-bottom: 5px;">
-                    <i class="material-icons" style="vertical-align: middle; margin-right: 8px;">download</i>
-                    Baixar Arquivos CSV (Dados Processados)
-                </h5>
-                <p style="color: #6c757d; font-size: 13px; margin-bottom: 0;">
-                    Arquivos no formato CSV, prontos para análise e processamento
-                </p>
-            </div>
-        </div>
         
-        <!-- === SEÇÃO 2: DOWNLOAD DOS ARQUIVOS XLSX (DADOS BRUTOS) === -->
-        <div class="xlsx-section">
-            <div class="row">
-                <div class="col-md-12">
-                    <h5 style="color: var(--primary-dark); font-weight: 600; margin-bottom: 15px;">
-                        <i class="material-icons" style="vertical-align: middle; margin-right: 8px;">table_view</i>
-                        Baixar Arquivos XLSX (Dados Brutos)
-                    </h5>
-                    <p style="color: #6c757d; font-size: 13px; margin-bottom: 20px;">
-                        Arquivos originais no formato Excel, conforme publicados pela fonte oficial
-                    </p>
-                </div>
+        <!-- === SEÇÃO 2: DOWNLOAD DOS ARQUIVOS XLSX (DINÂMICO) === -->
+<div class="xlsx-section">
+    <div class="row">
+        <div class="col-md-12">
+            <h5 style="color: var(--primary-dark); font-weight: 600; margin-bottom: 15px;">
+                <i class="material-icons" style="vertical-align: middle; margin-right: 8px;">folder_open</i>
+                Arquivos da Pasta "despesa_pessoal"
+            </h5>
+            <p style="color: #6c757d; font-size: 13px; margin-bottom: 20px;">
+                Selecione os arquivos XLSX que deseja baixar. Os arquivos são listados automaticamente do repositório.
+            </p>
+        </div>
+    </div>
+
+    <!-- Controles de seleção -->
+    <div class="xlsx-actions">
+        <button class="btn-export" id="selectAllXLSX">
+            <i class="material-icons">check_box</i> Selecionar Todos
+        </button>
+        <button class="btn-export" id="deselectAllXLSX">
+            <i class="material-icons">check_box_outline_blank</i> Limpar Seleção
+        </button>
+        <button class="btn-selected" id="downloadSelectedXLSX" disabled>
+            <i class="material-icons">file_download</i> 
+            Baixar Selecionados (<span id="selectedCount">0</span>)
+        </button>
+    </div>
+
+    <!-- Lista de arquivos -->
+    <div class="xlsx-list-container" id="xlsxListContainer">
+        <div class="xlsx-list-header">
+            <div class="checkbox-col">
+                <input type="checkbox" class="xlsx-checkbox" id="headerCheckbox">
             </div>
-
-            <div class="row">
-                <!-- Card XLSX 1: Despesa Pessoal 2023 -->
-                <div class="col-md-4 mb-3">
-                    <div class="xlsx-card d-flex align-items-center">
-                        <i class="material-icons">table_chart</i>
-                        <div class="flex-grow-1">
-                            <span>despesa_pessoal_2023.xlsx</span><br>
-                            <small>Dados completos de 2023</small>
-                        </div>
-                        <a href="https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/despesa_pessoal_2023.xlsx" 
-                           class="btn-xlsx" 
-                           download
-                           style="width: auto; padding: 8px 15px; max-width: none;">
-                            <i class="material-icons">file_download</i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Card XLSX 2: Despesa Pessoal 2024 -->
-                <div class="col-md-4 mb-3">
-                    <div class="xlsx-card d-flex align-items-center">
-                        <i class="material-icons">table_chart</i>
-                        <div class="flex-grow-1">
-                            <span>despesa_pessoal_2024.xlsx</span><br>
-                            <small>Dados completos de 2024</small>
-                        </div>
-                        <a href="https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/despesa_pessoal_2024.xlsx" 
-                           class="btn-xlsx" 
-                           download
-                           style="width: auto; padding: 8px 15px; max-width: none;">
-                            <i class="material-icons">file_download</i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Card XLSX 3: Despesa Pessoal 2025 -->
-                <div class="col-md-4 mb-3">
-                    <div class="xlsx-card d-flex align-items-center">
-                        <i class="material-icons">table_chart</i>
-                        <div class="flex-grow-1">
-                            <span>despesa_pessoal_2025.xlsx</span><br>
-                            <small>Dados completos de 2025</small>
-                        </div>
-                        <a href="https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/despesa_pessoal_2025.xlsx" 
-                           class="btn-xlsx" 
-                           download
-                           style="width: auto; padding: 8px 15px; max-width: none;">
-                            <i class="material-icons">file_download</i>
-                        </a>
-                    </div>
-                </div>
+            <div class="file-col">Arquivo</div>
+            <div class="size-col">Tamanho</div>
+        </div>
+        <div id="xlsxFileList">
+            <!-- Será preenchido via JavaScript -->
+            <div class="xlsx-loading">
+                <div class="spinner-small"></div>
+                Carregando lista de arquivos...
             </div>
         </div>
-
-        <hr class="my-4" style="border-top: 1px solid #dee2e6;">
+    </div>
+</div>
 
         <!-- === SEÇÃO 3: INFORMAÇÕES SOBRE OS DADOS (mantida igual) === -->
         <div class="table-container">
