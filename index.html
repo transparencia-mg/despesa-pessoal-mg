@@ -952,47 +952,6 @@
             </div>
         </div>
         
-        <!-- Cards de Download CSV -->
-        <div class="row mb-4">
-            <!-- Card 1: Despesa Mensal CSV -->
-            <div class="col-md-6 mb-4">
-                <div class="card-download">
-                    <i class="material-icons">insert_chart</i>
-                    <h5>Despesa Mensal com Pessoal</h5>
-                    <p>Dados mensais detalhados de despesa bruta, líquida, pessoal ativo, inativos, pensionistas e deduções.</p>
-                    <div class="file-info-badge">
-                        <i class="material-icons">insert_drive_file</i> 
-                        despesa_pessoal_mensal.csv
-                    </div>
-                    <a href="https://raw.githubusercontent.com/transparencia-mg/despesa-pessoal-mg/main/dataset/data/despesa_pessoal_mensal.csv" 
-                       class="btn-export" 
-                       download>
-                        <i class="material-icons">file_download</i> 
-                        Baixar CSV
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Card 2: Limites LRF CSV -->
-            <div class="col-md-6 mb-4">
-                <div class="card-download">
-                    <i class="material-icons">balance</i>
-                    <h5>Limites da Lei de Responsabilidade Fiscal</h5>
-                    <p>Dados quadrimestrais da Receita Corrente Líquida, despesa total com pessoal e apuração dos limites legais.</p>
-                    <div class="file-info-badge">
-                        <i class="material-icons">insert_drive_file</i> 
-                        limites_lrf.csv
-                    </div>
-                    <a href="https://raw.githubusercontent.com/transparencia-mg/despesa-pessoal-mg/main/dataset/data/limites_lrf.csv" 
-                       class="btn-export" 
-                       download>
-                        <i class="material-icons">file_download</i> 
-                        Baixar CSV
-                    </a>
-                </div>
-            </div>
-        </div>
-
         <!-- === SEÇÃO 2: DOWNLOAD DOS ARQUIVOS XLSX (DADOS BRUTOS) === -->
         <div class="xlsx-section">
             <div class="row">
@@ -2067,6 +2026,21 @@
 
         function printDashboard1() { window.print(); }
         function printDashboard2() { window.print(); }
+
+        // ==================== LISTAR ARQUIVOS XLSX ====================
+async function listarArquivosXLSX() {
+    // Como não temos uma API direta para listar arquivos, 
+    // você pode manter a lista estática ou implementar uma chamada à API do GitHub
+    
+    const arquivosConhecidos = [
+        { nome: 'despesa_pessoal_2023.xlsx', ano: '2023', url: 'https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/despesa_pessoal_2023.xlsx' },
+        { nome: 'despesa_pessoal_2024.xlsx', ano: '2024', url: 'https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/despesa_pessoal_2024.xlsx' },
+        { nome: 'despesa_pessoal_2025.xlsx', ano: '2025', url: 'https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/despesa_pessoal_2025.xlsx' },
+        { nome: 'despesa_pessoal_2026.xlsx', ano: '2026', url: 'https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/despesa_pessoal_2026.xlsx' }
+    ];
+    
+    return arquivosConhecidos;
+}
 
         // ============================================
         // RESET DE FILTROS
