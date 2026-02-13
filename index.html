@@ -533,10 +533,8 @@
 /* ==================== SEÇÃO DE DOWNLOADS XLSX ==================== */
 .xlsx-section {
     margin-top: 30px;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 10px;
-    border: 1px solid #dee2e6;
+    padding-top: 20px;
+    border-top: 1px solid #dee2e6;
 }
 
 .xlsx-section h5 {
@@ -546,154 +544,38 @@
     font-size: 16px;
 }
 
-/* Container da lista de arquivos */
-.xlsx-list-container {
-    max-height: 400px;
-    overflow-y: auto;
-    border: 1px solid #dee2e6;
+.xlsx-card {
+    background: #f8f9fa;
     border-radius: 8px;
-    background: white;
-    margin-bottom: 20px;
-}
-
-/* Cabeçalho da lista */
-.xlsx-list-header {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    background: var(--primary-dark);
-    color: white;
-    font-weight: 600;
-    font-size: 13px;
-    border-radius: 8px 8px 0 0;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.xlsx-list-header .checkbox-col {
-    width: 40px;
-    text-align: center;
-}
-
-.xlsx-list-header .file-col {
-    flex: 1;
-}
-
-.xlsx-list-header .size-col {
-    width: 80px;
-    text-align: right;
-}
-
-/* Item da lista */
-.xlsx-list-item {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    border-bottom: 1px solid #dee2e6;
-    transition: background-color 0.2s ease;
-    font-size: 13px;
-}
-
-.xlsx-list-item:hover {
-    background-color: rgba(41, 67, 90, 0.05);
-}
-
-.xlsx-list-item .checkbox-col {
-    width: 40px;
-    text-align: center;
-}
-
-.xlsx-list-item .file-col {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.xlsx-list-item .file-col i {
-    color: var(--success-green);
-    font-size: 20px;
-}
-
-.xlsx-list-item .file-col .file-name {
-    font-weight: 500;
-    color: var(--primary-dark);
-}
-
-.xlsx-list-item .file-col .file-desc {
-    font-size: 11px;
-    color: #6c757d;
-    margin-left: 10px;
-}
-
-.xlsx-list-item .size-col {
-    width: 80px;
-    text-align: right;
-    color: #6c757d;
-    font-size: 12px;
-}
-
-/* Checkbox personalizado */
-.xlsx-checkbox {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    accent-color: var(--primary-dark);
-}
-
-/* Barra de ações */
-.xlsx-actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: center;
-    padding: 15px 0;
-}
-
-.xlsx-actions .btn-selected {
-    background: var(--primary-dark);
-    border: 2px solid var(--primary-dark);
-    color: white;
-    padding: 8px 15px;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    padding: 15px;
+    border: 1px solid #dee2e6;
     transition: all 0.3s ease;
 }
 
-.xlsx-actions .btn-selected:hover {
-    background: var(--primary-darker);
-    border-color: var(--primary-darker);
-    transform: translateY(-1px);
+.xlsx-card:hover {
+    background: white;
+    border-color: var(--success-green);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-.xlsx-actions .btn-selected:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-/* Loading e vazio */
-.xlsx-loading, .xlsx-empty {
-    padding: 30px;
-    text-align: center;
-    color: #6c757d;
-}
-
-.xlsx-loading .spinner-small {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #f3f3f3;
-    border-top: 2px solid var(--primary-dark);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    display: inline-block;
+.xlsx-card i {
+    font-size: 24px;
+    color: var(--success-green);
     margin-right: 10px;
 }
+
+.xlsx-card span {
+    font-weight: 600;
+    color: var(--primary-dark);
+}
+
+.xlsx-card small {
+    color: #6c757d;
+    font-size: 11px;
+}
+    </style>
+</head>
+<body>
 
 
     <div class="container">
@@ -1057,13 +939,27 @@
 <div class="tab-pane fade" id="dashboard4" role="tabpanel" aria-labelledby="dashboard4-tab">
     <div class="filter-container">
         
-        <!-- === SEÇÃO 1: DOWNLOAD DOS ARQUIVOS === -->
+        <!-- === SEÇÃO 1: DOWNLOAD DOS ARQUIVOS CSV === -->
         <div class="row mb-4">
             <div class="col-md-12">
                 <h5 style="color: var(--primary-dark); font-weight: 600; margin-bottom: 5px;">
                     <i class="material-icons" style="vertical-align: middle; margin-right: 8px;">download</i>
-                    Baixar Arquivos
+                    Baixar Arquivos CSV (Dados Processados)
                 </h5>
+                <p style="color: #6c757d; font-size: 13px; margin-bottom: 0;">
+                    Arquivos no formato CSV, prontos para análise e processamento
+                </p>
+            </div>
+        </div>
+        
+        <!-- === SEÇÃO 2: DOWNLOAD DOS ARQUIVOS XLSX (DADOS BRUTOS) === -->
+        <div class="xlsx-section">
+            <div class="row">
+                <div class="col-md-12">
+                    <h5 style="color: var(--primary-dark); font-weight: 600; margin-bottom: 15px;">
+                        <i class="material-icons" style="vertical-align: middle; margin-right: 8px;">table_view</i>
+                        Baixar Arquivos XLSX (Dados Brutos)
+                    </h5>
                     <p style="color: #6c757d; font-size: 13px; margin-bottom: 20px;">
                         Arquivos originais no formato Excel, conforme publicados pela fonte oficial
                     </p>
