@@ -859,118 +859,278 @@
                 </div>
             </div>
 
-            <!-- ==================== DASHBOARD 4: DOWNLOADS ==================== -->
-            <div class="tab-pane fade" id="dashboard4" role="tabpanel" aria-labelledby="dashboard4-tab">
-                <div class="filter-container">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h5 class="mb-3" style="color: var(--primary-dark); font-weight: 600;">
-                                <i class="material-icons" style="vertical-align: middle; margin-right: 8px;">download</i>
-                                Baixar Arquivos CSV Originais
-                            </h5>                            
+   background: white;
+    border-radius: 12px;
+    padding: 25px;
+    border: 1px solid #dee2e6;
+    text-align: center;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.card-download:hover, .card-stats:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    border-color: var(--primary-dark);
+}
+
+.card-download i.material-icons,
+.card-stats i.material-icons {
+    font-size: 48px !important;
+    color: var(--primary-dark) !important;
+    margin-bottom: 15px !important;
+}
+
+.card-download h4,
+.card-download h5,
+.card-stats h4,
+.card-stats h5 {
+    color: var(--primary-dark);
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.card-download p,
+.card-stats p {
+    font-size: 13px;
+    color: #6c757d;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    flex-grow: 1;
+}
+
+/* ==================== BOTÃO EXPORT (PADRÃO) ==================== */
+.btn-export {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    background: white !important;
+    border: 2px solid var(--primary-darker) !important;
+    color: var(--primary-darker) !important;
+    padding: 10px 20px !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    width: 100%;
+    max-width: 250px;
+    margin: 0 auto !important;
+}
+
+.btn-export:hover {
+    background: var(--primary-darker) !important;
+    border-color: var(--primary-darker) !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(19, 40, 55, 0.25) !important;
+}
+
+.btn-export i.material-icons {
+    font-size: 18px !important;
+}
+
+/* ==================== BADGE DE ARQUIVO ==================== */
+.file-info-badge {
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--primary-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.file-info-badge i.material-icons {
+    font-size: 14px !important;
+    color: var(--primary-dark) !important;
+    margin-bottom: 0 !important;
+}
+
+/* ==================== RESPONSIVIDADE ==================== */
+@media (max-width: 768px) {
+    .btn-export {
+        max-width: 100%;
+    }
+    
+    .card-download, .card-stats {
+        padding: 20px;
+    }
+}
+📄 HTML COMPLETO DO DASHBOARD 4 (substitua completamente)
+html
+<!-- ==================== DASHBOARD 4: DOWNLOADS ==================== -->
+<div class="tab-pane fade" id="dashboard4" role="tabpanel" aria-labelledby="dashboard4-tab">
+    <div class="filter-container">
+        
+        <!-- === SEÇÃO 1: DOWNLOAD DOS ARQUIVOS CSV === -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h5 style="color: var(--primary-dark); font-weight: 600; margin-bottom: 5px;">
+                    <i class="material-icons" style="vertical-align: middle; margin-right: 8px;">download</i>
+                    Baixar Arquivos CSV Originais
+                </h5>
+                <p style="color: #6c757d; font-size: 13px; margin-bottom: 0;">
+                    Arquivos disponíveis no repositório oficial de dados abertos
+                </p>
+            </div>
+        </div>
+        
+        <!-- Cards de Download -->
+        <div class="row mb-5">
+            <!-- Card 1: Despesa Mensal -->
+            <div class="col-md-6 mb-4">
+                <div class="card-download">
+                    <i class="material-icons">insert_chart</i>
+                    <h5>Despesa Mensal com Pessoal</h5>
+                    <p>Dados mensais detalhados de despesa bruta, líquida, pessoal ativo, inativos, pensionistas e deduções.</p>
+                    <div class="file-info-badge">
+                        <i class="material-icons">insert_drive_file</i> 
+                        despesa_pessoal_mensal.csv
+                    </div>
+                    <a href="https://raw.githubusercontent.com/transparencia-mg/despesa-pessoal-mg/main/dataset/data/despesa_pessoal_mensal.csv" 
+                       class="btn-export" 
+                       download>
+                        <i class="material-icons">file_download</i> 
+                        Baixar CSV
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Card 2: Limites LRF -->
+            <div class="col-md-6 mb-4">
+                <div class="card-download">
+                    <i class="material-icons">balance</i>
+                    <h5>Limites da Lei de Responsabilidade Fiscal</h5>
+                    <p>Dados quadrimestrais da Receita Corrente Líquida, despesa total com pessoal e apuração dos limites legais.</p>
+                    <div class="file-info-badge">
+                        <i class="material-icons">insert_drive_file</i> 
+                        limites_lrf.csv
+                    </div>
+                    <a href="https://raw.githubusercontent.com/transparencia-mg/despesa-pessoal-mg/main/dataset/data/limites_lrf.csv" 
+                       class="btn-export" 
+                       download>
+                        <i class="material-icons">file_download</i> 
+                        Baixar CSV
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4" style="border-top: 1px solid #dee2e6;">
+
+        <!-- === SEÇÃO 2: INFORMAÇÕES SOBRE OS DADOS === -->
+        <div class="table-container">
+            <div class="table-header">
+                <h3 class="table-title" style="margin: 0; font-size: 16px;">Informações sobre os Dados</h3>
+            </div>
+            <div class="p-4">
+                <div class="row">
+                    <!-- Card 3: Repositório GitHub -->
+                    <div class="col-md-6 col-12 mb-4">
+                        <div class="card-stats">
+                            <i class="material-icons">code</i>
+                            <h4>Repositório no GitHub</h4>
+                            <p>Acesse o repositório oficial com todos os dados, scripts de processamento e documentação completa do projeto.</p>
+                            <a href="https://github.com/transparencia-mg/despesa-pessoal-mg" 
+                               target="_blank" 
+                               class="btn-export">
+                                <i class="material-icons">code</i> 
+                                GitHub
+                            </a>
                         </div>
                     </div>
                     
-                    <div class="row mb-5">
-                        <div class="col-md-6 mb-4">
-                            <div class="card-download">
-                                <i class="material-icons">insert_chart</i>
-                                <h5>Despesa Mensal com Pessoal</h5>
-                                <p>Dados mensais detalhados de despesa bruta, líquida, pessoal ativo, inativos, pensionistas e deduções.</p>
-                                <a href="https://raw.githubusercontent.com/transparencia-mg/despesa-pessoal-mg/main/dataset/data/despesa_pessoal_mensal.csv" 
-                                   class="btn-primary-custom w-100" download>
-                                    <i class="material-icons" style="font-size: 16px;">file_download</i> Baixar CSV
-                                </a>
-                            </div>
+                    <!-- Card 4: Portal de Dados Abertos -->
+                    <div class="col-md-6 col-12 mb-4">
+                        <div class="card-stats">
+                            <i class="material-icons">open_in_new</i>
+                            <h4>Portal de Dados Abertos</h4>
+                            <p>Acesse o portal oficial de dados abertos do Governo de Minas Gerais para mais informações e outros datasets.</p>
+                            <a href="https://dados.mg.gov.br/" 
+                               target="_blank" 
+                               class="btn-export">
+                                <i class="material-icons">open_in_new</i> 
+                                Acessar Portal
+                            </a>
                         </div>
-                        <div class="col-md-6 mb-4">
-                            <div class="card-download">
-                                <i class="material-icons">balance</i>
-                                <h5>Limites da Lei de Responsabilidade Fiscal</h5>
-                                <p>Dados quadrimestrais da Receita Corrente Líquida, despesa total com pessoal e apuração dos limites legais.</p>
-                                <a href="https://raw.githubusercontent.com/transparencia-mg/despesa-pessoal-mg/main/dataset/data/limites_lrf.csv" 
-                                   class="btn-primary-custom w-100" download>
-                                    <i class="material-icons">file_download</i> Baixar CSV
-                                </a>
+                    </div>
+                </div>
+
+                <!-- Tabela de Estrutura dos Arquivos -->
+                <div class="mt-5">
+                    <h5 style="color: var(--primary-dark); font-weight: 600; margin-bottom: 15px; font-size: 16px;">
+                        <i class="material-icons" style="vertical-align: middle; margin-right: 8px;">table_rows</i>
+                        Estrutura dos Arquivos CSV
+                    </h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" style="margin-bottom: 0;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%;">Arquivo</th>
+                                    <th style="width: 50%;">Descrição</th>
+                                    <th style="width: 20%;">Atualização</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">despesa_pessoal_mensal.csv</code></td>
+                                    <td>Dados mensais de despesa com pessoal (bruta, líquida, ativo, inativos, deduções)</td>
+                                    <td><span class="badge" style="background: var(--primary-dark); color: white; padding: 5px 10px;">Quadrimestral</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">limites_lrf.csv</code></td>
+                                    <td>Limites da LRF por período de 12 meses (RCL, deduções, DTP e percentuais)</td>
+                                    <td><span class="badge" style="background: var(--primary-dark); color: white; padding: 5px 10px;">Quadrimestral</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Alertas Informativo e Legal -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="alert" style="background-color: rgba(23, 162, 184, 0.1); border: 1px solid var(--info-blue); border-radius: 8px; padding: 15px; margin-bottom: 0; height: 100%;">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <i class="material-icons" style="font-size: 20px; color: var(--info-blue);">info</i>
+                                <div>
+                                    <strong style="color: var(--primary-dark);">Atualização Automática</strong>
+                                    <p style="font-size: 12px; color: #6c757d; margin: 5px 0 0 0; line-height: 1.5;">
+                                        Os dados são sincronizados automaticamente via GitHub Actions quando novos arquivos são publicados no repositório.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3 class="table-title">Informações sobre os Dados</h3>
-                    </div>
-                    <div class="p-4">
-                        <div class="row">
-                            <div class="col-md-6 col-12">
-                                <div class="card-stats" style="text-align: center;">
-                                    <i class="material-icons" style="font-size: 48px; color: var(--primary-dark); margin-bottom: 15px;">database</i>
-                                    <h4>Fonte dos Dados</h4>
-                                    <p class="text-muted" style="font-size: 13px;">Dados atualizados automaticamente do GitHub</p>
-                                    <div class="mt-3">
-                                        <button class="btn-export w-100 d-block text-decoration-none" id="atualizarDadosGitHub">
-                                            <i class="material-icons" style="font-size: 16px;">sync</i> Forçar Atualização
-                                        </button>
-                                    </div>
+                    <div class="col-md-6">
+                        <div class="alert" style="background-color: rgba(40, 167, 69, 0.1); border: 1px solid var(--success-green); border-radius: 8px; padding: 15px; margin-bottom: 0; height: 100%;">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <i class="material-icons" style="font-size: 20px; color: var(--success-green);">balance</i>
+                                <div>
+                                    <strong style="color: var(--primary-dark);">Conformidade Legal</strong>
+                                    <p style="font-size: 12px; color: #6c757d; margin: 5px 0 0 0; line-height: 1.5;">
+                                        Dados elaborados conforme a Lei Complementar nº 101/2000 (LRF) e publicados no RGF.
+                                    </p>
                                 </div>
-                            </div>
-                            <div class="col-md-6 col-12">
-                                <div class="card-stats" style="text-align: center;">
-                                    <i class="material-icons" style="font-size: 48px; color: var(--primary-dark); margin-bottom: 15px;">open_in_new</i>
-                                    <h4>Portal de Dados Abertos</h4>
-                                    <p class="text-muted" style="font-size: 13px;">Acesse o portal oficial de dados abertos de Minas Gerais</p>
-                                    <div class="mt-3">
-                                        <a href="https://dados.mg.gov.br/" target="_blank" class="btn-export w-100 d-block text-decoration-none">
-                                            <i class="material-icons" style="font-size: 16px;">open_in_new</i> Acessar Portal
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-4">
-                            <h5 class="mb-3">Estrutura dos Arquivos CSV</h5>
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Arquivo</th>
-                                            <th>Descrição</th>
-                                            <th>Período de Atualização</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><strong>despesa_pessoal_mensal.csv</strong></td>
-                                            <td>Dados mensais de despesa com pessoal</td>
-                                            <td>Quadrimestral</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>limites_lrf.csv</strong></td>
-                                            <td>Limites da Lei de Responsabilidade Fiscal por período de 12 meses</td>
-                                            <td>Quadrimestral</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            
-                            <div class="alert alert-info mt-3" style="background-color: rgba(23, 162, 184, 0.1); border-color: var(--info-blue);">
-                                <i class="material-icons" style="font-size: 16px; color: var(--info-blue);">info</i>
-                                <strong>Atualização Automática:</strong> Os dados são atualizados automaticamente quando novos arquivos são adicionados ao repositório GitHub. 
-                                Os relatórios são gerados quadrimestralmente.
-                            </div>
-                            
-                            <div class="alert alert-success mt-2" style="background-color: rgba(40, 167, 69, 0.1); border-color: var(--success-green);">
-                                <i class="material-icons" style="font-size: 16px; color: var(--success-green);">balance</i>
-                                <strong>Conformidade Legal:</strong> Os dados seguem as disposições da Lei Complementar nº 101/2000 (LRF) e são publicados conforme exigências do RGF.
                             </div>
                         </div>
                     </div>
                 </div>
-                
             </div>
         </div>
     </div>
+</div>
 
 
     <!-- ==================== LOADING OVERLAY ==================== -->
