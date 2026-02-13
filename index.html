@@ -2114,19 +2114,270 @@
         function printDashboard1() { window.print(); }
         function printDashboard2() { window.print(); }
 
-        // ==================== LISTAR ARQUIVOS XLSX ====================
+        // ==================== LISTAR ARQUIVOS XLSX DA PASTA ====================
 async function listarArquivosXLSX() {
-    // Como não temos uma API direta para listar arquivos, 
-    // você pode manter a lista estática ou implementar uma chamada à API do GitHub
+    try {
+        // Usando a API do GitHub para listar arquivos da pasta
+        const response = await fetch('https://api.github.com/repos/transparencia-mg/despesa-pessoal-mg/contents/despesa_pessoal');
+        
+        if (!response.ok) {
+            throw new Error('Erro ao acessar a API do GitHub');
+        }
+        
+        const files = await response.json();
+        
+        // Filtrar apenas arquivos .xlsx
+        const xlsxFiles = files
+            .filter(file => file.name.endsWith('.xlsx') && file.type === 'file')
+            .map(file => {
+                // Extrair informações do nome do arquivo
+                const name = file.name;
+                let descricao = '';
+                let ano = '';
+                let quadrimestre = '';
+                
+                // Tentar extrair informações do padrão "Anexo_I_Despesa_com_Pessoal_X_Quadrimestre_AAAA.xlsx"
+                const match = name.match(/Anexo_I_Despesa_com_Pessoal_(\d)_Quadrimestre_(\d{4})/i);
+                if (match) {
+                    quadrimestre = match[1];
+                    ano = match[2];
+                    descricao = `${quadrimestre}º Quadrimestre/${ano}`;
+                } else {
+                    descricao = 'Arquivo de despesa com pessoal';
+                }
+                
+                return {
+                    nome: file.name,
+                    descricao: descricao,
+                    ano: ano,
+                    quadrimestre: quadrimestre,
+                    tamanho: file.size,
+                    download_url: file.download_url,
+                    html_url: file.html_url
+                };
+            })
+            .sort((a, b) => {
+                // Ordenar por ano (decrescente) e depois por quadrimestre
+                if (a.ano !== b.ano) return b.ano - a.ano;
+                return a.quadrimestre - b.quadrimestre;
+            });
+        
+        return xlsxFiles;
+        
+    } catch (error) {
+        console.error('Erro ao listar arquivos:', error);
+        
+        // Fallback: lista estática caso a API falhe
+        return [
+            {
+                nome: 'Anexo_I_Despesa_com_Pessoal_1_Quadrimestre_2024.xlsx',
+                descricao: '1º Quadrimestre/2024',
+                ano: '2024',
+                quadrimestre: '1',
+                tamanho: 27400,
+                download_url: 'https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/Anexo_I_Despesa_com_Pessoal_1_Quadrimestre_2024.xlsx'
+            },
+            {
+                nome: 'Anexo_I_Despesa_com_Pessoal_2_Quadrimestre_2024.xlsx',
+                descricao: '2º Quadrimestre/2024',
+                ano: '2024',
+                quadrimestre: '2',
+                tamanho: 28100,
+                download_url: 'https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/Anexo_I_Despesa_com_Pessoal_2_Quadrimestre_2024.xlsx'
+            },
+            {
+                nome: 'Anexo_I_Despesa_com_Pessoal_3_Quadrimestre_2024.xlsx',
+                descricao: '3º Quadrimestre/2024',
+                ano: '2024',
+                quadrimestre: '3',
+                tamanho: 28600,
+                download_url: 'https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/Anexo_I_Despesa_com_Pessoal_3_Quadrimestre_2024.xlsx'
+            },
+            {
+                nome: 'Anexo_I_Despesa_com_Pessoal_1_Quadrimestre_2025.xlsx',
+                descricao: '1º Quadrimestre/2025',
+                ano: '2025',
+                quadrimestre: '1',
+                tamanho: 27900,
+                download_url: 'https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/Anexo_I_Despesa_com_Pessoal_1_Quadrimestre_2025.xlsx'
+            }
+        ];
+    }
+}
+
+// ==================== RENDERIZAR LISTA DE ARQUIVOS ====================
+async function renderizarListaXLSX() {
+    const container = document.getElementById('xlsxFileList');
+    if (!container) return;
     
-    const arquivosConhecidos = [
-        { nome: 'despesa_pessoal_2023.xlsx', ano: '2023', url: 'https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/despesa_pessoal_2023.xlsx' },
-        { nome: 'despesa_pessoal_2024.xlsx', ano: '2024', url: 'https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/despesa_pessoal_2024.xlsx' },
-        { nome: 'despesa_pessoal_2025.xlsx', ano: '2025', url: 'https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/despesa_pessoal_2025.xlsx' },
-        { nome: 'despesa_pessoal_2026.xlsx', ano: '2026', url: 'https://github.com/transparencia-mg/despesa-pessoal-mg/raw/main/despesa_pessoal/despesa_pessoal_2026.xlsx' }
-    ];
+    try {
+        const files = await listarArquivosXLSX();
+        
+        if (files.length === 0) {
+            container.innerHTML = '<div class="xlsx-empty">Nenhum arquivo XLSX encontrado na pasta.</div>';
+            return;
+        }
+        
+        let html = '';
+        files.forEach((file, index) => {
+            const tamanhoFormatado = formatFileSize(file.tamanho);
+            
+            html += `
+                <div class="xlsx-list-item" data-index="${index}">
+                    <div class="checkbox-col">
+                        <input type="checkbox" class="xlsx-checkbox file-checkbox" 
+                               data-url="${file.download_url}" data-name="${file.nome}">
+                    </div>
+                    <div class="file-col">
+                        <i class="material-icons">insert_drive_file</i>
+                        <span class="file-name">${file.nome}</span>
+                        <span class="file-desc">${file.descricao}</span>
+                    </div>
+                    <div class="size-col">${tamanhoFormatado}</div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        
+        // Adicionar eventos aos checkboxes
+        setupXLSXCheckboxes();
+        
+    } catch (error) {
+        console.error('Erro ao renderizar lista:', error);
+        container.innerHTML = '<div class="xlsx-empty">Erro ao carregar lista de arquivos.</div>';
+    }
+}
+
+// ==================== CONFIGURAR CHECKBOXES ====================
+function setupXLSXCheckboxes() {
+    const headerCheckbox = document.getElementById('headerCheckbox');
+    const fileCheckboxes = document.querySelectorAll('.file-checkbox');
+    const selectAllBtn = document.getElementById('selectAllXLSX');
+    const deselectAllBtn = document.getElementById('deselectAllXLSX');
+    const downloadBtn = document.getElementById('downloadSelectedXLSX');
+    const selectedCount = document.getElementById('selectedCount');
     
-    return arquivosConhecidos;
+    if (!headerCheckbox || !fileCheckboxes.length) return;
+    
+    // Atualizar contador
+    function updateSelectedCount() {
+        const checked = document.querySelectorAll('.file-checkbox:checked').length;
+        if (selectedCount) selectedCount.textContent = checked;
+        
+        // Atualizar estado do botão de download
+        if (downloadBtn) {
+            if (checked > 0) {
+                downloadBtn.disabled = false;
+            } else {
+                downloadBtn.disabled = true;
+            }
+        }
+        
+        // Atualizar header checkbox
+        if (headerCheckbox) {
+            if (checked === 0) {
+                headerCheckbox.indeterminate = false;
+                headerCheckbox.checked = false;
+            } else if (checked === fileCheckboxes.length) {
+                headerCheckbox.indeterminate = false;
+                headerCheckbox.checked = true;
+            } else {
+                headerCheckbox.indeterminate = true;
+            }
+        }
+    }
+    
+    // Evento do header checkbox
+    headerCheckbox.addEventListener('change', function() {
+        fileCheckboxes.forEach(cb => {
+            cb.checked = this.checked;
+        });
+        updateSelectedCount();
+    });
+    
+    // Eventos dos checkboxes individuais
+    fileCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateSelectedCount);
+    });
+    
+    // Botão selecionar todos
+    if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', function() {
+            fileCheckboxes.forEach(cb => cb.checked = true);
+            if (headerCheckbox) {
+                headerCheckbox.checked = true;
+                headerCheckbox.indeterminate = false;
+            }
+            updateSelectedCount();
+        });
+    }
+    
+    // Botão limpar seleção
+    if (deselectAllBtn) {
+        deselectAllBtn.addEventListener('click', function() {
+            fileCheckboxes.forEach(cb => cb.checked = false);
+            if (headerCheckbox) {
+                headerCheckbox.checked = false;
+                headerCheckbox.indeterminate = false;
+            }
+            updateSelectedCount();
+        });
+    }
+    
+    // Botão baixar selecionados
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', function() {
+            const selectedFiles = [];
+            document.querySelectorAll('.file-checkbox:checked').forEach(cb => {
+                selectedFiles.push({
+                    url: cb.dataset.url,
+                    name: cb.dataset.name
+                });
+            });
+            
+            if (selectedFiles.length > 0) {
+                downloadSelectedXLSX(selectedFiles);
+            }
+        });
+    }
+}
+
+// ==================== BAIXAR ARQUIVOS SELECIONADOS ====================
+function downloadSelectedXLSX(files) {
+    files.forEach((file, index) => {
+        // Pequeno delay entre downloads para não sobrecarregar
+        setTimeout(() => {
+            const a = document.createElement('a');
+            a.href = file.url;
+            a.download = file.name;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }, index * 500); // 500ms de intervalo
+    });
+    
+    // Feedback visual
+    showSuccess(`${files.length} arquivo(s) sendo baixado(s)...`);
+}
+
+// ==================== FORMATAR TAMANHO DE ARQUIVO ====================
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    if (!bytes) return '—';
+    
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// ==================== INICIALIZAR SEÇÃO XLSX ====================
+// Chamar esta função no DOMContentLoaded
+function initXLSXSection() {
+    renderizarListaXLSX();
 }
 
         // ============================================
